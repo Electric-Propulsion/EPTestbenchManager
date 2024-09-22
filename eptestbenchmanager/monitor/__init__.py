@@ -1,3 +1,3 @@
-from . import Rule
-from . import RuleFactory
-from . import TestbenchMonitor
+from .rule import Rule
+from .rulefactory import RuleFactory
+from .testbenchmonitor import TestbenchMonitor
