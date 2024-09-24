@@ -13,6 +13,6 @@ class TestbenchManager:
         # self.dashboard_manager = DashboardManager()
         # self.runner = ExperimentRunner()
 
-    def start(self):
+    def start_app(self):
         pass
         # TODO
