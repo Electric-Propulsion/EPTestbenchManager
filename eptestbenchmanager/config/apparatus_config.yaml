@@ -1,9 +1,8 @@
 physical_instruments:
   vacuum_controller:
-    class: epcomms.equipment.vacuum_controller.Terranova962A
+    class: epcomms.equipment.vacuumcontroller.Terranova962A
     arguments:
       device_location: /dev/ttyUSB0
-
 
 virtual_instruments:
   vacuum_chamber_pressure:
