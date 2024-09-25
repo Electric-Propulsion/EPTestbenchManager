@@ -5,14 +5,14 @@ experiment:
     This experiment will pump down the vacuum chamber and measure the leaks.
 
 segments:
-  Pumpdown:
+  pumpdown:
     setpoint_mbar: 1e-3
     timeout:
       minutes: 120
       action: continue   
     time_resolution_s: 30
   
-  MeasureLeaks:
+  measure_leaks:
     timeout: None
     termination:
       pressure_mbar: 1e3

@@ -19,7 +19,7 @@ class ExperimentFactory:
 
         segments = []
 
-        for segment_type, segment_config in config["experiment"]["segments"].items():
+        for segment_type, segment_config in config["segments"].items():
             segment_uid = f"{uid}__{segment_type}"
             segment = cls.get_class(segment_type)(segment_uid, segment_config)
             segments.append(segment)
