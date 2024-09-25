@@ -35,14 +35,14 @@ class VirtualInstrumentFactory:
         physical_instrument = physical_instruments[config["physical_instrument"]]
 
         setter_function = (
-            getattr(physical_instrument, config["setter_function"])
-            if config["setter_function"]
+            getattr(physical_instrument, config["setter_function"]) 
+            if config["setter_function"] != 'None' 
             else None
         )
 
         getter_function = (
             getattr(physical_instrument, config["getter_function"])
-            if config["getter_function"]
+            if config["getter_function"] != 'None'
             else None
         )
 

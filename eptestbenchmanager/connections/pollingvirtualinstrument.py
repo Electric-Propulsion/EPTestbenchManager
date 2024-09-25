@@ -52,3 +52,4 @@ class PollingVirtualInstrument(VirtualInstrument):
                 # We missed the polling interval
                 # TODO: Log a warning
                 pass
+            print(f"{self._polling_thread.name}: {value}")

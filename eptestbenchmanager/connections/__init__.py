@@ -1,4 +1,6 @@
-from .connectionmanager import ConnectionManager
-from .pollingvirtualinstrument import PollingVirtualInstrument
 from .virtualinstrument import VirtualInstrument
+from .pollingvirtualinstrument import PollingVirtualInstrument
 from .virtualinstrumentfactory import VirtualInstrumentFactory
+from .connectionmanager import ConnectionManager
+
+

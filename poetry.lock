@@ -44,7 +44,7 @@ description = ""
 optional = false
 python-versions = ">=3.12,<4.0"
 files = [
-    {file = "epcomms-0.1.0-py3-none-any.whl", hash = "sha256:c6adf34ba874e1bb4b170206ab54e2d6b6c1b82482bcb42565894caa1e8df9fb"},
+    {file = "epcomms-0.1.0-py3-none-any.whl", hash = "sha256:368f5d44fb0b3d628ed4338a632a7901894492e6ba7c51f6a18bc4311e2c3ee9"},
 ]
 
 [package.dependencies]
