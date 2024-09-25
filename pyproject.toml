@@ -11,6 +11,9 @@ epcomms = {path = "../EPComms/dist/epcomms-0.1.0-py3-none-any.whl"}
 pyyaml = "^6.0.2"
 
 
+[tool.poetry.group.dev.dependencies]
+pylint = "^3.3.1"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
