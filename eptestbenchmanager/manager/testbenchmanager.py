@@ -1,9 +1,13 @@
 from os import path, walk
 from pathlib import Path
+from time import sleep
 
 from eptestbenchmanager.connections import ConnectionManager
 from eptestbenchmanager.monitor import TestbenchMonitor
 from eptestbenchmanager.experiment_runner import ExperimentRunner
+from eptestbenchmanager.chat.alert_manager import DiscordAlertManager, AlertSeverity
+from eptestbenchmanager.chat.engine import DiscordEngine
+from eptestbenchmanager.chat.chat_manager import DiscordChatManager
 
 
 class TestbenchManager:
@@ -11,9 +15,9 @@ class TestbenchManager:
     def __init__(self):
         self.monitor: TestbenchMonitor = None
         self.connection_manager: ConnectionManager = None
-        # self.alert_manager = AlertManager()
-        # self.communication_engine = CommunicationEngine()
-        # self.chat_manager = ChatManager()
+        self.communication_engine = DiscordEngine()
+        self.alert_manager = DiscordAlertManager(self.communication_engine)
+        self.chat_manager = DiscordChatManager(self.communication_engine)
         # self.dashboard_manager = DashboardManager()
         self.runner: ExperimentRunner = None
 
@@ -21,6 +25,7 @@ class TestbenchManager:
         self,
         delay_apparatus_load: bool = False,
         delay_experiment_load: bool = False,
+        discord_guild: str = "Festus's bot test server",
     ):
 
         # Initialize the connection manager
@@ -49,7 +54,17 @@ class TestbenchManager:
                         ) as experiment_config_file:
                             self.runner.add_experiment(experiment_config_file)
 
+        # Configure the chat stuff
+        self.chat_manager.configure()
+
         # Start everything
         self.connection_manager.run()
 
         self.runner.run_experiment("pumpdown_measure_leaks")
+
+        self.communication_engine.run()
+        sleep(10)  # just give it a little time to start up
+        self.communication_engine.configure({"guild": discord_guild})
+
+        while True:
+            sleep(1)

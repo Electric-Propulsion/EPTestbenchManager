@@ -11,7 +11,7 @@ class DiscordClient(discord.Client):
         print(f"Logged in as {self.user} (ID: {self.user.id})")
         print("------")
 
-    def configure(self, process_message: callable):
+    def configure_message_processor(self, process_message: callable):
         self.process_message = process_message
 
     async def on_message(self, message):
