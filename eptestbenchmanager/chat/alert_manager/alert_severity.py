@@ -9,4 +9,3 @@ class AlertSeverity(Enum):
     INFO = 1
     CAUTION = 2
     WARNING = 3
-    CRITICAL = 4

@@ -20,9 +20,7 @@ class DiscordClient(discord.Client):
 
     async def send_message(self, message: str, channel: int) -> None:
         try:
-            print(f"Sending message: {message} to channel: {channel}")
             channel = self.get_channel(channel)
-            print(f"Sending message: {message} to channel: {channel}")
             await channel.send(message)
         except Exception as e:
             print(f"Error sending message: {e}")

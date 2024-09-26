@@ -9,7 +9,7 @@ class DiscordChatManager(ChatManager):
         print("running")
         print(self._engine)
         try:
-            self._engine.send_message("Hello from DiscordChatManager")
+            pass#self._engine.send_message("Hello from DiscordChatManager")
         except Exception as e:
             print(f"Error processing message: {e}")
         print("done running")
