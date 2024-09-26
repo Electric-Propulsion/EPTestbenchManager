@@ -16,6 +16,9 @@ class DiscordEngine(CommunicationEngine):
         self.loop = asyncio.new_event_loop()
         self._client_thread: Thread = None
 
+    def configure(self, process_message: callable) -> None:
+        self.client.configure(process_message)
+
     def send_message(self, message: str) -> None:
         print(f"Sending message: {message}")
         asyncio.run_coroutine_threadsafe(
