@@ -8,7 +8,7 @@ config_file_path = join(
     Path(__file__).parent.parent,
     Path("eptestbenchmanager/experiment_config/pumpdown_measure_leaks.yaml"),
 )
-print(config_file_path)  # TODO: make this a logging call
+print(f"Config file path: {config_file_path}")  # TODO: make this a logging call
 
 with open(config_file_path, "r", encoding="utf-8") as f:
     runner.add_experiment(f)

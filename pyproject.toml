@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.12"
 pyyaml = "^6.0.2"
 epcomms = {path = "../EPComms/dist/epcomms-0.1.0-py3-none-any.whl"}
+discord-py = "^2.4.0"
 
 
 [tool.poetry.group.dev.dependencies]

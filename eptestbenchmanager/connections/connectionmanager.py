@@ -14,14 +14,12 @@ class ConnectionManager:
         self._physical_instruments = {}
         self._virtual_instruments = {}
 
-        if config_file_path is None:
-            # Assume it's in ../config/apparatus_config.yaml
-            config_file_path = join(
-                Path(__file__).parent.parent, Path("config/apparatus_config.yaml")
-            )
-            print(config_file_path)  # TODO: make this a logging call
+        print(
+            f"Connection manager config file path: {config_file_path}"
+        )  # TODO: make this a logging call
 
-        self.new_apparatus_config(config_file_path)
+        if config_file_path is not None:
+            self.new_apparatus_config(config_file_path)
 
     def new_apparatus_config(self, config_file_path: Path) -> None:
         """
@@ -36,7 +34,9 @@ class ConnectionManager:
             for uid, instrument_config in config["physical_instruments"].items():
                 module_name = ".".join(instrument_config["class"].split(".")[0:-1])
                 class_name = instrument_config["class"].split(".")[-1]
-                physical_instrument_class = getattr(sys.modules[module_name] , class_name)
+                physical_instrument_class = getattr(
+                    sys.modules[module_name], class_name
+                )
 
                 self._physical_instruments[uid] = physical_instrument_class(
                     **instrument_config["arguments"]
@@ -51,14 +51,6 @@ class ConnectionManager:
                     )
                 )
 
-    def run(self): #TODO: fix this? Make things more accessible?
+    def run(self):  # TODO: fix this? Make things more accessible?
         for instrument in self._virtual_instruments:
             self._virtual_instruments[instrument].start_poll()
-            #self._virtual_instruments[instrument]._polling_thread.join()    
-        import time
-        while(True):
-            for instrument in self._virtual_instruments:
-                print(self._virtual_instruments[instrument].value)
-                time.sleep(0.01)
-
-
