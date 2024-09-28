@@ -31,26 +31,29 @@ class ConnectionManager:
         with open(config_file_path, "r", encoding="utf-8") as config_file:
             config = load(config_file, Loader=FullLoader)
 
-            for uid, instrument_config in config["physical_instruments"].items():
-                module_name = ".".join(instrument_config["class"].split(".")[0:-1])
-                class_name = instrument_config["class"].split(".")[-1]
-                physical_instrument_class = getattr(
-                    sys.modules[module_name], class_name
-                )
+        for uid, instrument_config in config["physical_instruments"].items():
+            module_name = ".".join(instrument_config["class"].split(".")[0:-1])
+            class_name = instrument_config["class"].split(".")[-1]
+            physical_instrument_class = getattr(sys.modules[module_name], class_name)
 
-                self._physical_instruments[uid] = physical_instrument_class(
-                    **instrument_config["arguments"]
-                )
+            self._physical_instruments[uid] = physical_instrument_class(
+                **instrument_config["arguments"]
+            )
 
-            for uid, instrument_config in config["virtual_instruments"].items():
-                self._virtual_instruments[uid] = (
-                    VirtualInstrumentFactory.create_instrument(
-                        self._physical_instruments,
-                        uid,
-                        instrument_config,
-                    )
-                )
+        for uid, instrument_config in config["virtual_instruments"].items():
+            self._virtual_instruments[uid] = VirtualInstrumentFactory.create_instrument(
+                self._physical_instruments,
+                uid,
+                instrument_config,
+            )
+
+        for virtual_instrument in self._virtual_instruments.values():
+            setattr(self, virtual_instrument.uid, property(virtual_instrument))
 
     def run(self):  # TODO: fix this? Make things more accessible?
-        for instrument in self._virtual_instruments:
-            self._virtual_instruments[instrument].start_poll()
+        for instrument in self._virtual_instruments.values():
+            instrument.start_poll()
+
+    @property
+    def virtual_instruments(self):
+        return self._virtual_instruments
