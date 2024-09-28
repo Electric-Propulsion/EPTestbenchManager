@@ -39,7 +39,7 @@ class TestbenchManager:
         self.connection_manager = ConnectionManager(apparatus_config_file_path)
 
         # Initialize the experiment runner
-        self.runner = ExperimentRunner()
+        self.runner = ExperimentRunner(self)
 
         if not delay_experiment_load:
             # Load all the experiments in /experiment_config
@@ -59,8 +59,6 @@ class TestbenchManager:
 
         # Start everything
         self.connection_manager.run()
-
-        self.runner.run_experiment("pumpdown_measure_leaks")
 
         self.communication_engine.run()
         sleep(10)  # just give it a little time to start up

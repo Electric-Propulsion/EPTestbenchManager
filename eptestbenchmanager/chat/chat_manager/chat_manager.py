@@ -13,5 +13,5 @@ class ChatManager(ABC):
         raise NotImplementedError("Trying to configure an abstract class.")
 
     @abstractmethod
-    def process_message(self, message: str) -> None:
+    def process_message(self, message: str, channel: str, user: int) -> None:
         raise NotImplementedError("Trying to process a message from an abstract class.")

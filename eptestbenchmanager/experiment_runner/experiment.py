@@ -1,4 +1,4 @@
-from .experiment_segments.experiment_segment import ExperimentSegment
+from .experiment_segments.experiment_segment import ExperimentSegment, AbortingSegmentFailure
 from io import StringIO
 
 
@@ -14,7 +14,14 @@ class Experiment:
 
     def run(self) -> None:
         for segment in self.segments:
-            segment.run()
+            try:
+                segment.run()
+                print(segment.data)
+            except AbortingSegmentFailure as e:
+                # TODO: indicate somehow that we're aborting
+                print(e)
+                print(segment.data)
+                return
 
     def generate_report(self) -> StringIO:
         for segment in self.segments:

@@ -10,7 +10,7 @@ class ExperimentFactory:
         raise NotImplementedError("This class is not meant to be instantiated")
 
     @classmethod
-    def create_experiment(cls, config_file: StringIO) -> Experiment:
+    def create_experiment(cls, config_file: StringIO, testbench_manager: 'TestbenchManager') -> Experiment:
         config = load(config_file, Loader=FullLoader)
 
         uid = config["experiment"]["uid"]
@@ -21,7 +21,7 @@ class ExperimentFactory:
 
         for segment_type, segment_config in config["segments"].items():
             segment_uid = f"{uid}__{segment_type}"
-            segment = cls.get_class(segment_type)(segment_uid, segment_config)
+            segment = cls.get_class(segment_type)(segment_uid, segment_config, testbench_manager)
             segments.append(segment)
 
         return Experiment(uid, name, description, segments)

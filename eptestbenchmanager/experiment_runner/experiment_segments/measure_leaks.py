@@ -1,13 +1,12 @@
-from . import ExperimentSegment
+from operator import ge
+from . import Pumpdown, Timeout, ThresholdLastNValues, AbortingSegmentFailure
+import time
 
 
-class MeasureLeaks(ExperimentSegment):
+class MeasureLeaks(Pumpdown):
 
     def configure(self, config: dict):
-        pass
+        config["setpoint_mbar"] = config["end_pressure_mbar"]
+        super().configure()
+        self.comparison_operator = ge
 
-    def run_segment(self) -> None:
-        pass
-
-    def generate_report(self):
-        pass

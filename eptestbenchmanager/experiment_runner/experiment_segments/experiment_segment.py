@@ -3,13 +3,19 @@ from threading import Thread, Lock
 
 from eptestbenchmanager.monitor import Rule
 
+class AbortingSegmentFailure(Exception):
+    # If this is raised, the experment should teminate
+    pass
+
 
 class ExperimentSegment(ABC):
 
-    def __init__(self, uid: str, config: dict):
+    def __init__(self, uid: str, config: dict, testbench_manager: 'TestbenchManager'):
         self.uid = uid
         self._rules: list[Rule] = []
         self._runner_thread: Thread = None
+        self._testbench_manager = testbench_manager
+        self.data = None
         self.configure(config)
 
     @abstractmethod

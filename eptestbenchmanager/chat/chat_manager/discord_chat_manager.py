@@ -19,6 +19,8 @@ class DiscordChatManager(ChatManager):
         match command:
             case 'read':
                 response = self.query_instrument(data.split()[0])
+            case 'run':
+                response = self.begin_experiment(data.split()[0])
             case _:
                 response = f"{command} is not a valid command"
 
@@ -37,5 +39,13 @@ class DiscordChatManager(ChatManager):
             response = f"{instrument.name} reports a reading of {instrument.value}"
 
         return response
+    
+    def begin_experiment(self, experiment: str) -> str:
+        try:
+            experiment = self.testbench_manager.runner.run_experiment(experiment)
+            return f"Now running f{experiment}"
+        except KeyError as e:
+            response = f"No such experiment ({experiment}) exists."
+            print(e)
 
     

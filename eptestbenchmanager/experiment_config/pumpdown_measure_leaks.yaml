@@ -13,9 +13,9 @@ segments:
     time_resolution_s: 30
   
   measure_leaks:
-    timeout: None
-    termination:
-      pressure_mbar: 1e3
-      duration_s: 300
+    timeout:
+      minutes: 120
+      action: continue
+    end_pressure_mbar: 1e3
     time_resolution_s: 30
 

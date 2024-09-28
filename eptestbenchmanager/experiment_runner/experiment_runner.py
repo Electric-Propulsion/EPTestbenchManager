@@ -5,11 +5,12 @@ from .experiment_factory import ExperimentFactory
 
 class ExperimentRunner:
 
-    def __init__(self):
+    def __init__(self, testbench_manager: 'TestbenchManager'):
         self._experiments: dict[str, Experiment] = {}
+        self._testbench_manager = testbench_manager
 
     def add_experiment(self, experiment_file: StringIO) -> None:
-        experiment = ExperimentFactory.create_experiment(experiment_file)
+        experiment = ExperimentFactory.create_experiment(experiment_file, self._testbench_manager)
         self._experiments[experiment.uid] = experiment
 
     def run_experiment(self, uid: str) -> None:
