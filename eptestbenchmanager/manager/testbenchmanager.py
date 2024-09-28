@@ -17,7 +17,7 @@ class TestbenchManager:
         self.connection_manager: ConnectionManager = None
         self.communication_engine = DiscordEngine()
         self.alert_manager = DiscordAlertManager(self.communication_engine)
-        self.chat_manager = DiscordChatManager(self.communication_engine)
+        self.chat_manager = DiscordChatManager(self.communication_engine, self)
         # self.dashboard_manager = DashboardManager()
         self.runner: ExperimentRunner = None
 

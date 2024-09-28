@@ -16,7 +16,11 @@ class DiscordClient(discord.Client):
 
     async def on_message(self, message):
         if self.process_message is not None:
-            self.process_message(message)
+            # don't reply to yourself
+            if message.author.id == self.user.id:
+                return
+            print(f"recieved message {message.content}")
+            self.process_message(message.content, message.channel.name, message.author.id)
 
     async def send_message(self, message: str, channel: int) -> None:
         try:

@@ -4,7 +4,8 @@ from eptestbenchmanager.chat.engine import CommunicationEngine
 
 class ChatManager(ABC):
 
-    def __init__(self, engine: CommunicationEngine):
+    def __init__(self, engine: CommunicationEngine, testbench_manager: 'TestbenchManager'):
+        self.testbench_manager = testbench_manager
         self._engine = engine
 
     @abstractmethod
