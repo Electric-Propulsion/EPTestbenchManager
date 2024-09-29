@@ -1,5 +1,5 @@
-from operator import le
-from . import ExperimentSegment, Timeout, ThresholdLastNValues, AbortingSegmentFailure
+from operator import ge
+from . import ExperimentSegment, ThresholdLastNValues, Timeout, AbortingSegmentFailure
 import time
 
 
@@ -10,12 +10,12 @@ class Pumpdown(ExperimentSegment):
         self.timeout_time_minutes = config["timeout"]["minutes"]
         self.timeout_action = config["timeout"]["action"]
         self.time_resolution_s = config["time_resolution_s"]
-        self.comparison_operator = le
-
+        self.comparison_operator = ge
         self.chamber_pressure = self._testbench_manager.connection_manager.vacuum_chamber_pressure
 
         self.data = {
             "metadata": {
+                "uid": self.uid,
                 "start_time": None,
                 "end_time": None,
             },
@@ -29,20 +29,27 @@ class Pumpdown(ExperimentSegment):
         }
 
     def run_segment(self) -> None:
-        with Timeout(Timeout.from_minutes(self.timeout_time_minutes)):
+        with Timeout(Timeout.from_minutes(self.timeout_time_minutes)) as timeout:
             pressure = self.chamber_pressure.value
-            threshold = ThresholdLastNValues(20, pressure, self.comparison_operator, self.setpoint_mbar)
-
+            threshold = ThresholdLastNValues(20, pressure, self.comparison_operator, float(self.setpoint_mbar))
             self.data["metadata"]["start_time"] = time.time()
-
             while(threshold.update_evaluate(pressure)):
-                next_loop_time = time.perf_counter() + self.time_resolution_s
+                if timeout.expired:
+                    # We've timed out
+                    self.data["termination"]["reason"] = "timeout"
+                    self.data["metadata"]["end_time"] = time.time()
+                    print(self.data )
+
+                    if(self.timeout_action != "continue"):
+                        raise AbortingSegmentFailure(f"{self.uid} segment failed, aborting the experiment. (Reason: {self.data["termination"]["reason"]}")
+                    return
                 
+                next_loop_time = time.perf_counter() + self.time_resolution_s
                 
                 pressure = self.chamber_pressure.value
 
                 self.data["pressure"]["data"].append([time.time(), pressure])
-                print(pressure)
+                print(f"{self.uid}: {pressure}")
                 
                 sleep_time = next_loop_time - time.perf_counter()
                 if sleep_time > 0:
@@ -52,17 +59,12 @@ class Pumpdown(ExperimentSegment):
                     # TODO: Log a warning
                     pass
 
-            # We're at the specified pressure
-            self.data["termination"]["reason"] = "success"
-            self.data["metadata"]["end_time"] = time.time()
-            return
-
-        # We've timed out
-        self.data["termination"]["reason"] = "timeout"
+        # We're at the specified pressure
+        self.data["termination"]["reason"] = "success"
         self.data["metadata"]["end_time"] = time.time()
+        print(self.data)
+        return
 
-        if(self.timeout_action != "continue"):
-            raise AbortingSegmentFailure(f"{self.uid} segment failed, aborting the experiment. (Reason: {self.data["termination"]["reason"]}")
 
     def generate_report(self):
         pass

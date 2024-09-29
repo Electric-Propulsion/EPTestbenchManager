@@ -42,10 +42,10 @@ class DiscordChatManager(ChatManager):
     
     def begin_experiment(self, experiment: str) -> str:
         try:
-            experiment = self.testbench_manager.runner.run_experiment(experiment)
-            return f"Now running f{experiment}"
+            self.testbench_manager.runner.run_experiment(experiment)
+            return f"Now running {experiment}"
         except KeyError as e:
-            response = f"No such experiment ({experiment}) exists."
             print(e)
+            return f"No such experiment ({experiment}) exists."
 
     

@@ -31,6 +31,7 @@ class ExperimentSegment(ABC):
             target=self.run_segment, name=f"{self.uid} Runner Thread", daemon=False
         )
         self._runner_thread.start()
+        #self._runner_thread.join()
 
     @abstractmethod
     def generate_report(self):  # TODO: return type?

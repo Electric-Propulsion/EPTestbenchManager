@@ -48,7 +48,7 @@ class ConnectionManager:
             )
 
         for virtual_instrument in self._virtual_instruments.values():
-            setattr(self, virtual_instrument.uid, property(virtual_instrument))
+            setattr(self, virtual_instrument.uid, virtual_instrument)
 
     def run(self):  # TODO: fix this? Make things more accessible?
         for instrument in self._virtual_instruments.values():

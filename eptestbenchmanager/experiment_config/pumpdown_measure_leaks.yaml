@@ -8,14 +8,14 @@ segments:
   pumpdown:
     setpoint_mbar: 1e-3
     timeout:
-      minutes: 120
+      minutes: 0.25
       action: continue   
-    time_resolution_s: 30
+    time_resolution_s: 1
   
-  measure_leaks:
-    timeout:
-      minutes: 120
-      action: continue
-    end_pressure_mbar: 1e3
-    time_resolution_s: 30
+  # measure_leaks:
+  #   timeout:
+  #     minutes: 120
+  #     action: continue
+  #   end_pressure_mbar: 1e3
+  #   time_resolution_s: 30
 
