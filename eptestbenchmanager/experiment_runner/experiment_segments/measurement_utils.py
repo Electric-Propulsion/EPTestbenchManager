@@ -13,4 +13,4 @@ class ThresholdLastNValues:
         self._values[self._oldest_index] = value
         self._oldest_index = (self._oldest_index + 1) % self._n
 
-        return all(self._operator(value, self._threshold) for value in self._values)
+        return all(self._operator(float(value), float(self._threshold)) for value in self._values)
