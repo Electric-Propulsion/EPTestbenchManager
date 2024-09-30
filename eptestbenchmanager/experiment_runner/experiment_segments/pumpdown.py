@@ -28,7 +28,7 @@ class Pumpdown(ExperimentSegment):
             }
         }
 
-    def run_segment(self) -> None:
+    def run(self) -> None:
         with Timeout(Timeout.from_minutes(self.timeout_time_minutes)) as timeout:
             pressure = self.chamber_pressure.value
             threshold = ThresholdLastNValues(20, pressure, self.comparison_operator, float(self.setpoint_mbar))
@@ -38,7 +38,7 @@ class Pumpdown(ExperimentSegment):
                     # We've timed out
                     self.data["termination"]["reason"] = "timeout"
                     self.data["metadata"]["end_time"] = time.time()
-                    print(self.data )
+                    print(self.data)
 
                     if(self.timeout_action != "continue"):
                         raise AbortingSegmentFailure(f"{self.uid} segment failed, aborting the experiment. (Reason: {self.data["termination"]["reason"]}")

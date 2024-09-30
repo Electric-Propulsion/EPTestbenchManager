@@ -1,3 +1,4 @@
+from threading import Thread
 from .experiment_segments.experiment_segment import ExperimentSegment, AbortingSegmentFailure
 from io import StringIO
 
@@ -12,7 +13,13 @@ class Experiment:
         self.description: str = description
         self.segments: list[ExperimentSegment] = segments
 
-    def run(self) -> None:
+    def run(self):
+        self._runner_thread = Thread(
+            target=self.run_segments, name=f"{self.uid} Runner Thread", daemon=False
+        )
+        self._runner_thread.start()
+
+    def run_segments(self) -> None:
         for segment in self.segments:
             try:
                 segment.run()

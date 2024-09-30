@@ -23,15 +23,8 @@ class ExperimentSegment(ABC):
         raise NotImplementedError("Trying to configure an abstract class.")
 
     @abstractmethod
-    def run_segment(self) -> None:
-        raise NotImplementedError("Trying to run an abstract class.")
-
     def run(self) -> None:
-        self._runner_thread = Thread(
-            target=self.run_segment, name=f"{self.uid} Runner Thread", daemon=False
-        )
-        self._runner_thread.start()
-        #self._runner_thread.join()
+        raise NotImplementedError("Trying to run an abstract class!")
 
     @abstractmethod
     def generate_report(self):  # TODO: return type?
