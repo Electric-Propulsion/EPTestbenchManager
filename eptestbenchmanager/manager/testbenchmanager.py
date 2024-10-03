@@ -8,7 +8,7 @@ from eptestbenchmanager.experiment_runner import ExperimentRunner
 from eptestbenchmanager.chat.alert_manager import DiscordAlertManager, AlertSeverity
 from eptestbenchmanager.chat.engine import DiscordEngine
 from eptestbenchmanager.chat.chat_manager import DiscordChatManager
-
+from eptestbenchmanager.dashboard import DashboardManager
 
 class TestbenchManager:
 
@@ -18,7 +18,7 @@ class TestbenchManager:
         self.communication_engine = DiscordEngine()
         self.alert_manager = DiscordAlertManager(self.communication_engine)
         self.chat_manager = DiscordChatManager(self.communication_engine, self)
-        # self.dashboard_manager = DashboardManager()
+        self.dashboard_manager = DashboardManager(self)
         self.runner: ExperimentRunner = None
 
     def start_app(
@@ -63,6 +63,8 @@ class TestbenchManager:
         self.communication_engine.run()
         sleep(10)  # just give it a little time to start up
         self.communication_engine.configure({"guild": discord_guild})
+
+        self.dashboard_manager.run()
 
         while True:
             sleep(1)
