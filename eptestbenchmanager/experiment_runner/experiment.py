@@ -1,4 +1,5 @@
 from threading import Thread
+from eptestbenchmanager.dashboard import DashboardView
 from .experiment_segments.experiment_segment import ExperimentSegment, AbortingSegmentFailure
 from io import StringIO
 
@@ -6,12 +7,13 @@ from io import StringIO
 class Experiment:
 
     def __init__(
-        self, uid: str, name: str, description: str, segments: list[ExperimentSegment]
+        self, uid: str, name: str, description: str, segments: list[ExperimentSegment], view: DashboardView
     ):
         self.uid: str = uid
         self.name: str = name
         self.description: str = description
         self.segments: list[ExperimentSegment] = segments
+        self.view = view
 
     def run(self):
         self._runner_thread = Thread(

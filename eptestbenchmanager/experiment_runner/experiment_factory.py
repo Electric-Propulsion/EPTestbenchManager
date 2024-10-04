@@ -1,5 +1,7 @@
 from io import StringIO
 from yaml import load, FullLoader
+from eptestbenchmanager.dashboard import DashboardView
+from eptestbenchmanager.dashboard.elements import ExperimentStatus
 from .experiment import Experiment
 from .experiment_segments import ExperimentSegment, Pumpdown, MeasureLeaks
 
@@ -24,7 +26,13 @@ class ExperimentFactory:
             segment = cls.get_class(segment_type)(segment_uid, segment_config, testbench_manager)
             segments.append(segment)
 
-        return Experiment(uid, name, description, segments)
+        view = DashboardView(uid, name, testbench_manager)
+
+        experiment = Experiment(uid, name, description, segments, view)
+
+        view.add_element(ExperimentStatus(uid, name, testbench_manager, experiment))
+
+        return experiment
 
     @classmethod
     def get_class(cls, segment_type) -> type:
