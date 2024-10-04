@@ -8,7 +8,8 @@ from eptestbenchmanager.experiment_runner import ExperimentRunner
 from eptestbenchmanager.chat.alert_manager import DiscordAlertManager, AlertSeverity
 from eptestbenchmanager.chat.engine import DiscordEngine
 from eptestbenchmanager.chat.chat_manager import DiscordChatManager
-from eptestbenchmanager.dashboard import DashboardManager
+from eptestbenchmanager.dashboard import DashboardManager, get_home_view
+
 
 class TestbenchManager:
 
@@ -65,6 +66,6 @@ class TestbenchManager:
         self.communication_engine.configure({"guild": discord_guild})
 
         self.dashboard_manager.run()
-
+        self.dashboard_manager.add_view(get_home_view(self))
         while True:
             sleep(1)

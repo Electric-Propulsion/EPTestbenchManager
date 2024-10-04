@@ -357,6 +357,19 @@ files = [
 ]
 
 [[package]]
+name = "dash-daq"
+version = "0.5.0"
+description = "DAQ components for Dash"
+optional = false
+python-versions = "*"
+files = [
+    {file = "dash_daq-0.5.0.tar.gz", hash = "sha256:a1d85b6799f7b885652fbc44aebdb58c41254616a8d350b943beeb42ade4256a"},
+]
+
+[package.dependencies]
+dash = ">=1.6.1"
+
+[[package]]
 name = "dash-html-components"
 version = "2.0.0"
 description = "Vanilla HTML components for Dash"
@@ -1245,4 +1258,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "e6838f278dcff981eaeb19347545c93ae47cc112d702cf200cfdd7e3ea393475"
+content-hash = "126e8a212385846d925b12604d1cc20abe9d2ef411e726b181c2efcb9ecda856"
