@@ -1,5 +1,6 @@
 from io import StringIO
 from yaml import load, FullLoader
+from threading import Lock
 from eptestbenchmanager.dashboard import DashboardView
 from eptestbenchmanager.dashboard.elements import ExperimentStatus
 from .experiment import Experiment
@@ -13,7 +14,10 @@ class ExperimentFactory:
 
     @classmethod
     def create_experiment(
-        cls, config_file: StringIO, testbench_manager: "TestbenchManager"
+        cls,
+        config_file: StringIO,
+        testbench_manager: "TestbenchManager",
+        experiment_lock: Lock,
     ) -> Experiment:
         config = load(config_file, Loader=FullLoader)
 
@@ -32,9 +36,11 @@ class ExperimentFactory:
 
         view = DashboardView(uid, name, testbench_manager)
 
-        experiment = Experiment(uid, name, description, segments, view)
+        experiment = Experiment(uid, name, description, segments, view, experiment_lock)
 
-        view.add_element(ExperimentStatus(uid, name, testbench_manager, experiment))
+        view.add_element(
+            ExperimentStatus(uid, name, testbench_manager, uid)
+        )  # TODO: We're passing uid twice, differentiate the element UID from the experiment UID
         view.register_callbacks()
 
         return experiment
