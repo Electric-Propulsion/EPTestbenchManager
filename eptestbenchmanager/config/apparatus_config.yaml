@@ -1,19 +1,41 @@
 physical_instruments:
-  vacuum_controller:
-    class: epcomms.equipment.vacuumcontroller.Terranova962A
-    arguments:
-      device_location: /dev/ttyUSB0
+  # vacuum_controller:
+  #   class: epcomms.equipment.vacuumcontroller.Terranova962A
+  #   arguments:
+  #     device_location: /dev/ttyUSB0
 
 virtual_instruments:
-  vacuum_chamber_pressure:
-    type: polling
-    name: Vacuum Chamber Pressure
-    physical_instrument: vacuum_controller
-    # dashboard_element: None
-    getter_function: get_pressure_gauge_1
-    getter_arguments: []
-    setter_function: None
-    setter_arguments: []
-    polling_interval: 200
+  # vacuum_chamber_pressure:
+  #   type: polling
+  #   name: Vacuum Chamber Pressure
+  #   physical_instrument: vacuum_controller
+  #   # dashboard_element: None
+  #   getter_function: get_pressure_gauge_1
+  #   getter_arguments: []
+  #   setter_function: None
+  #   setter_arguments: []
+  #   polling_interval: 200
+
+  gaussian_noise_1:
+    type: noise
+    name: Gaussian Noise
+    mean: 0
+    standard_deviation: 1
+
+  gaussian_noise_2:
+    type: noise
+    name: Gaussian Noise
+    mean: 0
+    standard_deviation: 1
+  
+  noise_sum:
+    type: composite
+    name: Noise Sum
+    composition_function: sum
+    instruments:
+      - gaussian_noise_1
+      - gaussian_noise_2
+  
+
 
 

@@ -1,0 +1,10 @@
+experiment:
+  uid: test_experiment
+  name: Test Experiment
+  description: |
+    This is a test .
+
+segments:
+  wait:
+    seconds: 5
+

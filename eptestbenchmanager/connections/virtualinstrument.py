@@ -24,14 +24,11 @@ class VirtualInstrument(ABC):
         self,
         uid: str,
         name: str,
-        physical_instrument: Instrument,
-        setter_function: Union[callable, None],  # We assume this is threadsafe
         # dashboard_element: Union[DashboardElement, None], #TODO: Implement DashboardElement #pylint: disable=fixme
     ):
         self.uid = uid
         self.name = name
-        self._physical_instrument = physical_instrument
-        self._setter_function = setter_function
+
         # self.dashboard_element = dashboard_element
         self._value: Union[str, int, float, bool, None] = None
         self._lock = Lock()
