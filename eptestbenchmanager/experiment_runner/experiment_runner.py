@@ -17,10 +17,10 @@ class ExperimentRunner:
         )
         self._experiments[experiment.uid] = experiment
 
-    def run_experiment(self, uid: str) -> None:
+    def run_experiment(self, uid: str, operator: str) -> None:
         if self._experiment_lock.acquire(blocking=False):
             print("Running experiment")
-            self._experiments[uid].run()
+            self._experiments[uid].run(operator)
         else:
             print("No can do. Experiment is already running")
         # generating reports should occur here too
@@ -28,7 +28,9 @@ class ExperimentRunner:
     def remove_experiment(self, uid: str) -> None:
         self._experiments.pop(uid)
 
-    def get_experiment_segments(self, experiment_uid: str) -> list:
+    def get_experiment_segments(
+        self, experiment_uid: str
+    ) -> list:  # TODO: probably shouldn't expose this
         return self._experiments[experiment_uid].segments
 
     def get_experiment_current_segment_id(self, experiment_uid: str) -> int:

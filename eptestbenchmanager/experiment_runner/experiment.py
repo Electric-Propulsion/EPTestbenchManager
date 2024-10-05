@@ -1,5 +1,6 @@
 from threading import Thread, Lock
 from eptestbenchmanager.dashboard import DashboardView
+from eptestbenchmanager.chat.alert_manager import AlertSeverity
 from .experiment_segments.experiment_segment import (
     ExperimentSegment,
     AbortingSegmentFailure,
@@ -17,16 +18,20 @@ class Experiment:
         segments: list[ExperimentSegment],
         view: DashboardView,
         experiment_lock: Lock,
+        testbench_manager: "TestbenchManager",
     ):
         self.uid: str = uid
         self.name: str = name
         self.description: str = description
         self.segments: list[ExperimentSegment] = segments
         self.view = view
-        self.current_segment_id = 0
+        self.current_segment_id = -1
         self._experiment_lock: Lock() = experiment_lock
+        self.operator: str = None
+        self._testbench_manager = testbench_manager
 
-    def run(self):
+    def run(self, operator: str) -> None:
+        self.operator = operator
         self._runner_thread = Thread(
             target=self.run_segments, name=f"{self.uid} Runner Thread", daemon=False
         )
@@ -34,10 +39,15 @@ class Experiment:
 
     def run_segments(self) -> None:
         try:
-            self.current_segment_id = 0
+            self.current_segment_id = -1
             for segment in self.segments:
                 self.current_segment_id += 1
                 try:
+                    self._testbench_manager.alert_manager.send_alert(
+                        f"Experiment {self.name} is running segment {self.segments[self.current_segment_id].uid} ({self.current_segment_id+1}/{len(self.segments)})",
+                        severity=AlertSeverity.INFO,
+                        target=self.operator,
+                    )
                     segment.run()
                     print(segment.data)
                 except AbortingSegmentFailure as e:
@@ -50,6 +60,9 @@ class Experiment:
         finally:
             # Allow other experiments to run
             self._experiment_lock.release()
+
+            # Reset the operator
+            self.operator = None
 
     def generate_report(self) -> StringIO:
         for segment in self.segments:

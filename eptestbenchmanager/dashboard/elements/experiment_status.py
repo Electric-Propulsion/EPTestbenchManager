@@ -1,14 +1,25 @@
 from dash import html, dcc, callback, Input, Output, State
+from dash.exceptions import PreventUpdate
 from . import ExperimentElement
 
 
 class ExperimentStatus(ExperimentElement):
 
+    def __init__(
+        self,
+        uid: str,
+        title: str,
+        testbench_manager: "TestbenchManager",
+        experiment_uid: str,
+    ):
+        super().__init__(uid, title, testbench_manager, experiment_uid)
+        self.operator = None
+
     @property
     def div(self):
 
-        progress_bar_marks = {0: "Waiting"}
-        i = 1
+        progress_bar_marks = {-1: "Waiting"}
+        i = 0
         for segment in self._experiment_runner.get_experiment_segments(
             self._experiment_uid
         ):
@@ -22,8 +33,8 @@ class ExperimentStatus(ExperimentElement):
         return html.Div(
             [
                 dcc.Slider(
-                    0,
-                    len(progress_bar_marks) - 1,
+                    -1,
+                    len(progress_bar_marks) - 2,
                     marks=progress_bar_marks,
                     disabled=True,
                     id=f"{self.uid}-progress-slider",
@@ -39,6 +50,11 @@ class ExperimentStatus(ExperimentElement):
                         ),
                     ],
                     style={"display": "inline-block"},
+                ),
+                dcc.Dropdown(
+                    id=f"{self.uid}-operator-dropdown",
+                    multi=True,
+                    placeholder="Select Operator(s)",
                 ),
                 dcc.Interval(
                     id=f"{self.uid}-update-interval",
@@ -66,5 +82,24 @@ class ExperimentStatus(ExperimentElement):
         )
         def begin_experiment(n_clicks):
             print("button pressed")
-            self._experiment_runner.run_experiment(self._experiment_uid)
+            if self.operator is not None:
+                self._experiment_runner.run_experiment(
+                    self._experiment_uid, self.operator
+                )
+            else:
+                print("No operator selected")
+
+        @callback(
+            Output(f"{self.uid}-operator-dropdown", "options"),
+            Input(f"{self.uid}-operator-dropdown", "value"),
+        )
+        def update_options(value):
+            return [*self._testbench_manager.communication_engine.users.keys()]
+
+        @callback(
+            Input(f"{self.uid}-operator-dropdown", "value"),
+        )
+        def update_operator(value):
+            print(f"Operator selected: {value}")
+            self.operator = value
             return

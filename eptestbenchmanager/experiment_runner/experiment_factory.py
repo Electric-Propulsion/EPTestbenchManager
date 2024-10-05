@@ -36,7 +36,9 @@ class ExperimentFactory:
 
         view = DashboardView(uid, name, testbench_manager)
 
-        experiment = Experiment(uid, name, description, segments, view, experiment_lock)
+        experiment = Experiment(
+            uid, name, description, segments, view, experiment_lock, testbench_manager
+        )
 
         view.add_element(
             ExperimentStatus(uid, name, testbench_manager, uid)
