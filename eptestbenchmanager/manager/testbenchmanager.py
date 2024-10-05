@@ -67,5 +67,8 @@ class TestbenchManager:
 
         self.dashboard_manager.run()
         self.dashboard_manager.add_view(get_home_view(self))
+        for view in self.runner.views:
+            self.dashboard_manager.add_view(view)
+            #view.register_callbacks()
         while True:
             sleep(1)

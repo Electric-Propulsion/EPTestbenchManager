@@ -20,6 +20,10 @@ class ExperimentRunner:
     def remove_experiment(self, uid: str) -> None:
         self._experiments.pop(uid)
 
+    @property 
+    def views(self):
+        return [experiment.view for experiment in self._experiments.values()]
+
     @property
     def experiments(self) -> dict[str, Experiment]:
         return self._experiments.keys()

@@ -35,6 +35,7 @@ class ExperimentFactory:
         experiment = Experiment(uid, name, description, segments, view)
 
         view.add_element(ExperimentStatus(uid, name, testbench_manager, experiment))
+        view.register_callbacks()
 
         return experiment
 

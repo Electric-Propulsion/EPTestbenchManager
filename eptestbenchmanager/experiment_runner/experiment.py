@@ -14,6 +14,7 @@ class Experiment:
         self.description: str = description
         self.segments: list[ExperimentSegment] = segments
         self.view = view
+        self.current_segment_id = 0
 
     def run(self):
         self._runner_thread = Thread(
@@ -22,7 +23,9 @@ class Experiment:
         self._runner_thread.start()
 
     def run_segments(self) -> None:
+        self.current_segment_id = 0
         for segment in self.segments:
+            self.current_segment_id +=1
             try:
                 segment.run()
                 print(segment.data)
@@ -31,6 +34,8 @@ class Experiment:
                 print(e)
                 print(segment.data)
                 return
+        # Add one more to indicate we're finished
+        self.current_segment_id +=1
 
     def generate_report(self) -> StringIO:
         for segment in self.segments:

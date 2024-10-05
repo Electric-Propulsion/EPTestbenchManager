@@ -26,7 +26,7 @@ class DashboardManager:
         self.views.pop(view.uid)
 
     def _run_app(self) -> None:
-        self._app.run_server(debug=True, use_reloader=False)
+        self._app.run_server(debug=True, use_reloader=False, host='0.0.0.0')
 
     def run(self) -> None:
         self._client_thread = Thread(

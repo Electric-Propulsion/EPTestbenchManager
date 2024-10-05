@@ -15,7 +15,7 @@ class Gauge(DashboardElement):
                     label=self.title,
                 ),
                 dcc.Interval(
-                    id=f"{self.uid}-interval",
+                    id=f"{self.uid}-update-interval",
                     interval=10,
                     n_intervals=0,
                 ),
@@ -26,7 +26,7 @@ class Gauge(DashboardElement):
 
         @callback(
             Output(f"{self.uid}-gauge", "value"),
-            Input(f"{self.uid}-interval", "n_intervals"),
+            Input(f"{self.uid}-update-interval", "n_intervals"),
         )
         def update_gauge(value):
             return random.randint(0, 100)
