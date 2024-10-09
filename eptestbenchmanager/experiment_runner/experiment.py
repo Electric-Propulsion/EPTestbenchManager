@@ -1,4 +1,5 @@
 from threading import Thread, Lock
+import time, datetime
 from eptestbenchmanager.dashboard import DashboardView
 from eptestbenchmanager.chat.alert_manager import AlertSeverity
 from .experiment_segments.experiment_segment import (
@@ -38,28 +39,64 @@ class Experiment:
         self._runner_thread.start()
 
     def run_segments(self) -> None:
+
+        self.start_time = time.perf_counter()
+
+        self._testbench_manager.alert_manager.send_alert(
+            f"Starting experiment **{self.name}**. ({len(self.segments)} segments)",
+            severity=AlertSeverity.INFO,
+            target=self.operator,
+        )
         try:
+
             self.current_segment_id = -1
+
             for segment in self.segments:
+
+                segment_start_time = time.perf_counter()
                 self.current_segment_id += 1
+
                 try:
+
                     self._testbench_manager.alert_manager.send_alert(
-                        f"Experiment {self.name} is running segment {self.segments[self.current_segment_id].uid} ({self.current_segment_id+1}/{len(self.segments)})",
+                        f"Experiment **{self.name}** is running segment **{self.segments[self.current_segment_id].uid}**. Elapsed time: {datetime.timedelta(seconds=segment_start_time - self.start_time)}. ({self.current_segment_id+1}/{len(self.segments)})",
                         severity=AlertSeverity.INFO,
                         target=self.operator,
                     )
+
                     segment.run()
-                    print(segment.data)
+
+                    print(segment.data)  # TODO: remove this
+
                 except AbortingSegmentFailure as e:
+
                     # TODO: indicate somehow that we're aborting
                     print(e)
                     print(segment.data)
+
+                    self._testbench_manager.alert_manager.send_alert(
+                        f"Experiment **{self.name}** has aborted at segment **{self.segments[self.current_segment_id].uid}**. Elapsed time: {datetime.timedelta(seconds=segment_start_time - self.start_time)}  (reason: {e})",
+                        severity=AlertSeverity.INFO,
+                        target=self.operator,
+                    )
+
                     return
+
             # Add one more to indicate we're finished
             self.current_segment_id += 1
+
         finally:
+
             # Allow other experiments to run
             self._experiment_lock.release()
+
+            end_time = time.perf_counter()
+
+            self._testbench_manager.alert_manager.send_alert(
+                f"Experiment **{self.name}** has completed. Completed in {datetime.timedelta(seconds=end_time - self.start_time)}.",
+                severity=AlertSeverity.INFO,
+                target=self.operator,
+            )
 
             # Reset the operator
             self.operator = None

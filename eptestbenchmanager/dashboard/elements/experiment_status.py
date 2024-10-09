@@ -1,5 +1,7 @@
 from dash import html, dcc, callback, Input, Output, State
 from dash.exceptions import PreventUpdate
+import time, datetime
+
 from . import ExperimentElement
 
 
@@ -42,6 +44,11 @@ class ExperimentStatus(ExperimentElement):
                 ),
                 html.Div(
                     children=[
+                        dcc.Dropdown(
+                            id=f"{self.uid}-operator-dropdown",
+                            multi=True,
+                            placeholder="Select Operator(s)",
+                        ),
                         html.Button(
                             id=f"{self.uid}-button-begin", children="Begin Experiment"
                         ),
@@ -49,12 +56,7 @@ class ExperimentStatus(ExperimentElement):
                             id=f"{self.uid}-button-stop", children="Stop Experiment"
                         ),
                     ],
-                    style={"display": "inline-block"},
-                ),
-                dcc.Dropdown(
-                    id=f"{self.uid}-operator-dropdown",
-                    multi=True,
-                    placeholder="Select Operator(s)",
+                    style={"display": "inline-block", "text_align": "center"},
                 ),
                 dcc.Interval(
                     id=f"{self.uid}-update-interval",
