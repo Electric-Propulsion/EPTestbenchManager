@@ -1,5 +1,6 @@
 import numpy as np
 from epcomms.equipment.base.instrument import Instrument
+from eptestbenchmanager.dashboard.elements import DashboardElement, Graph, Gauge
 from . import (
     VirtualInstrument,
     PollingVirtualInstrument,
@@ -83,12 +84,27 @@ class VirtualInstrumentFactory:
             NoiseVirtualInstrument: A noise virtual instrument object.
         """
         print("creating noise")
-        return NoiseVirtualInstrument(
+        instrument = NoiseVirtualInstrument(
             uid=uid,
             name=config["name"],
             mean=config["mean"],
             standard_deviation=config["standard_deviation"],
         )
+        instrument.begin_recording("total")
+        instrument.add_dashboard_elements(
+            [
+                Graph(
+                    f"{uid}-graph", instrument.name, lambda: instrument.rolling_storage
+                ),
+                Graph(
+                    f"{uid}-total-graph",
+                    "Total",
+                    lambda: instrument.get_recording_display("total"),
+                ),
+            ]
+        )
+
+        return instrument
 
     @classmethod
     def _create_composite_instrument(

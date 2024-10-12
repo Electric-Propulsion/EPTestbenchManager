@@ -3,10 +3,9 @@ from abc import ABC, abstractmethod
 
 
 class DashboardElement(ABC):
-    def __init__(self, uid: str, title: str, testbench_manager: "TestbenchManager"):
+    def __init__(self, uid: str, title: str):
         self.uid = uid
         self.title = title
-        self._testbench_manager = testbench_manager
 
     @abstractmethod
     def div(self) -> list:  # list of what??

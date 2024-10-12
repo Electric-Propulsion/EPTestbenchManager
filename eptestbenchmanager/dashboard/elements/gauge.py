@@ -1,10 +1,9 @@
 from dash import dcc, html, Input, Output, callback
 import dash_daq as daq
-from .dashboard_element import DashboardElement
-import random
+from . import SingleValueDashboardElement
 
 
-class Gauge(DashboardElement):
+class Gauge(SingleValueDashboardElement):
 
     @property
     def div(self) -> html.Div:
@@ -29,4 +28,4 @@ class Gauge(DashboardElement):
             Input(f"{self.uid}-update-interval", "n_intervals"),
         )
         def update_gauge(value):
-            return random.randint(0, 100)
+            return self._value_callback()

@@ -7,7 +7,12 @@ class DashboardManager:
     def __init__(self, testbench_manager: "TestbenchManager"):
         self.views: dict = {}
         self._testbench_manager = testbench_manager
-        self._app = Dash("Dashboard")
+        self._app = Dash(
+            "Dashboard",
+            suppress_callback_exceptions=True,
+            update_title=None,
+            title="EPDashboard",
+        )
         self._app.layout = html.Div(
             [dcc.Location(id="url", refresh=False), html.Div(id="page-content")]
         )
@@ -26,7 +31,7 @@ class DashboardManager:
         self.views.pop(view.uid)
 
     def _run_app(self) -> None:
-        self._app.run_server(debug=True, use_reloader=False, host='0.0.0.0')
+        self._app.run_server(debug=True, use_reloader=False, host="0.0.0.0")
 
     def run(self) -> None:
         self._client_thread = Thread(

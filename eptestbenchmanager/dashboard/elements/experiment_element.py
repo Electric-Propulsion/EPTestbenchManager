@@ -10,6 +10,6 @@ class ExperimentElement(DashboardElement):
         testbench_manager: "TestbenchManager",
         experiment_uid: str,
     ):
-        super().__init__(uid, title, testbench_manager)
+        super().__init__(uid, title)
         self._experiment_runner = testbench_manager.runner
         self._experiment_uid = experiment_uid
