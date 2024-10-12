@@ -1,9 +1,9 @@
 from typing import Union
 from threading import Lock
-from time import monotonic
 from abc import ABC, abstractmethod
 from epcomms.equipment.base.instrument import Instrument
 from eptestbenchmanager.dashboard.elements import DashboardElement
+from eptestbenchmanager.recording import Recording
 
 
 class VirtualInstrument(ABC):
@@ -23,64 +23,6 @@ class VirtualInstrument(ABC):
         command(command: Union[str, int, float, bool]): Abstract method to send a command to the instrument. Must be implemented by subclasses.
     """
 
-    class Recording:
-        def __init__(
-            self,
-            max_samples=None,
-            max_time_s=None,
-            rolling=False,
-            max_display_samples=250,  # picked at random lol
-        ):
-            self.max_samples = max_samples
-            self.max_time = max_time_s
-            self._rolling = rolling
-            self._start_time = None
-            self._samples = []
-            self._start_time = None
-            self._recording = False
-            self._max_display_samples = max_display_samples
-
-        @property
-        def active(self):
-            if self.max_samples is not None and not self._rolling:
-                if len(self._samples) >= self.max_samples:
-                    return False
-            elif self.max_time is not None:
-                if monotonic() - self._start_time >= self.max_time:
-                    return False
-            return True
-
-        @property
-        def values(self):
-            return self._samples.copy()
-
-        @property
-        def display_values(self):
-            if len(self._samples) <= self._max_display_samples:
-                return self._samples.copy()
-            else:
-                step = len(self._samples) / self._max_display_samples
-                compressed_samples = []
-                for i in range(self._max_display_samples):
-                    start = int(i * step)
-                    end = int((i + 1) * step)
-                    chunk = self._samples[start:end]
-                    if chunk:
-                        compressed_samples.append(sum(chunk) / len(chunk))
-                return len(self._samples), compressed_samples
-
-        def start_recording(self):
-            self._start_time = monotonic()
-            self._recording = True
-
-        def stop_recording(self):
-            self._recording = False
-
-        def add_sample(self, sample):
-            self._samples.append(sample)
-            if self._rolling and len(self._samples) > self.max_samples:
-                self._samples.pop(0)
-
     def __init__(  # pylint: disable=too-many-arguments #(This is built by a factory)
         self,
         uid: str,
@@ -95,11 +37,11 @@ class VirtualInstrument(ABC):
         self._value: Union[str, int, float, bool, None] = None
         self._lock = Lock()
 
-        self._rolling_storage = self.Recording(
+        self._rolling_storage = Recording(
             max_samples=rolling_storage_size, rolling=True
         )
         self._rolling_storage.start_recording()
-        self._recordings: dict[str, self.Recording] = {}
+        self._recordings: dict[str, Recording] = {}
 
     def add_dashboard_elements(
         self, dashboard_element: Union[DashboardElement, list[DashboardElement]]
@@ -134,7 +76,7 @@ class VirtualInstrument(ABC):
             The rolling storage of the virtual instrument.
         """
         self._lock.acquire()
-        rolling_storage = self._rolling_storage.values
+        rolling_storage = self._rolling_storage.record.values
         self._lock.release()
         return rolling_storage
 
@@ -149,9 +91,9 @@ class VirtualInstrument(ABC):
             The recording associated with the given ID, or None if not found.
         """
         self._lock.acquire()
-        recording = self._recordings[record_id].values
+        record = self._recordings[record_id].record.values
         self._lock.release()
-        return recording
+        return record
 
     def get_recording_display(
         self, record_id: str
@@ -166,9 +108,9 @@ class VirtualInstrument(ABC):
             The recording associated with the given ID, or None if not found.
         """
         self._lock.acquire()
-        true_length, recording = self._recordings[record_id].display_values
+        record = self._recordings[record_id].record.display_values
         self._lock.release()
-        return true_length, recording
+        return record
 
     def _set_value(self, value: Union[str, int, float, bool]) -> None:
         self._lock.acquire()
@@ -189,7 +131,7 @@ class VirtualInstrument(ABC):
         """
         Begin a new named recording.
         """
-        self._recordings[record_id] = self.Recording(max_samples, max_time)
+        self._recordings[record_id] = Recording(max_samples, max_time)
         self._recordings[record_id].start_recording()
 
     def stop_recording(self, record_id) -> None:
