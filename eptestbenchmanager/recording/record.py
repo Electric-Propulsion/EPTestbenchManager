@@ -3,18 +3,21 @@ from typing import Union
 
 class Record:
     def __init__(
-        self, values: list[Union[str, int, float, bool]], max_display_values: int = 250
+        self, values: list[Union[str, int, float, bool]], times: list[Union[str, int, float]], relative: bool = False, max_display_values: int = 250
     ):
         self._values = values
+        self._times = times
+        self._relative = relative # Relative to whenever the all or display property is called
         self._max_display_values = max_display_values
         self._length = len(values)
 
+
     @property
-    def values(self) -> list[Union[str, int, float, bool]]:
+    def all(self) -> list[Union[str, int, float, bool]]:
         return self._values.copy()
 
     @property
-    def display_values(self) -> list[Union[str, int, float, bool]]:
+    def display(self) -> list[Union[str, int, float, bool]]:
         if self._length <= self._max_display_values:
             return self._values.copy()
         else:
