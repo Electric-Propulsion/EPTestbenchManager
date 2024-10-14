@@ -76,7 +76,21 @@ class VirtualInstrument(ABC):
             The rolling storage of the virtual instrument.
         """
         self._lock.acquire()
-        rolling_storage = self._rolling_storage.record.values
+        rolling_storage = self._rolling_storage.record.all
+        self._lock.release()
+        return rolling_storage
+
+    @property
+    def rolling_storage_display(self) -> list[Union[str, int, float, bool]]:
+        """
+        Retrieve the rolling storage of the virtual instrument.
+        This method acquires a lock to ensure thread safety, retrieves the
+        value stored in the `_rolling_storage` attribute, and then releases the lock.
+        Returns:
+            The rolling storage of the virtual instrument.
+        """
+        self._lock.acquire()
+        rolling_storage = self._rolling_storage.record.display
         self._lock.release()
         return rolling_storage
 
@@ -90,8 +104,9 @@ class VirtualInstrument(ABC):
         Returns:
             The recording associated with the given ID, or None if not found.
         """
+        print("Attempting to get recording")
         self._lock.acquire()
-        record = self._recordings[record_id].record.values
+        record = self._recordings[record_id].record.all
         self._lock.release()
         return record
 
@@ -108,7 +123,7 @@ class VirtualInstrument(ABC):
             The recording associated with the given ID, or None if not found.
         """
         self._lock.acquire()
-        record = self._recordings[record_id].record.display_values
+        record = self._recordings[record_id].record.display
         self._lock.release()
         return record
 

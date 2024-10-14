@@ -9,7 +9,7 @@ class DashboardManager:
         self._testbench_manager = testbench_manager
         self._app = Dash(
             "Dashboard",
-            suppress_callback_exceptions=True,
+            # suppress_callback_exceptions=True,
             update_title=None,
             title="EPDashboard",
         )

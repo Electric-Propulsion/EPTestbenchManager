@@ -94,7 +94,9 @@ class VirtualInstrumentFactory:
         instrument.add_dashboard_elements(
             [
                 Graph(
-                    f"{uid}-graph", instrument.name, lambda: instrument.rolling_storage
+                    f"{uid}-graph",
+                    instrument.name,
+                    lambda: instrument.rolling_storage_display,
                 ),
                 Graph(
                     f"{uid}-total-graph",
