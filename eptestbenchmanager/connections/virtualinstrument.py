@@ -38,6 +38,7 @@ class VirtualInstrument(ABC):
         self._lock = Lock()
 
         self._rolling_storage = Recording(
+            f"{self.name}_rolling_storage",
             max_samples=rolling_storage_size, rolling=True
         )
         self._rolling_storage.start_recording()
@@ -146,7 +147,7 @@ class VirtualInstrument(ABC):
         """
         Begin a new named recording.
         """
-        self._recordings[record_id] = Recording(max_samples, max_time)
+        self._recordings[record_id] = Recording(record_id, max_samples, max_time)
         self._recordings[record_id].start_recording()
 
     def stop_recording(self, record_id) -> None:
