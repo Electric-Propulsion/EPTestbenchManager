@@ -35,21 +35,22 @@ class Record:
     def display(
         self,
     ) -> Tuple[list[Union[str, int, float, bool]], list[Union[str, int, float]]]:
-        print("here!")
         if self._length <= self._max_display_values:
             values = self._values.copy()
             times = self._times.copy()
         else:
             step = self._length / self._max_display_values
             values = []
+            times = []
             for i in range(self._max_display_values):
                 start = int(i * step)
                 end = int((i + 1) * step)
-                chunk = self._values[start:end]
-                if chunk:
-                    values.append(sum(chunk) / len(chunk))
-            times = self._times
-
+                value_chunk = self._values[start:end]
+                # time_chunk = self._times[start:end]
+                if value_chunk:
+                    values.append(sum(value_chunk) / len(value_chunk))
+                    # if time_chunk:
+                    times.append(self._times[int(start + (end - start) / 2)])
         # Format all timestamps based on the relative flag
         if self._relative:
             time_now = time.time()
@@ -57,6 +58,10 @@ class Record:
         else:
             times = [t for t in times]
 
+        if self._relative:
+            times = [self._format_relative_time(t) for t in times]
+        else:
+            times = [self._format_absolute_time(t) for t in times]
         return times, values
 
     def _format_relative_time(self, delta: float) -> str:
@@ -69,9 +74,9 @@ class Record:
         )
         millis = delta_td.microseconds // 1000
         if days > 0:
-            return f"{days} days, {hours:02}:{minutes:02}:{seconds:02}.{millis:03}"
+            return f"T-{days} days, {hours:02}:{minutes:02}:{seconds:02}.{millis:03}"
         else:
-            return f"{hours:02}:{minutes:02}:{seconds:02}.{millis:03}"
+            return f"T-{hours:02}:{minutes:02}:{seconds:02}.{millis:03}"
 
     def _format_absolute_time(self, timestamp: float) -> str:
         delta = time.time() - timestamp
@@ -84,9 +89,9 @@ class Record:
         )
         millis = delta_td.microseconds // 1000
         if days > 0:
-            return f"{days} days, {hours:02}:{minutes:02}:{seconds:02}.{millis:03}"
+            return f"T+{days} days, {hours:02}:{minutes:02}:{seconds:02}.{millis:03}"
         else:
-            return f"{hours:02}:{minutes:02}:{seconds:02}.{millis:03}"
+            return f"T+{hours:02}:{minutes:02}:{seconds:02}.{millis:03}"
 
     def __len__(self) -> int:
         return self._length

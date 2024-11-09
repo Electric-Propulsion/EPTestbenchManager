@@ -24,7 +24,7 @@ class Recording:
         self._start_time = None
         self._recording = False
         self._max_display_samples = max_display_samples
-        self._using_relative_time = None
+        self._using_relative_time = True
 
     @property
     def active(self):

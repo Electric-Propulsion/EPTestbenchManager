@@ -43,18 +43,14 @@ class Graph(SingleValueDashboardElement):
             Input(f"{self.uid}-update-interval", "n_intervals"),
         )
         def update_graph(n_intervals):
-            print(f"Updating graph {self.uid}")
             x_values, y_values = self._value_callback()
-            print(x_values, y_values)
 
-            # Calculate evenly spaced indices for x-axis labels
-            if len(x_values) > self._num_timestamps:
-                step = (len(x_values) - 1) // (self._num_timestamps - 1)
-                x_labels_indices = list(range(0, len(x_values), step))
-                if x_labels_indices[-1] != len(x_values) - 1:
-                    x_labels_indices.append(len(x_values) - 1)
+            if len(x_values) < self._num_timestamps:
+                x_labels_indices = range(len(x_values))
             else:
-                x_labels_indices = list(range(len(x_values)))
+                step = len(x_values) / self._num_timestamps
+                x_labels_indices = [int(i * step) for i in range(self._num_timestamps)]
+                x_labels_indices.append(len(x_values) - 1)
 
             x_labels = [x_values[i] for i in x_labels_indices]
 
