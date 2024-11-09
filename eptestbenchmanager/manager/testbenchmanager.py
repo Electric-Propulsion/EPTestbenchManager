@@ -39,6 +39,16 @@ class TestbenchManager:
             apparatus_config_file_path = None
         self.connection_manager = ConnectionManager(apparatus_config_file_path)
 
+        # Configure the chat stuff
+        self.chat_manager.configure()
+
+        # Start everything
+        self.connection_manager.run()
+
+        self.communication_engine.run()
+        sleep(10)  # just give it a little time to start up
+        self.communication_engine.configure({"guild": discord_guild})
+
         # Initialize the experiment runner
         self.runner = ExperimentRunner(self)
 
@@ -54,16 +64,6 @@ class TestbenchManager:
                             path.join(dirpath, filename), "r", encoding="utf-8"
                         ) as experiment_config_file:
                             self.runner.add_experiment(experiment_config_file)
-
-        # Configure the chat stuff
-        self.chat_manager.configure()
-
-        # Start everything
-        self.connection_manager.run()
-
-        self.communication_engine.run()
-        sleep(10)  # just give it a little time to start up
-        self.communication_engine.configure({"guild": discord_guild})
 
         self.dashboard_manager.run()
         self.dashboard_manager.add_view(get_home_view(self))

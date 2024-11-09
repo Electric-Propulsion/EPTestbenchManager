@@ -13,3 +13,4 @@ class ExperimentElement(DashboardElement):
         super().__init__(uid, title)
         self._experiment_runner = testbench_manager.runner
         self._experiment_uid = experiment_uid
+        self._available_operators = testbench_manager.communication_engine.users

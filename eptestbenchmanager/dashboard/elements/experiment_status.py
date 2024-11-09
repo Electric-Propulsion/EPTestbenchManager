@@ -96,7 +96,7 @@ class ExperimentStatus(ExperimentElement):
             Input(f"{self.uid}-operator-dropdown", "value"),
         )
         def update_options(value):
-            return [*self._testbench_manager.communication_engine.users.keys()]
+            return [*self._available_operators.keys()] #TODO: quick fix. Make this dynamic.
 
         @callback(
             Input(f"{self.uid}-operator-dropdown", "value"),
