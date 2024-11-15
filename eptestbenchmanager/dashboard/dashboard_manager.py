@@ -1,5 +1,6 @@
 from dash import Dash, dcc, html, Input, Output, callback
 from threading import Thread
+import os
 
 
 class DashboardManager:
@@ -11,6 +12,7 @@ class DashboardManager:
             "Dashboard",
             suppress_callback_exceptions=True,
             update_title=None,
+            assets_folder=os.path.join(os.path.dirname(os.path.abspath(__file__)), '../assets'),
             title="EPDashboard",
         )
         self._app.layout = html.Div(

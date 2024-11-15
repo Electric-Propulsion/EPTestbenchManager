@@ -67,4 +67,6 @@ class Graph(SingleValueDashboardElement):
                     ticktext=x_labels,
                 )
             )
+            figure.update_layout(template='plotly_dark')
+
             return figure

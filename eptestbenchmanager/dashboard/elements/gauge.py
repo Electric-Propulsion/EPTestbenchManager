@@ -12,6 +12,7 @@ class Gauge(SingleValueDashboardElement):
                 daq.Gauge(
                     id=f"{self.uid}-gauge",
                     label=self.title,
+                    theme="plotly_dark",
                 ),
                 dcc.Interval(
                     id=f"{self.uid}-update-interval",
@@ -28,4 +29,5 @@ class Gauge(SingleValueDashboardElement):
             Input(f"{self.uid}-update-interval", "n_intervals"),
         )
         def update_gauge(value):
+            
             return self._value_callback()

@@ -22,7 +22,7 @@ class DashboardView:
                 # View divs
                 html.H1(self.title),
                 html.H2(self.uid),
-                dcc.Link("Home", href="/"),
+                dcc.Link("Home", href="/", className="nav-menu-item"),
                 # Element divs
                 html.Div([element.div for element in self._elements.values()]),
             ]

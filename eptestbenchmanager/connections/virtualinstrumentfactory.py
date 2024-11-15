@@ -103,6 +103,11 @@ class VirtualInstrumentFactory:
                     "Total",
                     lambda: instrument.get_recording_display("total"),
                 ),
+                Gauge(
+                    f"{uid}-gauge",
+                    instrument.name,
+                    lambda: instrument.value,
+                ),
             ]
         )
 
