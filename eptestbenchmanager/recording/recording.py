@@ -15,19 +15,26 @@ class Recording:
         self,
         record_id: str,
         max_samples=None,
+        max_stored_samples=250, #picked at random
         max_time_s=None,
         rolling=False,
-        max_display_samples=250,  # picked at random lol
+        # I.e. the number of samples we want to keep in memory at any given time
+        stored_samples=250,  # picked at random lol
     ):
         self.max_samples = max_samples
+        self.max_stored_samples = max_stored_samples
         self.max_time = max_time_s
         self._rolling = rolling
         self._start_time = None
         self._samples = []
         self._times = []
+        self._sample_count = 0
+        self._sample_averaging_level = 1
+        self._sample_average = 0
+        self._time_average = 0
+        self._sample_average_count = 0
         self._start_time = None
         self._recording = False
-        self._max_display_samples = max_display_samples
         self._using_relative_time = True
         self.record_id = record_id
         self.log_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "logs") # what a terrific line of code.
@@ -37,7 +44,7 @@ class Recording:
     @property
     def active(self):
         if self.max_samples is not None and not self._rolling:
-            if len(self._samples) >= self.max_samples:
+            if self._sample_count >= self.max_samples:
                 return False
         elif self.max_time is not None:
             if time.monotonic() - self._start_time >= self.max_time:
@@ -50,7 +57,6 @@ class Recording:
             self._samples,
             self._times,
             self._using_relative_time,
-            self._max_display_samples,
         )
 
     def start_recording(self):
@@ -69,22 +75,53 @@ class Recording:
 
     def stop_recording(self):
         self._recording = False
-        if not self.rolling:
+        if not self._rolling:
             self.close_record_file()
             atexit.unregister(self.close_record_file) # I guess there could be a brief window where the file is closed but it's not unregistered
 
     def add_sample(self, sample, sample_time=None):
         timestamp = sample_time if sample_time is not None else time.time()
-        self._samples.append(sample)
-        self._times.append(timestamp)
-        if self._rolling and len(self._samples) > self.max_samples:
-            self._samples.pop(0)
-            self._times.pop(0)
+        self._sample_count += 1
 
         if not self._rolling:
             self._csv_writer.writerow([timestamp, sample])
             self._file.flush()
 
+        if self._sample_count <= self.max_stored_samples:
+            self._samples.append(sample)
+            self._times.append(timestamp)
+        else:
+            if self._rolling:
+                self._samples.pop(0)
+                self._times.pop(0)
+                self._samples.append(sample)
+                self._times.append(timestamp)
+            else: 
+                self._sample_average = (self._sample_average * self._sample_average_count + sample) / (
+                                self._sample_average_count + 1)                
+                self._time_average = (self._time_average * self._sample_average_count + timestamp) / (
+                                self._sample_average_count + 1)
+                self._sample_average_count += 1
+
+                self._samples[-1] = self._sample_average
+                self._times[-1] = self._time_average
+
+                if self._sample_average_count == self._sample_averaging_level:
+                    self._sample_average_count = 0
+                    self._samples.append(self._sample_average)
+                    self._times.append(self._time_average)
+                if len(self._samples) > 2*self.max_stored_samples:
+                    for i in range(0, len(self._samples)-1, 2):
+                        self._samples[i] = (self._samples[i] + self._samples[i + 1]) / 2
+                        self._times[i] = (self._times[i] + self._times[i + 1]) / 2
+                    self._samples = self._samples[::2]
+                    self._times = self._times[::2]
+                    self._sample_average_count = 0
+                    self._sample_averaging_level *= 2
+
+                    self._sample_average = sample
+                    self._time_average = timestamp
+        #print(f"record ID: {self.record_id}, sample count: {self._sample_count}, number of samples: {len(self._samples)}, number of times: {len(self._times)}, value: {sample}, average_count: {self._sample_average_count}, average_level: {self._sample_averaging_level}")
     def close_record_file(self):
         self._file.flush()
         self._file.close()

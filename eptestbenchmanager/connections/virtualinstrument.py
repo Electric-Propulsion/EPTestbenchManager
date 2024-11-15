@@ -134,7 +134,7 @@ class VirtualInstrument(ABC):
         self._value = value
 
         # Update the rolling storage (which should always be active)
-        self._rolling_storage.add_sample(value)
+        #self._rolling_storage.add_sample(value)
 
         # Update any active recordings
         for recording in self._recordings.values():
@@ -147,7 +147,7 @@ class VirtualInstrument(ABC):
         """
         Begin a new named recording.
         """
-        self._recordings[record_id] = Recording(record_id, max_samples, max_time)
+        self._recordings[record_id] = Recording(record_id, max_samples, 250, max_time)
         self._recordings[record_id].start_recording()
 
     def stop_recording(self, record_id) -> None:

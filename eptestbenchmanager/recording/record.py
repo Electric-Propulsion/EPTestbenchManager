@@ -11,14 +11,12 @@ class Record:
             Union[str, int, float]
         ],  # These are always assumed to be *entered* as UNIX timestamps
         relative: bool = False,
-        max_display_values: int = 250,
     ):
         self._values = values
         self._times = times
         self._relative = (
             relative  # Relative to whenever the all or display property is called
         )
-        self._max_display_values = max_display_values
         self._length = len(values)
 
     @property
@@ -35,35 +33,20 @@ class Record:
     def display(
         self,
     ) -> Tuple[list[Union[str, int, float, bool]], list[Union[str, int, float]]]:
-        if self._length <= self._max_display_values:
-            values = self._values.copy()
-            times = self._times.copy()
-        else:
-            step = self._length / self._max_display_values
-            values = []
-            times = []
-            for i in range(self._max_display_values):
-                start = int(i * step)
-                end = int((i + 1) * step)
-                value_chunk = self._values[start:end]
-                # time_chunk = self._times[start:end]
-                if value_chunk:
-                    values.append(sum(value_chunk) / len(value_chunk))
-                    # if time_chunk:
-                    times.append(self._times[int(start + (end - start) / 2)])
-        # Format all timestamps based on the relative flag
-        if self._relative:
-            time_now = time.time()
-            times = [time_now - t for t in times]
-        else:
-            times = [t for t in times]
+        # values = self._values.copy()
+        # # Format all timestamps based on the relative flag
+        # if self._relative:
+        #     time_now = time.time()
+        #     times = [time_now - t for t in times]
+        # else:
+        #     times = [t for t in times]
 
-        if self._relative:
-            times = [self._format_relative_time(t) for t in times]
-        else:
-            times = [self._format_absolute_time(t) for t in times]
-        return times, values
-
+        # if self._relative:
+        #     times = [self._format_relative_time(t) for t in times]
+        # else:
+        #     times = [self._format_absolute_time(t) for t in times]
+        # return times, values
+        return self._times.copy(), self._values.copy()
     def _format_relative_time(self, delta: float) -> str:
         delta_td = timedelta(seconds=delta)
         days = delta_td.days

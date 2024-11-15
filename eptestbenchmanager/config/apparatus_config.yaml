@@ -18,13 +18,13 @@ virtual_instruments:
 
   gaussian_noise_1:
     type: noise
-    name: Gaussian Noise
+    name: Gaussian Noise 1
     mean: 0
     standard_deviation: 1
 
   gaussian_noise_2:
     type: noise
-    name: Gaussian Noise
+    name: Gaussian Noise 2
     mean: 0
     standard_deviation: 1
   
