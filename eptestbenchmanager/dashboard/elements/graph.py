@@ -13,7 +13,7 @@ class Graph(SingleValueDashboardElement):
         uid: str,
         title: str,
         value_callback: callable,
-        update_interval: int = 50,
+        update_interval: int = 500,
         num_timestamps: int = 10,
     ):
         super().__init__(uid, title, value_callback)

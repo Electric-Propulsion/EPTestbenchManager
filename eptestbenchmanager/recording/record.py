@@ -1,6 +1,7 @@
 from typing import Union, Tuple
 import time
 from datetime import timedelta
+import datetime
 
 
 class Record:
@@ -33,11 +34,16 @@ class Record:
     def display(
         self,
     ) -> Tuple[list[Union[str, int, float, bool]], list[Union[str, int, float]]]:
+        if self._relative:
+            times = [self._format_relative_time(time, 0) for time in self._times]
+        else:
+            times = [self._format_absolute_time(time, self._times[0]) for time in self._times]
     
-        return self._times.copy(), self._values.copy()
+        return times, self._values.copy()
     
 
-    def _format_relative_time(self, delta: float) -> str:
+    def _format_relative_time(self, timestamp: float, t_now: float) -> str:
+        delta = time.time() - timestamp
         delta_td = timedelta(seconds=delta)
         days = delta_td.days
         hours, minutes, seconds = (
@@ -51,16 +57,15 @@ class Record:
         else:
             return f"T-{hours:02}:{minutes:02}:{seconds:02}.{millis:03}"
 
-    def _format_absolute_time(self, timestamp: float) -> str:
-        delta = time.time() - timestamp
-        delta_td = timedelta(seconds=delta)
-        days = delta_td.days
+    def _format_absolute_time(self, timestamp: float, t0: float) -> str:
+        abs_time = datetime.fromtimestamp(timestamp-t0)
+        days = abs_time.days
         hours, minutes, seconds = (
-            delta_td.seconds // 3600,
-            (delta_td.seconds // 60) % 60,
-            delta_td.seconds % 60,
+            abs_time.seconds // 3600,
+            (abs_time.seconds // 60) % 60,
+            abs_time.seconds % 60,
         )
-        millis = delta_td.microseconds // 1000
+        millis = abs_time.microseconds // 1000
         if days > 0:
             return f"T+{days} days, {hours:02}:{minutes:02}:{seconds:02}.{millis:03}"
         else:
