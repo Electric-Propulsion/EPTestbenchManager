@@ -143,11 +143,11 @@ class VirtualInstrument(ABC):
 
         self._lock.release()
 
-    def begin_recording(self, record_id, max_samples=None, max_time=None) -> None:
+    def begin_recording(self, record_id, max_samples=None, stored_samples = 250, max_time=None) -> None:
         """
         Begin a new named recording.
         """
-        self._recordings[record_id] = Recording(record_id, max_samples, 250, max_time)
+        self._recordings[record_id] = Recording(record_id, max_samples, stored_samples, max_time)
         self._recordings[record_id].start_recording()
 
     def stop_recording(self, record_id) -> None:

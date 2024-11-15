@@ -1,6 +1,6 @@
 from typing import Union, Tuple
 import time
-from datetime import timedelta
+from datetime import timedelta, date
 import datetime
 
 
@@ -58,18 +58,18 @@ class Record:
             return f"T-{hours:02}:{minutes:02}:{seconds:02}.{millis:03}"
 
     def _format_absolute_time(self, timestamp: float, t0: float) -> str:
-        abs_time = datetime.fromtimestamp(timestamp-t0)
-        days = abs_time.days
-        hours, minutes, seconds = (
-            abs_time.seconds // 3600,
-            (abs_time.seconds // 60) % 60,
-            abs_time.seconds % 60,
+        abs_time = timestamp - t0
+        days, hours, minutes, seconds, millis = (
+            abs_time // 86400,
+            abs_time // 3600,
+            (abs_time // 60) % 60,
+            abs_time % 60,
+            (abs_time * 1000) % 1000,
         )
-        millis = abs_time.microseconds // 1000
         if days > 0:
-            return f"T+{days} days, {hours:02}:{minutes:02}:{seconds:02}.{millis:03}"
+            return f"T+{days:.0f} days, {hours:02.0f}:{minutes:02.0f}:{seconds:02.0f}.{millis:03.0f}"
         else:
-            return f"T+{hours:02}:{minutes:02}:{seconds:02}.{millis:03}"
+            return f"T+{hours:02.0f}:{minutes:02.0f}:{seconds:02.0f}.{millis:03.0f}"
 
     def __len__(self) -> int:
         return self._length

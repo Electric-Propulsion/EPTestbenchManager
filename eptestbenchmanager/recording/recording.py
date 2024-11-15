@@ -15,14 +15,13 @@ class Recording:
         self,
         record_id: str,
         max_samples=None,
-        max_stored_samples=250, #picked at random
+        stored_samples=250, #picked at random
         max_time_s=None,
         rolling=False,
         # I.e. the number of samples we want to keep in memory at any given time
-        stored_samples=250,  # picked at random lol
     ):
         self.max_samples = max_samples
-        self.max_stored_samples = max_stored_samples
+        self._stored_samples = stored_samples
         self.max_time = max_time_s
         self._rolling = rolling
         self._start_time = None
@@ -35,7 +34,7 @@ class Recording:
         self._sample_average_count = 0
         self._start_time = None
         self._recording = False
-        self._using_relative_time = True
+        self._using_relative_time = self._rolling
         self.record_id = record_id
         self.log_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "logs") # what a terrific line of code.
         os.makedirs(self.log_dir, exist_ok=True)
@@ -87,7 +86,7 @@ class Recording:
             self._csv_writer.writerow([timestamp, sample])
             self._file.flush()
 
-        if self._sample_count <= self.max_stored_samples:
+        if self._sample_count <= self._stored_samples:
             self._samples.append(sample)
             self._times.append(timestamp)
         else:
@@ -110,7 +109,7 @@ class Recording:
                     self._sample_average_count = 0
                     self._samples.append(self._sample_average)
                     self._times.append(self._time_average)
-                if len(self._samples) > 2*self.max_stored_samples:
+                if len(self._samples) > 2*self._stored_samples:
                     for i in range(0, len(self._samples)-1, 2):
                         self._samples[i] = (self._samples[i] + self._samples[i + 1]) / 2
                         self._times[i] = (self._times[i] + self._times[i + 1]) / 2
