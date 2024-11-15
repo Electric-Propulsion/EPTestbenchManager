@@ -12,6 +12,7 @@ class Record:
             Union[str, int, float]
         ],  # These are always assumed to be *entered* as UNIX timestamps
         relative: bool = False,
+        t0: float = None,
     ):
         self._values = values
         self._times = times
@@ -19,6 +20,7 @@ class Record:
             relative  # Relative to whenever the all or display property is called
         )
         self._length = len(values)
+        self._t0 = t0
 
     @property
     def all(self) -> list[Union[str, int, float, bool]]:
@@ -37,7 +39,7 @@ class Record:
         if self._relative:
             times = [self._format_relative_time(time, 0) for time in self._times]
         else:
-            times = [self._format_absolute_time(time, self._times[0]) for time in self._times]
+            times = [self._format_absolute_time(time, self._t0 if self._t0 is not None else self._times[0]) for time in self._times]
     
         return times, self._values.copy()
     

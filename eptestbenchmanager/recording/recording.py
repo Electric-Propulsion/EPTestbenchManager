@@ -18,12 +18,13 @@ class Recording:
         stored_samples=250, #picked at random
         max_time_s=None,
         rolling=False,
-        # I.e. the number of samples we want to keep in memory at any given time
+        t0=None, # optional t_0 parameter for displaying based off of a set start time
     ):
         self.max_samples = max_samples
         self._stored_samples = stored_samples
         self.max_time = max_time_s
         self._rolling = rolling
+        self._t0 = t0
         self._start_time = None
         self._samples = []
         self._times = []
@@ -56,6 +57,7 @@ class Recording:
             self._samples,
             self._times,
             self._using_relative_time,
+            self._t0,
         )
 
     def start_recording(self):
