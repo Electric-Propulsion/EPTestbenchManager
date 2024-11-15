@@ -33,20 +33,10 @@ class Record:
     def display(
         self,
     ) -> Tuple[list[Union[str, int, float, bool]], list[Union[str, int, float]]]:
-        # values = self._values.copy()
-        # # Format all timestamps based on the relative flag
-        # if self._relative:
-        #     time_now = time.time()
-        #     times = [time_now - t for t in times]
-        # else:
-        #     times = [t for t in times]
-
-        # if self._relative:
-        #     times = [self._format_relative_time(t) for t in times]
-        # else:
-        #     times = [self._format_absolute_time(t) for t in times]
-        # return times, values
+    
         return self._times.copy(), self._values.copy()
+    
+
     def _format_relative_time(self, delta: float) -> str:
         delta_td = timedelta(seconds=delta)
         days = delta_td.days

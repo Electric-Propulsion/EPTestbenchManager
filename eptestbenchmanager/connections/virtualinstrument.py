@@ -134,7 +134,7 @@ class VirtualInstrument(ABC):
         self._value = value
 
         # Update the rolling storage (which should always be active)
-        #self._rolling_storage.add_sample(value)
+        self._rolling_storage.add_sample(value)
 
         # Update any active recordings
         for recording in self._recordings.values():
