@@ -63,8 +63,14 @@ class Experiment:
                         severity=AlertSeverity.INFO,
                         target=self.operator,
                     )
-
+                    segment.prerun()
+                    for element in segment._segment_view:
+                        self.view.add_element(element) # this doesn't work, will have to more deeply link to dashboard manager to update things
                     segment.run()
+                    segment.postrun()
+                    for element in segment._segment_view:
+                        self.view.remove_element(element)
+
 
                     print(segment.data)  # TODO: remove this
 

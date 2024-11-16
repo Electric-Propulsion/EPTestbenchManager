@@ -39,6 +39,8 @@ class Recording:
         self.record_id = record_id
         self.log_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "logs") # what a terrific line of code.
         os.makedirs(self.log_dir, exist_ok=True)
+        self._file_id = f"{self.log_dir}/{self.record_id}_{time.strftime('%Y%m%d_%H%M%S')}.csv"
+
 
 
     @property
@@ -49,7 +51,7 @@ class Recording:
         elif self.max_time is not None:
             if time.monotonic() - self._start_time >= self.max_time:
                 return False
-        return True
+        return self._recording
 
     @property
     def record(self):
@@ -61,14 +63,13 @@ class Recording:
         )
 
     def start_recording(self):
-        self._start_time = (
+        if self._start_time is None:
+            self._start_time = (
             time.monotonic()
-        )  # this is the only time we use monotonic here, otherwise we care about the actual time
+            )  # this is the only time we use monotonic here, otherwise we care about the actual time
         self._recording = True
-        
         if not self._rolling:
-            file_id = f"{self.log_dir}/{self.record_id}_{time.strftime('%Y%m%d_%H%M%S')}.csv"
-            self._file = open(file_id, mode="a", newline="")
+            self._file = open(self._file_id, mode="a", newline="")
             self._csv_writer = csv.writer(self._file, lineterminator='\n' )
             if self._file.tell() == 0:
                 self._csv_writer.writerow(["Time", "Value"])
@@ -84,9 +85,14 @@ class Recording:
         timestamp = sample_time if sample_time is not None else time.time()
         self._sample_count += 1
 
+        if not self._recording:
+            print("add sample being called when recording is not active")
         if not self._rolling:
-            self._csv_writer.writerow([timestamp, sample])
-            self._file.flush()
+            try: 
+                self._csv_writer.writerow([timestamp, sample])
+                self._file.flush()
+            except ValueError:
+                print("File closed - should fix this")
 
         if self._sample_count <= self._stored_samples:
             self._samples.append(sample)

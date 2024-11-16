@@ -31,7 +31,7 @@ class VirtualInstrument(ABC):
     ):
         self.uid = uid
         self.name = name
-        self.dashboard_elements = []
+        self.dashboard_elements = {}
 
         # self.dashboard_element = dashboard_element
         self._value: Union[str, int, float, bool, None] = None
@@ -63,9 +63,9 @@ class VirtualInstrument(ABC):
     ):
         if isinstance(dashboard_element, list):
             for element in dashboard_element:
-                self.dashboard_elements.append(element)
+                self.dashboard_elements[element.uid] = element
         else:
-            self.dashboard_elements.append(dashboard_element)
+            self.dashboard_elements[dashboard_element.uid] = dashboard_element
 
     @property
     def value(self) -> Union[str, int, float, bool]:
@@ -138,6 +138,18 @@ class VirtualInstrument(ABC):
                 lambda: self.get_recording(record_id),
             )
         )
+
+    def recording_exists(self, record_id) -> bool:
+        """
+        Check if a recording exists.
+        """
+        return record_id in self._recordings
+    
+    def resume_recording(self, record_id) -> None:
+        """
+        Resume a recording.
+        """
+        self._recordings[record_id].start_recording()
 
     def stop_recording(self, record_id) -> None:
         """

@@ -4,7 +4,33 @@ experiment:
   description: |
     This is a test .
 
-segments:
+segments: #TODO: swap uid and type
   wait:
+    name: Wait 1
+    uid: wait_1
     seconds: 30
+    recordings:
+      - gaussian_noise_1:
+          record_id: noise_total
+    dashboard_elements:
+      - gaussian_noise_1:
+        - gaussian_noise_1-rolling-graph
+        - gaussian_noise_1-noise_total-graph
+  wait:
+    name: Wait 2
+    uid: wait_2
+    seconds: 30
+    recordings:
+      - gaussian_noise_2:
+          record_id: noise_total
+      - gaussian_noise_1:
+          record_id: noise_total
+    dashboard_elements:
+      - gaussian_noise_2:
+        - gaussian_noise_2-gauge
+      - gaussian_noise_1:
+        - gaussian_noise_1-noise_total-graph
+
+
+
 

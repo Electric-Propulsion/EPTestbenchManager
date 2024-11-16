@@ -11,6 +11,7 @@ class DashboardView:
 
     def add_element(self, element: "DashboardElement") -> None:
         self._elements[element.uid] = element
+        self._elements[element.uid].register_callbacks()
 
     def remove_element(self, element: "DashboardElement") -> None:
         self._elements.pop(element.uid)
@@ -29,5 +30,6 @@ class DashboardView:
         )
 
     def register_callbacks(self) -> None:
-        for element in self._elements.values():
-            element.register_callbacks()
+        pass
+        # for element in self._elements.values():
+        #     element.register_callbacks()

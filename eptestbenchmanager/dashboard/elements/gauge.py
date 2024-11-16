@@ -5,6 +5,8 @@ from . import SingleValueDashboardElement
 
 class Gauge(SingleValueDashboardElement):
 
+    #TODO: need to be able to set min/max values
+
     @property
     def div(self) -> html.Div:
         return html.Div(
