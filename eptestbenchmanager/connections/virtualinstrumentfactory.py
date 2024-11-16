@@ -96,12 +96,12 @@ class VirtualInstrumentFactory:
                 Graph(
                     f"{uid}-graph",
                     instrument.name,
-                    lambda: instrument.rolling_storage_display,
+                    lambda: instrument.rolling_storage,
                 ),
                 Graph(
                     f"{uid}-total-graph",
                     "Total",
-                    lambda: instrument.get_recording_display("total"),
+                    lambda: instrument.get_recording("total"),
                 ),
                 Gauge(
                     f"{uid}-gauge",

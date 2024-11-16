@@ -23,17 +23,7 @@ class Record:
         self._t0 = t0
 
     @property
-    def all(self) -> list[Union[str, int, float, bool]]:
-        if self._relative:
-            time_now = time.time()
-            return [
-                (self._times[i] - time_now, self._values[i])
-                for i in range(self._length)
-            ]
-        return self._times.copy(), self._values.copy()
-
-    @property
-    def display(
+    def values(
         self,
     ) -> Tuple[list[Union[str, int, float, bool]], list[Union[str, int, float]]]:
         if self._relative:
@@ -45,7 +35,7 @@ class Record:
     
 
     def _format_relative_time(self, timestamp: float, t_now: float) -> str:
-        delta = time.time() - timestamp
+        delta = t_now - timestamp
         delta_td = timedelta(seconds=delta)
         days = delta_td.days
         hours, minutes, seconds = (
