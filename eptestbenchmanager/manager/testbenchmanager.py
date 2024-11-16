@@ -8,6 +8,7 @@ from eptestbenchmanager.experiment_runner import ExperimentRunner
 from eptestbenchmanager.chat.alert_manager import DiscordAlertManager, AlertSeverity
 from eptestbenchmanager.chat.engine import DiscordEngine
 from eptestbenchmanager.chat.chat_manager import DiscordChatManager
+from eptestbenchmanager.dashboard import DashboardManager, get_home_view
 
 
 class TestbenchManager:
@@ -18,7 +19,7 @@ class TestbenchManager:
         self.communication_engine = DiscordEngine()
         self.alert_manager = DiscordAlertManager(self.communication_engine)
         self.chat_manager = DiscordChatManager(self.communication_engine, self)
-        # self.dashboard_manager = DashboardManager()
+        self.dashboard_manager = DashboardManager(self)
         self.runner: ExperimentRunner = None
 
     def start_app(
@@ -38,6 +39,16 @@ class TestbenchManager:
             apparatus_config_file_path = None
         self.connection_manager = ConnectionManager(apparatus_config_file_path)
 
+        # Configure the chat stuff
+        self.chat_manager.configure()
+
+        # Start everything
+        self.connection_manager.run()
+
+        self.communication_engine.run()
+        sleep(10)  # just give it a little time to start up
+        self.communication_engine.configure({"guild": discord_guild})
+
         # Initialize the experiment runner
         self.runner = ExperimentRunner(self)
 
@@ -54,15 +65,10 @@ class TestbenchManager:
                         ) as experiment_config_file:
                             self.runner.add_experiment(experiment_config_file)
 
-        # Configure the chat stuff
-        self.chat_manager.configure()
-
-        # Start everything
-        self.connection_manager.run()
-
-        self.communication_engine.run()
-        sleep(10)  # just give it a little time to start up
-        self.communication_engine.configure({"guild": discord_guild})
-
+        self.dashboard_manager.run()
+        self.dashboard_manager.add_view(get_home_view(self))
+        for view in self.runner.views:
+            self.dashboard_manager.add_view(view)
+            #view.register_callbacks()
         while True:
             sleep(1)

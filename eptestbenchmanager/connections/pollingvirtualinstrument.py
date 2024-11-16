@@ -17,7 +17,9 @@ class PollingVirtualInstrument(VirtualInstrument):
         polling_interval: int,  # in milliseconds
         # dashboard_element: Union[DashboardElement, None], #TODO: Implement DashboardElement #pylint: disable=fixme
     ):
-        super().__init__(uid, name, physical_instrument, setter_function)
+        super().__init__(uid, name)
+        self._physical_instrument = physical_instrument
+        self._setter_function = setter_function
         self._getter_function = getter_function
         self._polling_interval = polling_interval
         self._polling_thread = Thread(
@@ -52,4 +54,3 @@ class PollingVirtualInstrument(VirtualInstrument):
                 # We missed the polling interval
                 # TODO: Log a warning
                 pass
-            print(f"{self._polling_thread.name}: {value}")

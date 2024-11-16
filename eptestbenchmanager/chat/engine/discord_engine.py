@@ -65,6 +65,10 @@ class DiscordEngine(CommunicationEngine):
             return users
         raise ValueError("Guild ID not set")
 
+    @property
+    def users(self) -> dict[str, int]:
+        return self._user_ids
+
     def _get_channel_ids(self) -> dict[str, int]:
         if self._guild_id is not None:
             channels = {}
