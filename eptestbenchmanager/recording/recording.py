@@ -14,6 +14,7 @@ class Recording:
     def __init__(
         self,
         record_id: str,
+        instrument_uid: str,
         max_samples=None,
         stored_samples=250, #picked at random
         max_time_s=None,
@@ -37,6 +38,7 @@ class Recording:
         self._recording = False
         self._using_relative_time = self._rolling
         self.record_id = record_id
+        self.instrument_id = instrument_uid
         self.log_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "logs") # what a terrific line of code.
         os.makedirs(self.log_dir, exist_ok=True)
 
@@ -67,7 +69,7 @@ class Recording:
         self._recording = True
         
         if not self._rolling:
-            file_id = f"{self.log_dir}/{self.record_id}_{time.strftime('%Y%m%d_%H%M%S')}.csv"
+            file_id = f"{self.log_dir}/{self.record_id}__{self.instrument_id}__{time.strftime('%Y%m%d_%H%M%S')}.csv"
             self._file = open(file_id, mode="a", newline="")
             self._csv_writer = csv.writer(self._file, lineterminator='\n' )
             if self._file.tell() == 0:
