@@ -46,7 +46,7 @@ class TestbenchManager:
         self.connection_manager.run()
 
         self.communication_engine.run()
-        sleep(10)  # just give it a little time to start up
+        sleep(2.5)  # just give it a little time to start up
         self.communication_engine.configure({"guild": discord_guild})
 
         # Initialize the experiment runner

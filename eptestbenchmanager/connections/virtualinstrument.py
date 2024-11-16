@@ -2,7 +2,7 @@ from typing import Union
 from threading import Lock
 from abc import ABC, abstractmethod
 from epcomms.equipment.base.instrument import Instrument
-from eptestbenchmanager.dashboard.elements import DashboardElement
+from eptestbenchmanager.dashboard.elements import DashboardElement, Graph, Gauge
 from eptestbenchmanager.recording import Recording
 
 
@@ -41,6 +41,20 @@ class VirtualInstrument(ABC):
             f"{self.name}_rolling_storage",
             max_samples=rolling_storage_size, rolling=True
         )
+        self.add_dashboard_elements( # all virtual instruments by default have a rolling graph and a gauge dashboard elements, corresponding to the rolling storage and the current value of the virtual instrument
+            [
+                Graph(
+                    f"{uid}-rolling-graph",
+                    f"{self.name} (Last {rolling_storage_size} Samples)",
+                    lambda: self.rolling_storage,
+                ),
+                Gauge(
+                    f"{uid}-gauge",
+                    self.name,
+                    lambda: self.value,
+                )
+            ]
+            )
         self._rolling_storage.start_recording()
         self._recordings: dict[str, Recording] = {}
 
@@ -117,6 +131,13 @@ class VirtualInstrument(ABC):
         """
         self._recordings[record_id] = Recording(record_id, max_samples, stored_samples, max_time)
         self._recordings[record_id].start_recording()
+        self.add_dashboard_elements(
+            Graph(
+                f"{self.uid}-{record_id}-graph",
+                f"{self.name}: {record_id}",
+                lambda: self.get_recording(record_id),
+            )
+        )
 
     def stop_recording(self, record_id) -> None:
         """

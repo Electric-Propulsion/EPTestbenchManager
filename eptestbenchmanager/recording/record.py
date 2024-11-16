@@ -27,15 +27,15 @@ class Record:
         self,
     ) -> Tuple[list[Union[str, int, float, bool]], list[Union[str, int, float]]]:
         if self._relative:
-            times = [self._format_relative_time(time, 0) for time in self._times]
+            times = [self._format_relative_time(time) for time in self._times]
         else:
             times = [self._format_absolute_time(time, self._t0 if self._t0 is not None else self._times[0]) for time in self._times]
     
         return times, self._values.copy()
     
 
-    def _format_relative_time(self, timestamp: float, t_now: float) -> str:
-        delta = t_now - timestamp
+    def _format_relative_time(self, timestamp: float) -> str:
+        delta = time.time() - timestamp
         delta_td = timedelta(seconds=delta)
         days = delta_td.days
         hours, minutes, seconds = (

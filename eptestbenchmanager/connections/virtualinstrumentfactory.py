@@ -91,25 +91,6 @@ class VirtualInstrumentFactory:
             standard_deviation=config["standard_deviation"],
         )
         instrument.begin_recording("total")
-        instrument.add_dashboard_elements(
-            [
-                Graph(
-                    f"{uid}-graph",
-                    instrument.name,
-                    lambda: instrument.rolling_storage,
-                ),
-                Graph(
-                    f"{uid}-total-graph",
-                    "Total",
-                    lambda: instrument.get_recording("total"),
-                ),
-                Gauge(
-                    f"{uid}-gauge",
-                    instrument.name,
-                    lambda: instrument.value,
-                ),
-            ]
-        )
 
         return instrument
 
