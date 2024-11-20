@@ -22,7 +22,6 @@ class Graph(SingleValueDashboardElement):
 
     @property
     def div(self) -> html.Div:
-        print(self.uid)
         return html.Div(
             [
                 dcc.Graph(

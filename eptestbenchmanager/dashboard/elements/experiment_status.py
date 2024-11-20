@@ -62,7 +62,7 @@ class ExperimentStatus(ExperimentElement):
                     id=f"{self.uid}-update-interval",
                     interval=10,
                     n_intervals=0,
-                ),
+                ),   
             ]
         )
 

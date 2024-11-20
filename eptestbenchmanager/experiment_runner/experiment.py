@@ -65,11 +65,11 @@ class Experiment:
                     )
                     segment.prerun()
                     for element in segment._segment_view:
-                        self.view.add_element(element) # this doesn't work, will have to more deeply link to dashboard manager to update things
+                        self.view.get_element(f"{self.uid}-updating-container").add_child(element)
                     segment.run()
                     segment.postrun()
                     for element in segment._segment_view:
-                        self.view.remove_element(element)
+                        self.view.get_element(f"{self.uid}-updating-container").remove_child(element)
 
 
                     print(segment.data)  # TODO: remove this

@@ -2,7 +2,7 @@ from io import StringIO
 from yaml import load, FullLoader
 from threading import Lock
 from eptestbenchmanager.dashboard import DashboardView
-from eptestbenchmanager.dashboard.elements import ExperimentStatus
+from eptestbenchmanager.dashboard.elements import ExperimentStatus, UpdatingContainer
 from .experiment import Experiment
 from .experiment_segments import ExperimentSegment, Pumpdown, MeasureLeaks, Wait
 
@@ -42,8 +42,9 @@ class ExperimentFactory:
         )
 
         view.add_element(
-            ExperimentStatus(uid, name, testbench_manager, uid)
-        )  # TODO: We're passing uid twice, differentiate the element UID from the experiment UID
+            ExperimentStatus(f"{uid}-status", name, testbench_manager, uid)
+        )
+        view.add_element(UpdatingContainer(f"{uid}-updating-container", name))
         view.register_callbacks()
 
         return experiment

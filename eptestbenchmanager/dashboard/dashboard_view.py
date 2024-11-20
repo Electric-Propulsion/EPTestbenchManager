@@ -7,6 +7,7 @@ class DashboardView:
         self.uid = uid
         self.title = title
         self._testbench_manager = testbench_manager
+        self._dashboard_manager = testbench_manager.dashboard_manager
         self._elements = {}
 
     def add_element(self, element: "DashboardElement") -> None:
@@ -15,6 +16,9 @@ class DashboardView:
 
     def remove_element(self, element: "DashboardElement") -> None:
         self._elements.pop(element.uid)
+
+    def get_element(self, uid: str) -> "DashboardElement":
+        return self._elements[uid]
 
     @property
     def div(self) -> Any:  # TODO
