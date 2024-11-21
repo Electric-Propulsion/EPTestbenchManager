@@ -16,7 +16,7 @@ class DashboardManager:
             title="EPDashboard",
         )
         self._app.layout = html.Div(
-            [dcc.Location(id="url", refresh=False), html.Div(id="page-content")]
+            [dcc.Location(id="url", refresh=True), html.Div(id="page-content")]
         )
         self._app_thread: Thread = None
 

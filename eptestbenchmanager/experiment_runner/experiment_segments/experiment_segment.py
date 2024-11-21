@@ -39,6 +39,7 @@ class ExperimentSegment(ABC):
         return self._rules
     
     def start_recordings(self):
+        #breakpoint()
         for vinstrument_data in self._recordings:
             vinstrument_id = list(vinstrument_data.keys())[0]
             record_id = vinstrument_data[vinstrument_id]["record_id"]
@@ -70,6 +71,7 @@ class ExperimentSegment(ABC):
             vinstrument = self._testbench_manager.connection_manager.virtual_instruments[vinstrument_id]
 
             for element in vinstrument_data[vinstrument_id]:
+                print(vinstrument.dashboard_elements)
                 self._segment_view.append(vinstrument.dashboard_elements[element])
 
     def prerun(self):

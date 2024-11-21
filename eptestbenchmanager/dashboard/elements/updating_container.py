@@ -1,14 +1,15 @@
-from threading import Lock
-from dash import dcc, Input, Output, callback, html
+from threading import Lock, Semaphore, BoundedSemaphore
+from dash import dcc, Input, Output, callback, html, no_update
 
 from . import DashboardElement
 
 class UpdatingContainer(DashboardElement):
 
-    def __init__(self, uid: str, title: str, interval: int = 50):
+    def __init__(self, uid: str, title: str, interval: int = 250):
         super().__init__(uid, title)
         self._children = []
         self._lock = Lock()
+        self._updates = BoundedSemaphore(1)
         self._interval = interval
 
     @property
@@ -22,11 +23,19 @@ class UpdatingContainer(DashboardElement):
         with self._lock:
             self._children.append(child)
             child.register_callbacks()
+            try:
+                self._updates.release()
+            except ValueError:
+                pass #expected behavior :(
     
     def remove_child(self, child: DashboardElement) -> None:
         with self._lock:
             self._children.remove(child)
-            # will not removing callbacks cause a problem?    
+            # will not removing callbacks cause a problem?
+            try:
+                self._updates.release()
+            except ValueError:
+                pass #expected behavior :(
 
     def register_callbacks(self) -> None:
         @callback(
@@ -35,5 +44,9 @@ class UpdatingContainer(DashboardElement):
 
         )
         def update_children(n_intervals):
-            return [child.div for child in self._children]
+            if self._updates.acquire(blocking=False):
+                with self._lock:
+                    return [child.div for child in self._children]
+            else:
+                return no_update
     

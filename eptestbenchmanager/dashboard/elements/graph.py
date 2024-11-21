@@ -19,6 +19,8 @@ class Graph(SingleValueDashboardElement):
         super().__init__(uid, title, value_callback)
         self._update_interval = update_interval
         self._num_timestamps = num_timestamps
+        print(f"Graph {self.uid} created with value callback {value_callback}")
+        print(self._value_callback())
 
     @property
     def div(self) -> html.Div:
@@ -36,7 +38,7 @@ class Graph(SingleValueDashboardElement):
         )
 
     def register_callbacks(self) -> None:
-
+        print(f"Registering callbacks for graph {self.uid}")
         @callback(
             Output(f"{self.uid}-graph", "figure"),
             Input(f"{self.uid}-update-interval", "n_intervals"),

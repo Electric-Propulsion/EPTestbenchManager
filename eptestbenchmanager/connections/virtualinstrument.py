@@ -1,6 +1,7 @@
 from typing import Union
 from threading import Lock
 from abc import ABC, abstractmethod
+from functools import partial
 from epcomms.equipment.base.instrument import Instrument
 from eptestbenchmanager.dashboard.elements import DashboardElement, Graph, Gauge
 from eptestbenchmanager.recording import Recording
@@ -64,8 +65,11 @@ class VirtualInstrument(ABC):
         if isinstance(dashboard_element, list):
             for element in dashboard_element:
                 self.dashboard_elements[element.uid] = element
+                print(f"{element.uid} added tp {self.uid} as a dashboard element")
         else:
             self.dashboard_elements[dashboard_element.uid] = dashboard_element
+            print(f"{dashboard_element.uid} added tp {self.uid} as a dashboard element")
+        
 
     @property
     def value(self) -> Union[str, int, float, bool]:
@@ -105,6 +109,7 @@ class VirtualInstrument(ABC):
         Returns:
             The recording associated with the given ID, or None if not found.
         """
+        print(f"Getting recording {record_id}: {self._recordings[record_id].record.values}")
         self._lock.acquire()
         record = self._recordings[record_id].record.values
         self._lock.release()
@@ -129,13 +134,14 @@ class VirtualInstrument(ABC):
         """
         Begin a new named recording.
         """
+        print(f"Beginning recording {record_id}")
         self._recordings[record_id] = Recording(record_id, max_samples, stored_samples, max_time)
         self._recordings[record_id].start_recording()
         self.add_dashboard_elements(
             Graph(
                 f"{self.uid}-{record_id}-graph",
                 f"{self.name}: {record_id}",
-                lambda: self.get_recording(record_id),
+                partial(self.get_recording, record_id)
             )
         )
 
@@ -143,18 +149,21 @@ class VirtualInstrument(ABC):
         """
         Check if a recording exists.
         """
+        print(f"Checking if {record_id} exists in {self._recordings}")
         return record_id in self._recordings
     
     def resume_recording(self, record_id) -> None:
         """
         Resume a recording.
         """
+        print(f"Resuming recording {record_id}")
         self._recordings[record_id].start_recording()
 
     def stop_recording(self, record_id) -> None:
         """
         Stop a recording.
         """
+        print(f"Stopping recording {record_id}")
         self._recordings[record_id].stop_recording()
 
     @abstractmethod
