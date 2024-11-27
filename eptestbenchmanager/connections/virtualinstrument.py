@@ -42,6 +42,7 @@ class VirtualInstrument(ABC):
             f"{self.name}_rolling_storage",
             max_samples=rolling_storage_size, rolling=True
         )
+        # TODO: it would be nice if recordings other than rolling storage could be seen during experiments
         self.add_dashboard_elements( # all virtual instruments by default have a rolling graph and a gauge dashboard elements, corresponding to the rolling storage and the current value of the virtual instrument
             [
                 Graph(
@@ -135,7 +136,7 @@ class VirtualInstrument(ABC):
         Begin a new named recording.
         """
         print(f"Beginning recording {record_id}")
-        self._recordings[record_id] = Recording(record_id, max_samples, stored_samples, max_time)
+        self._recordings[record_id] = Recording(record_id, self.uid, max_samples, stored_samples, max_time)
         self._recordings[record_id].start_recording()
         self.add_dashboard_elements(
             Graph(

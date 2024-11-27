@@ -90,8 +90,6 @@ class VirtualInstrumentFactory:
             mean=config["mean"],
             standard_deviation=config["standard_deviation"],
         )
-        instrument.begin_recording("total")
-
         return instrument
 
     @classmethod
