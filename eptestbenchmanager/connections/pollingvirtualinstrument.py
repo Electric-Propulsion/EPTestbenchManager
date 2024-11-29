@@ -9,6 +9,7 @@ class PollingVirtualInstrument(VirtualInstrument):
 
     def __init__(  # pylint: disable=too-many-arguments #(This is built by a factory)
         self,
+        experiment_manager,
         uid: str,
         name: str,
         physical_instrument: Instrument,
@@ -17,7 +18,7 @@ class PollingVirtualInstrument(VirtualInstrument):
         polling_interval: int,  # in milliseconds
         # dashboard_element: Union[DashboardElement, None], #TODO: Implement DashboardElement #pylint: disable=fixme
     ):
-        super().__init__(uid, name)
+        super().__init__(experiment_manager, uid, name)
         self._physical_instrument = physical_instrument
         self._setter_function = setter_function
         self._getter_function = getter_function

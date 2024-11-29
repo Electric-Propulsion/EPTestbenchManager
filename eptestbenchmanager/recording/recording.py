@@ -13,6 +13,7 @@ class Recording:
 
     def __init__(
         self,
+        experiment_manager,
         record_id: str,
         instrument_uid: str,
         max_samples=None,
@@ -21,6 +22,7 @@ class Recording:
         rolling=False,
         t0=None, # optional t_0 parameter for displaying based off of a set start time
     ):
+        self.experiment_manager = experiment_manager
         self.max_samples = max_samples
         self._stored_samples = stored_samples
         self.max_time = max_time_s
@@ -74,7 +76,7 @@ class Recording:
             self._file = open(self._file_id, mode="a", newline="")
             self._csv_writer = csv.writer(self._file, lineterminator='\n' )
             if self._file.tell() == 0:
-                self._csv_writer.writerow(["Time", "Value"])
+                self._csv_writer.writerow(["Time", "Value", "Segment UID"])
             atexit.register(self.close_record_file)
 
     def stop_recording(self):
@@ -85,13 +87,14 @@ class Recording:
 
     def add_sample(self, sample, sample_time=None):
         timestamp = sample_time if sample_time is not None else time.time()
+        current_experiment = self.experiment_manager.get_experiment_current_segment_uid(self.experiment_manager.get_current_experiment_id())
         self._sample_count += 1
 
         if not self._recording:
             print("add sample being called when recording is not active")
         if not self._rolling:
             try: 
-                self._csv_writer.writerow([timestamp, sample])
+                self._csv_writer.writerow([timestamp, sample, current_experiment])
                 self._file.flush()
             except ValueError:
                 print("File closed - should fix this")

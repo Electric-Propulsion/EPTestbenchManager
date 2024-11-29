@@ -9,10 +9,11 @@ from . import VirtualInstrumentFactory, PollingVirtualInstrument
 
 class ConnectionManager:
 
-    def __init__(self, config_file_path: Union[Path, None] = None):
+    def __init__(self, experiment_manager, config_file_path: Union[Path, None] = None):
 
         self._physical_instruments = {}
         self._virtual_instruments = {}
+        self._experiment_manager = experiment_manager
 
         print(
             f"Connection manager config file path: {config_file_path}"
@@ -49,6 +50,7 @@ class ConnectionManager:
 
         for uid, instrument_config in config["virtual_instruments"].items():
             self._virtual_instruments[uid] = VirtualInstrumentFactory.create_instrument(
+                self._experiment_manager,
                 self._physical_instruments,
                 self.virtual_instruments,
                 uid,

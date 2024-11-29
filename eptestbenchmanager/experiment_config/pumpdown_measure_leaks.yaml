@@ -1,0 +1,37 @@
+experiment:
+  uid: pumpdown_measure_leaks
+  name: Pumpdown and Measure Leaks
+  description: |
+    This experiment will pump down the vacuum chamber and measure the leaks.
+
+segments:
+  pumpdown:
+    type: pumpdown
+    setpoint_mbar: 1e-3
+    timeout:
+      minutes: 1
+      action: continue   
+    time_resolution_s: 1
+    recordings:
+      - vacuum_chamber_pressure:
+          record_id: pressure_total
+    dashboard_elements:
+      - vacuum_chamber_pressure:
+        - pressure_total-rolling-graph
+        - pressure_total-gauge
+  
+  measure_leaks:
+    type: measure_leaks
+    timeout:
+      minutes: 1
+      action: continue
+    end_pressure_mbar: 1e3
+    time_resolution_s: 30
+    recordings:
+    - vacuum_chamber_pressure:
+        record_id: pressure_total
+    dashboard_elements:
+      - vacuum_chamber_pressure:
+        - pressure_total-rolling-graph
+        - pressure_total-gauge
+

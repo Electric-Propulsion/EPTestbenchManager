@@ -37,7 +37,12 @@ class TestbenchManager:
             )
         else:
             apparatus_config_file_path = None
-        self.connection_manager = ConnectionManager(apparatus_config_file_path)
+
+        # Initialize the experiment runner
+        self.runner = ExperimentRunner(self)
+
+
+        self.connection_manager = ConnectionManager(self.runner, apparatus_config_file_path)
 
         # Configure the chat stuff
         self.chat_manager.configure()
@@ -49,8 +54,7 @@ class TestbenchManager:
         sleep(2.5)  # just give it a little time to start up
         self.communication_engine.configure({"guild": discord_guild})
 
-        # Initialize the experiment runner
-        self.runner = ExperimentRunner(self)
+
 
         if not delay_experiment_load:
             # Load all the experiments in /experiment_config

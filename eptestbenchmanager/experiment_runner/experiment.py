@@ -112,6 +112,13 @@ class Experiment:
             segment.generate_report()
         # TODO: return the report
 
+
+    def get_current_segment_uid(self) -> str:
+        try:
+            return self.segments[self.current_segment_id].uid
+        except IndexError:
+            return "no segment"
+
     @property
     def rules(self):
         pass  # TODO: need to get just the rule from the active segment?

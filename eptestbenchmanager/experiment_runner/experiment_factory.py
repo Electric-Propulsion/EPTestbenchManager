@@ -27,8 +27,8 @@ class ExperimentFactory:
 
         segments = []
 
-        for segment_type, segment_config in config["segments"].items():
-            segment_uid = f"{uid}_{segment_config['uid']}"
+        for segment_uid, segment_config in config["segments"].items():
+            segment_type = segment_config['type']
             segment_name = segment_config["name"]
             segment = cls.get_class(segment_type)(
                 segment_uid, segment_name, segment_config, testbench_manager

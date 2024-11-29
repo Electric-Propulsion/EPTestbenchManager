@@ -26,10 +26,12 @@ class VirtualInstrument(ABC):
 
     def __init__(  # pylint: disable=too-many-arguments #(This is built by a factory)
         self,
+        experiment_manager,
         uid: str,
         name: str,
         rolling_storage_size: int = 250,
     ):
+        self._experiment_manager = experiment_manager
         self.uid = uid
         self.name = name
         self.dashboard_elements = {}
@@ -39,7 +41,9 @@ class VirtualInstrument(ABC):
         self._lock = Lock()
 
         self._rolling_storage = Recording(
+            self._experiment_manager,
             f"{self.name}_rolling_storage",
+            self.uid,
             max_samples=rolling_storage_size, rolling=True
         )
         # TODO: it would be nice if recordings other than rolling storage could be seen during experiments
@@ -136,7 +140,7 @@ class VirtualInstrument(ABC):
         Begin a new named recording.
         """
         print(f"Beginning recording {record_id}")
-        self._recordings[record_id] = Recording(record_id, self.uid, max_samples, stored_samples, max_time)
+        self._recordings[record_id] = Recording(self._experiment_manager, record_id, self.uid, max_samples, stored_samples, max_time)
         self._recordings[record_id].start_recording()
         self.add_dashboard_elements(
             Graph(

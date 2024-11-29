@@ -10,6 +10,7 @@ class ExperimentRunner:
         self._experiments: dict[str, Experiment] = {}
         self._testbench_manager = testbench_manager
         self._experiment_lock = Lock()
+        self._current_experiment_uid = None
 
     def add_experiment(self, experiment_file: StringIO) -> None:
         experiment = ExperimentFactory.create_experiment(
@@ -20,6 +21,7 @@ class ExperimentRunner:
     def run_experiment(self, uid: str, operator: str) -> None:
         if self._experiment_lock.acquire(blocking=False):
             print("Running experiment")
+            self._current_experiment_uid = uid
             self._experiments[uid].run(operator)
         else:
             print("No can do. Experiment is already running")
@@ -33,8 +35,16 @@ class ExperimentRunner:
     ) -> list:  # TODO: probably shouldn't expose this
         return self._experiments[experiment_uid].segments
 
+    def get_experiment_current_segment_uid(self, experiment_uid: str) -> str:
+        if experiment_uid is not None:
+            return self._experiments[experiment_uid].get_current_segment_uid()
+        return "No experiment"
+    
     def get_experiment_current_segment_id(self, experiment_uid: str) -> int:
         return self._experiments[experiment_uid].current_segment_id
+
+    def get_current_experiment_id(self) -> str:
+        return self._current_experiment_uid
 
     @property
     def views(self):
