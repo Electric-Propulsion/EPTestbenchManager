@@ -19,10 +19,6 @@ class Pumpdown(ExperimentSegment):
                 "start_time": None,
                 "end_time": None,
             },
-            "pressure": {
-                "header": ["time_s", "value_mbar"],
-                "data": []
-            },
             "termination":{
                 "reason": None
             }
@@ -48,7 +44,6 @@ class Pumpdown(ExperimentSegment):
                 
                 pressure = self.chamber_pressure.value
 
-                self.data["pressure"]["data"].append([time.time(), pressure])
                 print(f"{self.uid}: {pressure}")
                 
                 sleep_time = next_loop_time - time.perf_counter()

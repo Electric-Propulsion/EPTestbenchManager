@@ -46,7 +46,6 @@ class PollingVirtualInstrument(VirtualInstrument):
             next_poll_time = monotonic() + self._polling_interval / 1000
             if self._stop_event.is_set():
                 return  # Exit the thread
-            print("About to attempt getter function")
             try:
                 value = self._getter_function()
             except MeasurementError:

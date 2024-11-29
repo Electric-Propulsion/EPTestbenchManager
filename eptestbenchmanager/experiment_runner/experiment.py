@@ -67,11 +67,22 @@ class Experiment:
                     for element in segment._segment_view:
                         self.view.get_element(f"{self.uid}-updating-container").add_child(element)
                     segment.run()
+                    segment_end_time = time.perf_counter()
+
                     segment.postrun()
                     for element in segment._segment_view:
                         self.view.get_element(f"{self.uid}-updating-container").remove_child(element)
 
+                    if "termination" in segment.data and "reason" in segment.data["termination"] or segment.data["termination"]["reason"] is None:
+                        termination_reason = segment.data["termination"]["reason"]
+                    else:
+                        termination_reason = "Unknown Termination"
 
+                    self._testbench_manager.alert_manager.send_alert(
+                        f"Segment **{self.segments[self.current_segment_id].uid}** finished ({termination_reason}). Segment took {datetime.timedelta(seconds=segment_end_time-segment_start_time)}s.",
+                        severity = AlertSeverity.INFO,
+                        target = self.operator,
+                    )
                     print(segment.data)  # TODO: remove this
 
                 except AbortingSegmentFailure as e:
@@ -82,7 +93,7 @@ class Experiment:
 
                     self._testbench_manager.alert_manager.send_alert(
                         f"Experiment **{self.name}** has aborted at segment **{self.segments[self.current_segment_id].uid}**. Elapsed time: {datetime.timedelta(seconds=segment_start_time - self.start_time)}  (reason: {e})",
-                        severity=AlertSeverity.INFO,
+                        severity=AlertSeverity.CAUTION,
                         target=self.operator,
                     )
 
