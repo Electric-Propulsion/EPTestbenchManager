@@ -16,25 +16,25 @@ virtual_instruments:
     setter_arguments: []
     polling_interval: 200
 
-  gaussian_noise_1:
-    type: noise
-    name: Gaussian Noise 1
-    mean: 0
-    standard_deviation: 1
+  # gaussian_noise_1:
+  #   type: noise
+  #   name: Gaussian Noise 1
+  #   mean: 0
+  #   standard_deviation: 1
 
-  gaussian_noise_2:
-    type: noise
-    name: Gaussian Noise 2
-    mean: 0
-    standard_deviation: 1
+  # gaussian_noise_2:
+  #   type: noise
+  #   name: Gaussian Noise 2
+  #   mean: 0
+  #   standard_deviation: 1
   
-  noise_sum:
-    type: composite
-    name: Noise Sum
-    composition_function: sum
-    instruments:
-      - gaussian_noise_1
-      - gaussian_noise_2
+  # noise_sum:
+  #   type: composite
+  #   name: Noise Sum
+  #   composition_function: sum
+  #   instruments:
+  #     - gaussian_noise_1
+  #     - gaussian_noise_2
   
 
 

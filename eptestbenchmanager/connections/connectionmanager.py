@@ -61,8 +61,11 @@ class ConnectionManager:
             setattr(self, virtual_instrument.uid, virtual_instrument)
 
     def run(self):  # TODO: fix this? Make things more accessible?
+        print("********** RUNNING POLLS **********")
+        print(self._virtual_instruments.values())
         for instrument in self._virtual_instruments.values():
             if isinstance(instrument, PollingVirtualInstrument):
+                print(f"**** STARTING POLL {instrument.uid}")
                 instrument.start_poll()
 
     @property

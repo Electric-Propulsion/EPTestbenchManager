@@ -12,5 +12,7 @@ class ThresholdLastNValues:
     def update_evaluate(self, value: Union[int, float]):
         self._values[self._oldest_index] = value
         self._oldest_index = (self._oldest_index + 1) % self._n
-
-        return all(self._operator(float(value), float(self._threshold)) for value in self._values)
+        try:
+            return all(self._operator(float(value), float(self._threshold)) for value in self._values)
+        except TypeError:
+            return True

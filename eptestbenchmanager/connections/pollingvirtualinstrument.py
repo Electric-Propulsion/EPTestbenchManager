@@ -1,7 +1,7 @@
 from typing import Union
 from threading import Lock, Thread, Event
 from time import monotonic, sleep
-from epcomms.equipment.base.instrument import Instrument
+from epcomms.equipment.base.instrument import Instrument, MeasurementError
 from . import VirtualInstrument
 
 
@@ -46,7 +46,12 @@ class PollingVirtualInstrument(VirtualInstrument):
             next_poll_time = monotonic() + self._polling_interval / 1000
             if self._stop_event.is_set():
                 return  # Exit the thread
-            value = self._getter_function()
+            print("About to attempt getter function")
+            try:
+                value = self._getter_function()
+            except MeasurementError:
+                value = None
+            print(f"{self.uid}: {value}")
             self._set_value(value)
             sleep_time = next_poll_time - monotonic()
             if sleep_time > 0:

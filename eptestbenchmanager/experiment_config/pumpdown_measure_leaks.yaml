@@ -6,6 +6,7 @@ experiment:
 
 segments:
   pumpdown:
+    name: Pumpdown
     type: pumpdown
     setpoint_mbar: 1e-3
     timeout:
@@ -17,10 +18,11 @@ segments:
           record_id: pressure_total
     dashboard_elements:
       - vacuum_chamber_pressure:
-        - pressure_total-rolling-graph
-        - pressure_total-gauge
+        - vacuum_chamber_pressure-rolling-graph
+        - vacuum_chamber_pressure-gauge
   
   measure_leaks:
+    name: Measure Leaks
     type: measure_leaks
     timeout:
       minutes: 1
@@ -32,6 +34,6 @@ segments:
         record_id: pressure_total
     dashboard_elements:
       - vacuum_chamber_pressure:
-        - pressure_total-rolling-graph
-        - pressure_total-gauge
+        - vacuum_chamber_pressure-rolling-graph
+        - vacuum_chamber_pressure-gauge
 
