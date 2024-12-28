@@ -1,6 +1,5 @@
 import numpy as np
 from epcomms.equipment.base.instrument import Instrument
-from eptestbenchmanager.dashboard.elements import DashboardElement, Graph, Gauge
 from . import (
     VirtualInstrument,
     PollingVirtualInstrument,

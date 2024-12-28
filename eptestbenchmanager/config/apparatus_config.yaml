@@ -13,7 +13,6 @@ virtual_instruments:
     # type: polling
     # name: Vacuum Chamber Pressure
     # physical_instrument: vacuum_controller
-    # dashboard_element: None
     # getter_function: get_pressure_gauge_1
     # getter_arguments: []
     # setter_function: None

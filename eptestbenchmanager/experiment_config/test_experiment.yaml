@@ -12,9 +12,6 @@ segments: #TODO: swap uid and type
     recordings:
       - gaussian_noise_1:
           record_id: noise_total
-    dashboard_elements:
-      - gaussian_noise_1:
-        - gaussian_noise_1-rolling-graph
   wait_2:
     name: Wait 2
     type: wait
@@ -24,9 +21,6 @@ segments: #TODO: swap uid and type
           record_id: noise_total
       - gaussian_noise_1:
           record_id: noise_total
-    dashboard_elements:
-      - gaussian_noise_2:
-        - gaussian_noise_2-gauge
 
 
 

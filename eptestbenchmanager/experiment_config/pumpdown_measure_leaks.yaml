@@ -16,10 +16,6 @@ segments:
     recordings:
       - vacuum_chamber_pressure:
           record_id: pressure_total
-    dashboard_elements:
-      - vacuum_chamber_pressure:
-        - pressure_total-rolling-graph
-        - pressure_total-gauge
   
   measure_leaks:
     name: Measure Leaks
@@ -32,8 +28,4 @@ segments:
     recordings:
     - vacuum_chamber_pressure:
         record_id: pressure_total
-    dashboard_elements:
-      - vacuum_chamber_pressure:
-        - pressure_total-rolling-graph
-        - pressure_total-gauge
 

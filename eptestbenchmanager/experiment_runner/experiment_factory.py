@@ -1,8 +1,6 @@
 from io import StringIO
 from yaml import load, FullLoader
 from threading import Lock
-from eptestbenchmanager.dashboard import DashboardView
-from eptestbenchmanager.dashboard.elements import ExperimentStatus, UpdatingContainer
 from .experiment import Experiment
 from .experiment_segments import ExperimentSegment, Pumpdown, MeasureLeaks, Wait
 
@@ -35,17 +33,12 @@ class ExperimentFactory:
             )
             segments.append(segment)
 
-        view = DashboardView(uid, name, testbench_manager)
 
         experiment = Experiment(
-            uid, name, description, segments, view, experiment_lock, testbench_manager
+            uid, name, description, segments, experiment_lock, testbench_manager
         )
 
-        view.add_element(
-            ExperimentStatus(f"{uid}-status", name, testbench_manager, uid)
-        )
-        view.add_element(UpdatingContainer(f"{uid}-updating-container", name))
-        view.register_callbacks()
+        
 
         return experiment
 

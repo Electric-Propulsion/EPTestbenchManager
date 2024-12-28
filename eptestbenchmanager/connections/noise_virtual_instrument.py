@@ -1,5 +1,4 @@
 import numpy as np
-from eptestbenchmanager.dashboard.elements import Graph
 
 from . import PollingVirtualInstrument
 

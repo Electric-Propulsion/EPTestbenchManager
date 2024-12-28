@@ -8,7 +8,6 @@ from eptestbenchmanager.experiment_runner import ExperimentRunner
 from eptestbenchmanager.chat.alert_manager import DiscordAlertManager, AlertSeverity
 from eptestbenchmanager.chat.engine import DiscordEngine
 from eptestbenchmanager.chat.chat_manager import DiscordChatManager
-from eptestbenchmanager.dashboard import DashboardManager, get_home_view
 
 
 class TestbenchManager:
@@ -19,7 +18,6 @@ class TestbenchManager:
         self.communication_engine = DiscordEngine()
         self.alert_manager = DiscordAlertManager(self.communication_engine)
         self.chat_manager = DiscordChatManager(self.communication_engine, self)
-        self.dashboard_manager = DashboardManager(self)
         self.runner: ExperimentRunner = None
 
     def start_app(
@@ -69,10 +67,5 @@ class TestbenchManager:
                         ) as experiment_config_file:
                             self.runner.add_experiment(experiment_config_file)
 
-        self.dashboard_manager.run()
-        self.dashboard_manager.add_view(get_home_view(self))
-        for view in self.runner.views:
-            self.dashboard_manager.add_view(view)
-            #view.register_callbacks()
         while True:
             sleep(1)

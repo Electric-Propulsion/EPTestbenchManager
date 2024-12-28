@@ -1,6 +1,5 @@
 from threading import Thread, Lock
 import time, datetime
-from eptestbenchmanager.dashboard import DashboardView
 from eptestbenchmanager.chat.alert_manager import AlertSeverity
 from .experiment_segments.experiment_segment import (
     ExperimentSegment,
@@ -17,7 +16,6 @@ class Experiment:
         name: str,
         description: str,
         segments: list[ExperimentSegment],
-        view: DashboardView,
         experiment_lock: Lock,
         testbench_manager: "TestbenchManager",
     ):
@@ -25,7 +23,6 @@ class Experiment:
         self.name: str = name
         self.description: str = description
         self.segments: list[ExperimentSegment] = segments
-        self.view = view
         self.current_segment_id = -1
         self._experiment_lock: Lock() = experiment_lock
         self.operator: str = None
@@ -64,12 +61,8 @@ class Experiment:
                         target=self.operator,
                     )
                     segment.prerun()
-                    for element in segment._segment_view:
-                        self.view.get_element(f"{self.uid}-updating-container").add_child(element)
                     segment.run()
                     segment.postrun()
-                    for element in segment._segment_view:
-                        self.view.get_element(f"{self.uid}-updating-container").remove_child(element)
 
 
                     print(segment.data)  # TODO: remove this

@@ -19,7 +19,6 @@ class ExperimentSegment(ABC):
         self.data = None
         self.configure(config)
         self._recordings = config["recordings"] if "recordings" in config else []
-        self._dashboard_elements = config["dashboard_elements"] if "dashboard_elements" in config else []
         self._segment_view = []
 
     @abstractmethod
@@ -63,20 +62,9 @@ class ExperimentSegment(ABC):
             vinstrument = self._testbench_manager.connection_manager.virtual_instruments[vinstrument_id]
             vinstrument.stop_recording(record_id)
 
-    def add_dashboard_elements(self):
-        for vinstrument_data in self._dashboard_elements:
-            vinstrument_id = list(vinstrument_data.keys())[0]
-            if vinstrument_id not in self._testbench_manager.connection_manager.virtual_instruments:
-                raise ValueError(f"Virtual instrument {vinstrument_id} not found in testbench manager.")
-            vinstrument = self._testbench_manager.connection_manager.virtual_instruments[vinstrument_id]
-
-            for element in vinstrument_data[vinstrument_id]:
-                print(vinstrument.dashboard_elements)
-                self._segment_view.append(vinstrument.dashboard_elements[element])
 
     def prerun(self):
         self.start_recordings()
-        self.add_dashboard_elements()
 
     def postrun(self):
         self.stop_recordings()

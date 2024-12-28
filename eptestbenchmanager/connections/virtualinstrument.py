@@ -3,7 +3,6 @@ from threading import Lock
 from abc import ABC, abstractmethod
 from functools import partial
 from epcomms.equipment.base.instrument import Instrument
-from eptestbenchmanager.dashboard.elements import DashboardElement, Graph, Gauge
 from eptestbenchmanager.recording import Recording
 
 
@@ -34,9 +33,7 @@ class VirtualInstrument(ABC):
         self._experiment_manager = experiment_manager
         self.uid = uid
         self.name = name
-        self.dashboard_elements = {}
 
-        # self.dashboard_element = dashboard_element
         self._value: Union[str, int, float, bool, None] = None
         self._lock = Lock()
 
@@ -46,34 +43,8 @@ class VirtualInstrument(ABC):
             self.uid,
             max_samples=rolling_storage_size, rolling=True
         )
-        # TODO: it would be nice if recordings other than rolling storage could be seen during experiments
-        self.add_dashboard_elements( # all virtual instruments by default have a rolling graph and a gauge dashboard elements, corresponding to the rolling storage and the current value of the virtual instrument
-            [
-                Graph(
-                    f"{uid}-rolling-graph",
-                    f"{self.name} (Last {rolling_storage_size} Samples)",
-                    lambda: self.rolling_storage,
-                ),
-                Gauge(
-                    f"{uid}-gauge",
-                    self.name,
-                    lambda: self.value,
-                )
-            ]
-            )
         self._rolling_storage.start_recording()
         self._recordings: dict[str, Recording] = {}
-
-    def add_dashboard_elements(
-        self, dashboard_element: Union[DashboardElement, list[DashboardElement]]
-    ):
-        if isinstance(dashboard_element, list):
-            for element in dashboard_element:
-                self.dashboard_elements[element.uid] = element
-                print(f"{element.uid} added tp {self.uid} as a dashboard element")
-        else:
-            self.dashboard_elements[dashboard_element.uid] = dashboard_element
-            print(f"{dashboard_element.uid} added tp {self.uid} as a dashboard element")
         
 
     @property
@@ -142,13 +113,7 @@ class VirtualInstrument(ABC):
         print(f"Beginning recording {record_id}")
         self._recordings[record_id] = Recording(self._experiment_manager, record_id, self.uid, max_samples, stored_samples, max_time)
         self._recordings[record_id].start_recording()
-        self.add_dashboard_elements(
-            Graph(
-                f"{self.uid}-{record_id}-graph",
-                f"{self.name}: {record_id}",
-                partial(self.get_recording, record_id)
-            )
-        )
+
 
     def recording_exists(self, record_id) -> bool:
         """

@@ -16,7 +16,6 @@ class PollingVirtualInstrument(VirtualInstrument):
         setter_function: Union[callable, None],  # We assume this is threadsafe
         getter_function: Union[callable, None],  # We assume this is threadsafe
         polling_interval: int,  # in milliseconds
-        # dashboard_element: Union[DashboardElement, None], #TODO: Implement DashboardElement #pylint: disable=fixme
     ):
         super().__init__(experiment_manager, uid, name)
         self._physical_instrument = physical_instrument
