@@ -24,7 +24,7 @@ body {
 }
 
 .unit {
-    top: -6px; /* Slightly higher to intersect and mask the border */
+    bottom: -7.5%; /* Slightly higher to intersect and mask the border */
     left: 50%;
     transform: translateX(-50%);
     font-size: 0.8rem;
@@ -45,7 +45,7 @@ body {
 }
 
 .name {
-    bottom: -6px; /* Slightly lower to intersect and mask the border */
+    top: -7.5%; /* Slightly lower to intersect and mask the border */
     left: 50%;
     transform: translateX(-50%);
     font-size: 0.8rem;
