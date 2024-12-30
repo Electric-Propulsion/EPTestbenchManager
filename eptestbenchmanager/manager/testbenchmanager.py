@@ -8,6 +8,7 @@ from eptestbenchmanager.experiment_runner import ExperimentRunner
 from eptestbenchmanager.chat.alert_manager import DiscordAlertManager, AlertSeverity
 from eptestbenchmanager.chat.engine import DiscordEngine
 from eptestbenchmanager.chat.chat_manager import DiscordChatManager
+from eptestbenchmanager.dashboard import DashboardManager
 
 
 class TestbenchManager:
@@ -66,6 +67,11 @@ class TestbenchManager:
                             path.join(dirpath, filename), "r", encoding="utf-8"
                         ) as experiment_config_file:
                             self.runner.add_experiment(experiment_config_file)
+
+        # Start the dashboard
+        self.dashboard = DashboardManager(self)
+        self.dashboard.configure()
+        self.dashboard.run()
 
         while True:
             sleep(1)
