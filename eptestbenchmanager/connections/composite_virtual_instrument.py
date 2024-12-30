@@ -10,8 +10,9 @@ class CompositeVirtualInstrument(VirtualInstrument):
         name: str,
         composition_function: callable,
         instruments: list[VirtualInstrument],
+        unit: str = None,
     ) -> None:
-        super().__init__(testbench_manager, experiment_manager, uid, name)
+        super().__init__(testbench_manager, experiment_manager, uid, name, unit)
         self._instruments = instruments
         self._composition_function = composition_function
 

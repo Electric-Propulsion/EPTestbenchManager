@@ -6,7 +6,7 @@ class DigitalGauge(CurrentValueElement):
         <div id="{self.uid}" class="digital-gauge">
             <h2>{self.name}</h2>
             <h1 class="value"></h1>
-            <p class="unit"></p>
+            <p class="unit">{self.unit}</p>
         </div>
         """
     
@@ -15,6 +15,5 @@ class DigitalGauge(CurrentValueElement):
         var {self.uid}_socket = io('{self.namespace}');
         {self.uid}_socket.on('update', function(data) {{
             document.getElementById('{self.uid}').getElementsByClassName('value')[0].innerText = data.value;
-            document.getElementById('{self.uid}').getElementsByClassName('unit')[0].innerText = data.unit;
         }});
         """

@@ -31,12 +31,14 @@ class VirtualInstrument(ABC):
         experiment_manager,
         uid: str,
         name: str,
+        unit: str = None,
         rolling_storage_size: int = 250,
     ):
         self._experiment_manager = experiment_manager
         self.testbench_manager = testbench_manager
         self.uid = uid
         self.name = name
+        self.unit = unit
 
         self._value: Union[str, int, float, bool, None] = None
         self._lock = Lock()
@@ -51,7 +53,7 @@ class VirtualInstrument(ABC):
         self._recordings: dict[str, Recording] = {}
 
         # Attach the UI elements
-        self._gauge = self.testbench_manager.dashboard.create_element(DigitalGauge, (self.uid, self.name))
+        self._gauge = self.testbench_manager.dashboard.create_element(DigitalGauge, (self.uid, self.name, self.unit))
         
 
     @property
@@ -114,7 +116,7 @@ class VirtualInstrument(ABC):
             if recording.active:
                 recording.add_sample(value)
         try:
-            self._gauge.set_value(value, 'units')
+            self._gauge.set_value(value)
         except RuntimeError as e:
             print(f"Error updating gauge for {self.name}: {e}") #expected until the dashboard is up and running
 

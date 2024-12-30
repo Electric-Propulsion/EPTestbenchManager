@@ -10,6 +10,7 @@ virtual_instruments:
     name: Vacuum Chamber Pressure
     mean: 1
     standard_deviation: 1
+    unit: mbar
     # type: polling
     # name: Vacuum Chamber Pressure
     # physical_instrument: vacuum_controller

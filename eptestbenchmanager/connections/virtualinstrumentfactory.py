@@ -66,6 +66,8 @@ class VirtualInstrumentFactory:
             else None
         )
 
+
+
         return PollingVirtualInstrument(
             testbench_manager,
             experiment_manager,
@@ -75,6 +77,7 @@ class VirtualInstrumentFactory:
             setter_function=setter_function,
             getter_function=getter_function,
             polling_interval=config["polling_interval"],
+            unit = config.get("unit", None)
         )
 
     @classmethod
@@ -94,6 +97,7 @@ class VirtualInstrumentFactory:
             name=config["name"],
             mean=config["mean"],
             standard_deviation=config["standard_deviation"],
+            unit = config.get("unit", None)
         )
         return instrument
 
@@ -128,6 +132,7 @@ class VirtualInstrumentFactory:
             name=config["name"],
             composition_function=composition_function,
             instruments=instruments,
+            unit = config.get("unit", None)
         )
 
     @classmethod
