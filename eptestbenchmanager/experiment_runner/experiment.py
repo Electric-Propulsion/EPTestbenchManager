@@ -53,6 +53,13 @@ class Experiment:
                 segment_start_time = time.perf_counter()
                 self.current_segment_id += 1
 
+
+                # Update the appropriate virtual instruments
+                self._testbench_manager.connection_manager.virtual_instruments["experiment_current_segment_id"].set_value(self.current_segment_id)
+                self._testbench_manager.connection_manager.virtual_instruments["experiment_current_segment_uid"].set_value(segment.uid)
+                self._testbench_manager.connection_manager.virtual_instruments["experiment_current_segment_name"].set_value(segment.name)
+
+
                 try:
 
                     self._testbench_manager.alert_manager.send_alert(
@@ -96,6 +103,7 @@ class Experiment:
                 severity=AlertSeverity.INFO,
                 target=self.operator,
             )
+
 
             # Reset the operator
             self.operator = None

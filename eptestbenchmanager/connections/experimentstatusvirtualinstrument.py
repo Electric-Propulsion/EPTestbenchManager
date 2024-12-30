@@ -1,4 +1,5 @@
 from . import VirtualInstrument
 
 class ExperimentStatusVirtualInstrument(VirtualInstrument):
-    pass
+    def command(self, command):
+        raise NotImplementedError("ExperimentStatusVirtualInstrument does not support commands")

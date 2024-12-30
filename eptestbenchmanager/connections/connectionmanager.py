@@ -4,7 +4,7 @@ from yaml import load, FullLoader
 from typing import Union
 import epcomms.equipment
 import sys
-from . import VirtualInstrumentFactory, PollingVirtualInstrument
+from . import VirtualInstrumentFactory, PollingVirtualInstrument, ExperimentStatusVirtualInstrument
 
 
 class ConnectionManager:
@@ -60,6 +60,15 @@ class ConnectionManager:
 
         for virtual_instrument in self._virtual_instruments.values():
             setattr(self, virtual_instrument.uid, virtual_instrument)
+
+
+        # Virtual instruments that inform about experiment status are hard-coded; they are not defined in the config file
+        self._virtual_instruments["experiment_current_segment_id"] = ExperimentStatusVirtualInstrument(
+            self._testbench_manager, "experiment_current_segment_id", "Current Experiment Segment ID")
+        self._virtual_instruments["experiment_current_segment_uid"] = ExperimentStatusVirtualInstrument(
+            self._testbench_manager, "experiment_current_segment_uid", "Current Experiment Segment UID")
+        self._virtual_instruments["experiment_current_segment_name"] = ExperimentStatusVirtualInstrument(
+            self._testbench_manager, "experiment_current_segment_name", "Current Experiment Segment Name")
 
     def run(self):  # TODO: fix this? Make things more accessible?
         for instrument in self._virtual_instruments.values():

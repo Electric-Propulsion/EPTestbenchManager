@@ -14,12 +14,19 @@ class MainPage(DashboardPage):
             </head>
             <body>
                 <h1>Dashboard</h1>
+
                 <div id="dashboard">
                     {self.render_components_html(self.components)}
                 </div>
                 <script>
                     {self.render_components_js(self.components)}
                 </script>
+
+                <div id="experiment-control">
+                    <h1>Experiment Control</h1>
+                    <button id="start-experiment">Start Experiment</button>
+                    <button id="abort-experiment">Abort Experiment</button>
+                </div>
             </body>
         </html>
         """
