@@ -44,7 +44,7 @@ class TestbenchManager:
         self.runner = ExperimentRunner(self)
 
 
-        self.connection_manager = ConnectionManager(self, self.runner, apparatus_config_file_path)
+        self.connection_manager = ConnectionManager(self, apparatus_config_file_path)
 
         # Configure the chat stuff
         self.chat_manager.configure()

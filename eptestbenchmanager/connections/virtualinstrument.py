@@ -28,13 +28,12 @@ class VirtualInstrument(ABC):
     def __init__(  # pylint: disable=too-many-arguments #(This is built by a factory)
         self,
         testbench_manager,
-        experiment_manager,
         uid: str,
         name: str,
         unit: str = None,
         rolling_storage_size: int = 250,
     ):
-        self._experiment_manager = experiment_manager
+        self._experiment_manager = testbench_manager.runner
         self.testbench_manager = testbench_manager
         self.uid = uid
         self.name = name
@@ -101,7 +100,6 @@ class VirtualInstrument(ABC):
         return record
 
     def _set_value(self, value: Union[str, int, float, bool]) -> None:
-        print(f"Instrument {self.name} setting value to {value}")
         self._lock.acquire()
 
         self._value = value
