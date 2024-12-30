@@ -2,6 +2,8 @@ from flask import Flask, render_template
 from flask_socketio import SocketIO, emit, Namespace
 from threading import Thread
 
+from .pages import MainPage
+
 class DashboardManager:
      def __init__(self, testbench_manager: "TestbenchManager"):
           self.testbench_manager = testbench_manager
@@ -14,8 +16,13 @@ class DashboardManager:
           # Set up all the pages, i.e. the routes
           @self.app.route('/')
           def index():
-               return f"Hello, World!"
+               page = MainPage(self.app, self.socketio, self.testbench_manager)
+               return page.render()
 
+     def create_element(self, element_class: 'DashboardElement', args):
+          print(args)
+          element_object = element_class(*args, **{'socketio': self.socketio})
+          return element_object
 
 
      def run(self):

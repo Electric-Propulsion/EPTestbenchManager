@@ -13,6 +13,7 @@ class VirtualInstrumentFactory:
     @classmethod
     def create_instrument(
         cls,
+        testbench_manager,
         experiment_manager,
         physical_instruments: list[Instrument],
         virtual_instruments: list[VirtualInstrument],
@@ -28,20 +29,20 @@ class VirtualInstrumentFactory:
         """
         match config["type"]:
             case "polling":
-                return cls._create_polling_instrument(experiment_manager, physical_instruments, uid, config)
+                return cls._create_polling_instrument(testbench_manager, experiment_manager, physical_instruments, uid, config)
             case "noise":
-                return cls._create_noise_instrument(experiment_manager, uid, config)
+                return cls._create_noise_instrument(testbench_manager, experiment_manager, uid, config)
             case "composite":
                 print(virtual_instruments)
                 return cls._create_composite_instrument(
-                    experiment_manager, virtual_instruments, uid, config
+                    testbench_manager, experiment_manager, virtual_instruments, uid, config
                 )
             case _:
                 raise ValueError(f"Invalid virtual instrument type: {config['type']}")
 
     @classmethod
     def _create_polling_instrument(
-        cls, experiment_manager, physical_instruments: list[Instrument], uid: str, config: dict
+        cls, testbench_manager, experiment_manager, physical_instruments: list[Instrument], uid: str, config: dict
     ) -> PollingVirtualInstrument:
         """
         Create a polling virtual instrument from a configuration dictionary.
@@ -66,6 +67,7 @@ class VirtualInstrumentFactory:
         )
 
         return PollingVirtualInstrument(
+            testbench_manager,
             experiment_manager,
             uid=uid,
             name=config["name"],
@@ -76,7 +78,7 @@ class VirtualInstrumentFactory:
         )
 
     @classmethod
-    def _create_noise_instrument(cls, experiment_manager, uid: str, config: dict) -> NoiseVirtualInstrument:
+    def _create_noise_instrument(cls, testbench_manager, experiment_manager, uid: str, config: dict) -> NoiseVirtualInstrument:
         """
         Create a noise virtual instrument from a configuration dictionary.
         Args:
@@ -86,6 +88,7 @@ class VirtualInstrumentFactory:
         """
         print("creating noise")
         instrument = NoiseVirtualInstrument(
+            testbench_manager,
             experiment_manager,
             uid=uid,
             name=config["name"],
@@ -96,7 +99,7 @@ class VirtualInstrumentFactory:
 
     @classmethod
     def _create_composite_instrument(
-        cls, experiment_manager, virtual_instruments: list[Instrument], uid: str, config: dict
+        cls, testbench_manager, experiment_manager, virtual_instruments: list[Instrument], uid: str, config: dict
     ) -> CompositeVirtualInstrument:
         """
         Create a composite virtual instrument from a configuration dictionary.
@@ -119,6 +122,7 @@ class VirtualInstrumentFactory:
         )
 
         return CompositeVirtualInstrument(
+            testbench_manager,
             experiment_manager,
             uid=uid,
             name=config["name"],

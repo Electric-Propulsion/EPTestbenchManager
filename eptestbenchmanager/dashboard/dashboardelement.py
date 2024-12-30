@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from flask_socketio import SocketIO
 
 class DashboardElement(ABC):
-    def __init__(self, uid: str, socketio: SocketIO):
+    def __init__(self, uid: str, socketio: SocketIO = None):
         self.uid = uid
         self.socketio = socketio
 

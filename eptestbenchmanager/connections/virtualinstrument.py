@@ -5,6 +5,8 @@ from functools import partial
 from epcomms.equipment.base.instrument import Instrument
 from eptestbenchmanager.recording import Recording
 
+from eptestbenchmanager.dashboard.elements import DigitalGauge
+
 
 class VirtualInstrument(ABC):
     """
@@ -25,12 +27,14 @@ class VirtualInstrument(ABC):
 
     def __init__(  # pylint: disable=too-many-arguments #(This is built by a factory)
         self,
+        testbench_manager,
         experiment_manager,
         uid: str,
         name: str,
         rolling_storage_size: int = 250,
     ):
         self._experiment_manager = experiment_manager
+        self.testbench_manager = testbench_manager
         self.uid = uid
         self.name = name
 
@@ -45,6 +49,9 @@ class VirtualInstrument(ABC):
         )
         self._rolling_storage.start_recording()
         self._recordings: dict[str, Recording] = {}
+
+        # Attach the UI elements
+        self._gauge = self.testbench_manager.dashboard.create_element(DigitalGauge, (self.uid, self.name))
         
 
     @property
@@ -92,9 +99,12 @@ class VirtualInstrument(ABC):
         return record
 
     def _set_value(self, value: Union[str, int, float, bool]) -> None:
+        print(f"Instrument {self.name} setting value to {value}")
         self._lock.acquire()
 
         self._value = value
+
+        self._lock.release()
 
         # Update the rolling storage (which should always be active)
         self._rolling_storage.add_sample(value)
@@ -103,8 +113,10 @@ class VirtualInstrument(ABC):
         for recording in self._recordings.values():
             if recording.active:
                 recording.add_sample(value)
-
-        self._lock.release()
+        try:
+            self._gauge.set_value(value, 'units')
+        except RuntimeError as e:
+            print(f"Error updating gauge for {self.name}: {e}") #expected until the dashboard is up and running
 
     def begin_recording(self, record_id, max_samples=None, stored_samples = 250, max_time=None) -> None:
         """

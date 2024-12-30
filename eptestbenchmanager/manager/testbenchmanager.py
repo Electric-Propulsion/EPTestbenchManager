@@ -27,6 +27,9 @@ class TestbenchManager:
         delay_experiment_load: bool = False,
         discord_guild: str = "Festus's bot test server",
     ):
+        
+        self.dashboard = DashboardManager(self)
+
 
         # Initialize the connection manager
         if not delay_apparatus_load:
@@ -41,7 +44,7 @@ class TestbenchManager:
         self.runner = ExperimentRunner(self)
 
 
-        self.connection_manager = ConnectionManager(self.runner, apparatus_config_file_path)
+        self.connection_manager = ConnectionManager(self, self.runner, apparatus_config_file_path)
 
         # Configure the chat stuff
         self.chat_manager.configure()
@@ -69,7 +72,6 @@ class TestbenchManager:
                             self.runner.add_experiment(experiment_config_file)
 
         # Start the dashboard
-        self.dashboard = DashboardManager(self)
         self.dashboard.configure()
         self.dashboard.run()
 

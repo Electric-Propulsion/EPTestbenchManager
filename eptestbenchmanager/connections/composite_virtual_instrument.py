@@ -4,13 +4,14 @@ from . import VirtualInstrument
 class CompositeVirtualInstrument(VirtualInstrument):
     def __init__(
         self,
+        testbench_manager,
         experiment_manager,
         uid: str,
         name: str,
         composition_function: callable,
         instruments: list[VirtualInstrument],
     ) -> None:
-        super().__init__(experiment_manager, uid, name)
+        super().__init__(testbench_manager, experiment_manager, uid, name)
         self._instruments = instruments
         self._composition_function = composition_function
 

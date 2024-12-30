@@ -4,6 +4,7 @@ class DigitalGauge(CurrentValueElement):
     def render_html(self):
         return f"""
         <div id="{self.uid}" class="digital-gauge">
+            <h2>{self.name}</h2>
             <h1 class="value"></h1>
             <p class="unit"></p>
         </div>

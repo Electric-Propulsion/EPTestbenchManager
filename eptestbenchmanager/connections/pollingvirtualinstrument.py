@@ -9,6 +9,7 @@ class PollingVirtualInstrument(VirtualInstrument):
 
     def __init__(  # pylint: disable=too-many-arguments #(This is built by a factory)
         self,
+        testbench_manager,
         experiment_manager,
         uid: str,
         name: str,
@@ -17,7 +18,7 @@ class PollingVirtualInstrument(VirtualInstrument):
         getter_function: Union[callable, None],  # We assume this is threadsafe
         polling_interval: int,  # in milliseconds
     ):
-        super().__init__(experiment_manager, uid, name)
+        super().__init__(testbench_manager, experiment_manager, uid, name)
         self._physical_instrument = physical_instrument
         self._setter_function = setter_function
         self._getter_function = getter_function

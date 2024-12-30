@@ -1,8 +1,7 @@
 from ..dashboardelement import DashboardElement
-from abc import ABC, abstractmethod
-from flask_socketio import emit, Namespace
+from flask_socketio import emit, Namespace, SocketIO
 
-class CurrentValueElement(DashboardElement, ABC):
+class CurrentValueElement(DashboardElement):
     class CurrentValueNamespace(Namespace):
         def on_connect(self):
             print("Client connected to CurrentValueNamespace")
@@ -12,8 +11,8 @@ class CurrentValueElement(DashboardElement, ABC):
             super().__init__(namespace)
             self.element = element
 
-    def __init__(self, uid: str, name: str):
-        super(DashboardElement, self).__init__(uid)
+    def __init__(self, uid: str, name: str, socketio: SocketIO = None):
+        super().__init__(uid, socketio)
         self.name = name
         self.value = None
         self.unit = None
@@ -28,7 +27,7 @@ class CurrentValueElement(DashboardElement, ABC):
         self.unit = unit
 
         # Derived classes must have client-side JS that listens for the 'update' event
-        emit('update', {'value': self.value, 'unit': self.unit}, namespace=self.namespace)
+        self.socketio.emit('update', {'value': self.value, 'unit': self.unit}, namespace=self.namespace)
 
     
 

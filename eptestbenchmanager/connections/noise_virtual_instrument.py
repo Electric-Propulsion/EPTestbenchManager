@@ -6,6 +6,7 @@ from . import PollingVirtualInstrument
 class NoiseVirtualInstrument(PollingVirtualInstrument):
     def __init__(
         self,
+        testbench_manager,
         experiment_manager,
         uid: str,
         name: str,
@@ -16,7 +17,7 @@ class NoiseVirtualInstrument(PollingVirtualInstrument):
         self._mean = mean
         self._standard_deviation = standard_deviation
         getter_function = lambda: np.random.normal(self._mean, self._standard_deviation)
-        super().__init__(experiment_manager, uid, name, None, None, getter_function, 1000)
+        super().__init__(testbench_manager, experiment_manager, uid, name, None, None, getter_function, 1000)
 
     def command(self, command: float) -> None:
         super().command(command)
