@@ -18,20 +18,18 @@ class MainPage(DashboardPage):
             </head>
             <body>
                 <h1>Dashboard</h1>
+                <div id="experiment_control_segment">
+                    {self.experiment_control.render_html()}
+                </div>
+                <script>
+                    {self.experiment_control.render_js()}
+                </script>
                 <div id="dashboard">
                     {self.render_components_html(self.components)}
                 </div>
                 <script>
                     {self.render_components_js(self.components)}
                 </script>
-                <div id="experiment_control">
-                    {self.experiment_control.render_html()}
-                </div>
-
-                <script>
-                    {self.experiment_control.render_js()}
-                </script>
-
             </body>
         </html>
         """
