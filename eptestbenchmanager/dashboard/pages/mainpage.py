@@ -5,8 +5,10 @@ class MainPage(DashboardPage):
         super().__init__(app, socketio, "/")
         vints =  testbench_manager.connection_manager._virtual_instruments.values()
         self.components = [vint._gauge for vint in vints]
+        self.experiment_control = testbench_manager.dashboard.experiment_control
     def render(self):
         return f"""
+        <!DOCTYPE html>
         <html>
             <head>
                 <title>Dashboard</title>
@@ -22,11 +24,14 @@ class MainPage(DashboardPage):
                     {self.render_components_js(self.components)}
                 </script>
 
-                <div id="experiment-control">
-                    <h1>Experiment Control</h1>
-                    <button id="start-experiment">Start Experiment</button>
-                    <button id="abort-experiment">Abort Experiment</button>
+                <div id="experiment_control">
+                    {self.experiment_control.render_html()}
                 </div>
+
+                <script>
+                    {self.experiment_control.render_js()}
+                </script>
+
             </body>
         </html>
         """
