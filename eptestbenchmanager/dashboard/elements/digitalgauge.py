@@ -1,19 +1,18 @@
+from flask import render_template
 from . import CurrentValueElement
 
 class DigitalGauge(CurrentValueElement):
     def render_html(self):
-        return f"""
-        <div id="{self.uid}" class="digital-gauge">
-            <h2>{self.name}</h2>
-            <h1 class="value"></h1>
-            <p class="unit">{self.unit}</p>
-        </div>
-        """
+        data = {
+            "uid": self.uid,
+            "name": self.name,
+            "unit": self.unit,
+        }
+        return render_template("elements/digital_gauge.html", data=data)
     
     def render_js(self):
-        return f"""
-        var {self.uid}_socket = io('{self.namespace}');
-        {self.uid}_socket.on('update', function(data) {{
-            document.getElementById('{self.uid}').getElementsByClassName('value')[0].innerText = data.value;
-        }});
-        """
+        data = {
+            "namespace": self.namespace,
+            "uid": self.uid
+        }
+        return render_template("elements/digital_gauge.js", data=data)

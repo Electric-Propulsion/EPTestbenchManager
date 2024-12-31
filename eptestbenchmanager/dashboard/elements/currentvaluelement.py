@@ -4,7 +4,7 @@ from flask_socketio import emit, Namespace, SocketIO
 class CurrentValueElement(DashboardElement):
     class CurrentValueNamespace(Namespace):
         def on_connect(self):
-            print("Client connected to CurrentValueNamespace")
+            print(f"Client connected to CurrentValueNamespace {self.element.namespace}")
             emit('update', {'value': self.element.value, 'unit': self.element.unit}, namespace=self.element.namespace)
 
         def __init__(self, namespace, element):

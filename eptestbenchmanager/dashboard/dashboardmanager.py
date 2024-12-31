@@ -8,7 +8,7 @@ from .elements import ExperimentControl
 class DashboardManager:
      def __init__(self, testbench_manager: "TestbenchManager"):
           self.testbench_manager = testbench_manager
-          self.app = Flask('eptestbenchmanager', template_folder='dashboard/assets/templates', static_folder='dashboard/static')
+          self.app = Flask('eptestbenchmanager', static_folder='dashboard/assets/static', template_folder='dashboard/assets/templates')
           self.socketio = SocketIO(self.app)
           self.app.config["SECRET_KEY"] = 'testkey!' #TODO: change me!
 

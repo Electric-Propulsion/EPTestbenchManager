@@ -37,7 +37,10 @@ class ExperimentControl(DashboardElement):
         @self.socketio.on('start_experiment', namespace=self.namespace)
         def start_experiment(data):
             print(f"experiment starting with {data}")
-            self.experiment_runner.run_experiment(data['experiment_uid'], data['operator']) 
+            try:
+                self.experiment_runner.run_experiment(data['experiment_uid'], data['operator']) 
+            except Exception as e:
+                print(f"Error starting experiment: {e}")
 
         @self.socketio.on('stop_experiment', namespace=self.namespace)
         def stop_experiment(data):

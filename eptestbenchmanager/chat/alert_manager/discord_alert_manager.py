@@ -11,12 +11,16 @@ class DiscordAlertManager(AlertManager):
         target: Union[str, list[str], None] = None,
     ) -> None:
         if target is not None:
-            if isinstance(target, str):
-                target_str = f"<@{self._engine._user_ids[target]}>"
-            else:
-                target_str = " ".join(
-                    [f"<@{self._engine._user_ids[user]}>" for user in target]
-                )
+            try:
+                if isinstance(target, str):
+                    target_str = f"<@{self._engine._user_ids[target]}>"
+                else:
+                    target_str = " ".join(
+                        [f"<@{self._engine._user_ids[user]}>" for user in target]
+                    )
+            except KeyError:
+                print(f"Failed to send alert to {target} (not in known users).")
+                target_str = ""
         else:
             target_str = ""
 
