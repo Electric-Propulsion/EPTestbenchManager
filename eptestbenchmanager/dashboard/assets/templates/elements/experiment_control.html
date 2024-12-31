@@ -12,5 +12,6 @@
         {% endfor %}
     </select>
     <button onclick="start_experiment()" id="{{ data.uid }}_start_button">Start</button>
-    <button id="{{ data.uid }}_stop_button">Stop</button>
+    <button disabled id="{{ data.uid }}_cancel">Request End</button>
+    <button disabled id="{{ data.uid }}_estop">E-Stop</button>
 </div>

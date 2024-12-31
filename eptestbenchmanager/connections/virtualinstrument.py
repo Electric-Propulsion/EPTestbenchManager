@@ -42,6 +42,8 @@ class VirtualInstrument(ABC):
         self._value: Union[str, int, float, bool, None] = None
         self._lock = Lock()
 
+        self._dependant_composites: list["CompositeVirtualInstrument"] = []
+
         self._rolling_storage = Recording(
             self._experiment_manager,
             f"{self.name}_rolling_storage",
@@ -54,6 +56,7 @@ class VirtualInstrument(ABC):
         # Attach the UI elements
         self._gauge = self.testbench_manager.dashboard.create_element(DigitalGauge, (self.uid, self.name, self.unit))
         
+
 
     @property
     def value(self) -> Union[str, int, float, bool]:
@@ -106,6 +109,11 @@ class VirtualInstrument(ABC):
 
         self._lock.release()
 
+        # Update any dependant composite virtual instruments
+        for composite in self._dependant_composites:
+            composite.update_semaphore.release()
+        
+
         # Update the rolling storage (which should always be active)
         self._rolling_storage.add_sample(value)
 
@@ -147,6 +155,12 @@ class VirtualInstrument(ABC):
         """
         print(f"Stopping recording {record_id}")
         self._recordings[record_id].stop_recording()
+
+    def register_dependant_composite(self, composite: "CompositeVirtualInstrument") -> None:
+        """
+        Register a composite virtual instrument as a dependant of this virtual instrument.
+        """
+        self._dependant_composites.append(composite)
 
     @abstractmethod
     def command(self, command: Union[str, int, float, bool]) -> None:

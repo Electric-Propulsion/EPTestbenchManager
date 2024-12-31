@@ -4,7 +4,7 @@ from yaml import load, FullLoader
 from typing import Union
 import epcomms.equipment
 import sys
-from . import VirtualInstrumentFactory, PollingVirtualInstrument, ExperimentStatusVirtualInstrument
+from . import VirtualInstrumentFactory, PollingVirtualInstrument, ExperimentStatusVirtualInstrument, CompositeVirtualInstrument
 
 
 class ConnectionManager:
@@ -74,6 +74,8 @@ class ConnectionManager:
         for instrument in self._virtual_instruments.values():
             if isinstance(instrument, PollingVirtualInstrument):
                 instrument.start_poll()
+            if isinstance(instrument, CompositeVirtualInstrument):
+                instrument.start_updating()
 
     @property
     def virtual_instruments(self):
