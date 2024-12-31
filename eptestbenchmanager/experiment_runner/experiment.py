@@ -27,8 +27,12 @@ class Experiment:
         self._experiment_lock: Lock() = experiment_lock
         self.operator: str = None
         self._testbench_manager = testbench_manager
+        self.run_id: str = None # Not defined until the first run
+        for segment in self.segments: # Inject the experiment into the segments
+            segment.inject_experiment(self)
 
     def run(self, operator: str) -> None:
+        self.run_id = f"{self.uid}_{time.strftime('%Y%m%d_%H%M%S')}"
         self.operator = operator
         self._runner_thread = Thread(
             target=self.run_segments, name=f"{self.uid} Runner Thread", daemon=False
@@ -38,9 +42,10 @@ class Experiment:
     def run_segments(self) -> None:
 
         self.start_time = time.perf_counter()
+        
 
         self._testbench_manager.alert_manager.send_alert(
-            f"Starting experiment **{self.name}**. ({len(self.segments)} segments)",
+            f"Starting experiment **{self.name}**. ({len(self.segments)} segments)\nRun ID: {self.run_id}",
             severity=AlertSeverity.INFO,
             target=self.operator,
         )

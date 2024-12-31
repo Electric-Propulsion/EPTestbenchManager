@@ -20,6 +20,10 @@ class ExperimentSegment(ABC):
         self.configure(config)
         self._recordings = config["recordings"] if "recordings" in config else []
         self._segment_view = []
+        self.experiment = None
+
+    def inject_experiment(self, experiment):
+        self.experiment = experiment
 
     @abstractmethod
     def configure(self, config: dict):
@@ -41,7 +45,7 @@ class ExperimentSegment(ABC):
         #breakpoint()
         for vinstrument_data in self._recordings:
             vinstrument_id = list(vinstrument_data.keys())[0]
-            record_id = vinstrument_data[vinstrument_id]["record_id"]
+            record_id = self.generate_full_record_ID(vinstrument_data[vinstrument_id]["record_id"])
             if vinstrument_id not in self._testbench_manager.connection_manager.virtual_instruments:
                 raise ValueError(f"Virtual instrument {vinstrument_id} not found in testbench manager.")
             
@@ -55,7 +59,7 @@ class ExperimentSegment(ABC):
     def stop_recordings(self):
         for vinstrument_data in self._recordings:
             vinstrument_id = list(vinstrument_data.keys())[0]
-            record_id = vinstrument_data[vinstrument_id]["record_id"]
+            record_id = self.generate_full_record_ID(vinstrument_data[vinstrument_id]["record_id"])
             if vinstrument_id not in self._testbench_manager.connection_manager.virtual_instruments:
                 raise ValueError(f"Virtual instrument {vinstrument_id} not found in testbench manager.")
             
@@ -68,3 +72,6 @@ class ExperimentSegment(ABC):
 
     def postrun(self):
         self.stop_recordings()
+
+    def generate_full_record_ID(self, record_id: str):
+        return f"{record_id}_{self.experiment.run_id}"

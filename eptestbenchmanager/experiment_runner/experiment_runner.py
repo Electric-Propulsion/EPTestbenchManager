@@ -45,7 +45,10 @@ class ExperimentRunner:
 
     def get_current_experiment_id(self) -> str:
         return self._current_experiment_uid
-    
+
+    def get_current_experiment_run_id(self) -> str:
+        return self._experiments[self._current_experiment_uid].run_id
+
     @property
     def experiments(self) -> dict[str, Experiment]:
         return self._experiments.keys()
