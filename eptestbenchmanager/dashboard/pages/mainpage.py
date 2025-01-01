@@ -1,4 +1,5 @@
 from ..dashboardpage import DashboardPage
+from ..elements import ArchiveDownload
 
 class MainPage(DashboardPage):
     def __init__(self, app, socketio, testbench_manager):
@@ -6,6 +7,7 @@ class MainPage(DashboardPage):
         vints =  testbench_manager.connection_manager._virtual_instruments.values()
         self.components = [vint._gauge for vint in vints]
         self.experiment_control = testbench_manager.dashboard.experiment_control
+        self.archive_download = ArchiveDownload("archive_download", testbench_manager, socketio)
     def render(self):
         return f"""
         <!DOCTYPE html>
@@ -24,11 +26,20 @@ class MainPage(DashboardPage):
                 <script>
                     {self.experiment_control.render_js()}
                 </script>
+
                 <div id="dashboard">
                     {self.render_components_html(self.components)}
                 </div>
                 <script>
                     {self.render_components_js(self.components)}
+                </script>
+
+
+                <div id="archive_download_segment">
+                    {self.archive_download.render_html()}
+                </div>
+                <script>
+                    {self.archive_download.render_js()}
                 </script>
             </body>
         </html>

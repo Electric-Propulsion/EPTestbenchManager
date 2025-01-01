@@ -136,7 +136,7 @@ class Experiment:
             return "no segment"
         
     def compress_log_file_dir(self, run_ID: str, output_name_root) -> Path:
-        log_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "logs") # what a terrific line of code.
+        log_dir = os.path.join(Path(os.path.abspath(__package__)).parent, "eptestbenchmanager", "logs") # what a terrific line of code.
         for_archive_dir = os.path.join(log_dir, run_ID)
         output_zip_file_path = os.path.join(log_dir, "archives", f"{output_name_root}.zip")
         os.makedirs(os.path.dirname(output_zip_file_path), exist_ok=True)

@@ -1,6 +1,8 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, send_from_directory
 from flask_socketio import SocketIO, emit, Namespace
 from threading import Thread
+import os
+from pathlib import Path
 
 from .pages import MainPage
 from .elements import ExperimentControl
@@ -19,6 +21,15 @@ class DashboardManager:
           def index():
                page = MainPage(self.app, self.socketio, self.testbench_manager)
                return page.render()
+          
+          @self.app.route('/archive/<archive>')
+          def download_archive(archive):
+               archive_dir = os.path.join(Path(os.path.abspath(__package__)).parent, "eptestbenchmanager", "logs", "archives") # what a terrific line of code.
+               print(f"downloading archive {archive}")
+               try:
+                    return send_from_directory(archive_dir, f"{archive}")
+               except Exception as e:
+                    print(f"Error starting experiment: {e}")
           
           # set up the experiment control elements
           self.experiment_control = self.create_element(ExperimentControl, args=['experiment_control', self.testbench_manager])
