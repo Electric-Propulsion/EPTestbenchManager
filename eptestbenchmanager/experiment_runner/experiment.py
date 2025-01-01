@@ -106,12 +106,17 @@ class Experiment:
 
             end_time = time.perf_counter()
 
-            self.compress_log_file_dir(self.run_id, self.run_id)
+            log_archive_path = self.compress_log_file_dir(self.run_id, self.run_id)
 
             self._testbench_manager.alert_manager.send_alert(
                 f"Experiment **{self.name}** has completed. Completed in {datetime.timedelta(seconds=end_time - self.start_time)}.",
                 severity=AlertSeverity.INFO,
                 target=self.operator,
+            )
+
+            self._testbench_manager.alert_manager.send_file(
+                file_path=log_archive_path,
+                severity=AlertSeverity.INFO,
             )
 
 

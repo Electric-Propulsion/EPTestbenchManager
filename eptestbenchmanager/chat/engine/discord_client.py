@@ -28,3 +28,10 @@ class DiscordClient(discord.Client):
             await channel.send(message)
         except Exception as e:
             print(f"Error sending message: {e}")
+
+    async def send_file(self, file_path: str, channel: int) -> None:
+        try:
+            channel = self.get_channel(channel)
+            await channel.send(file=discord.File(file_path))
+        except Exception as e:
+            print(f"Error sending file: {e}")

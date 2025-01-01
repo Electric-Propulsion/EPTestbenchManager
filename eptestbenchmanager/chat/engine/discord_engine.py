@@ -28,6 +28,11 @@ class DiscordEngine(CommunicationEngine):
             self._client.send_message(message, self._channel_ids[channel]), self._loop
         )
 
+    def send_file(self, file_path: str, channel: str) -> None:
+        asyncio.run_coroutine_threadsafe(
+            self._client.send_file(file_path, self._channel_ids[channel]), self._loop
+        )
+
     def run(self) -> None:
         self._client_thread = Thread(
             target=self._run_client, name="Discord Client Thread", daemon=True
