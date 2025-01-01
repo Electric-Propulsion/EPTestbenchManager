@@ -26,9 +26,13 @@ class CompositeVirtualInstrument(VirtualInstrument):
     def _updating_loop(self) -> None:
         while True:
             self.update_semaphore.acquire()
-            new_value = self._composition_function(
-            [instrument.value for instrument in self._instruments]
-            )
+            try:
+                new_value = self._composition_function(
+                    [instrument.value for instrument in self._instruments]
+                    )
+            except TypeError as e:
+                print(f"Error in composition function for {self.name}: {e}")
+                new_value = None
             self._set_value(new_value)
             
     def start_updating(self) -> None:
