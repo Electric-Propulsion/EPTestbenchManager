@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
-from threading import Thread, Lock
+from threading import Thread
+from os import path
+
 
 from eptestbenchmanager.monitor import Rule
 
@@ -74,4 +76,4 @@ class ExperimentSegment(ABC):
         self.stop_recordings()
 
     def generate_full_record_ID(self, record_id: str):
-        return f"{record_id}_{self.experiment.run_id}"
+        return path.join(self.experiment.run_id,record_id)

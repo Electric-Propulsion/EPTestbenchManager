@@ -73,6 +73,7 @@ class Recording:
             )  # this is the only time we use monotonic here, otherwise we care about the actual time
         self._recording = True
         if not self._rolling:
+            os.makedirs(os.path.dirname(self._file_id), exist_ok=True)
             self._file = open(self._file_id, mode="a", newline="")
             self._csv_writer = csv.writer(self._file, lineterminator='\n' )
             if self._file.tell() == 0:
