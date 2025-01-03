@@ -19,7 +19,8 @@ h1 {
     justify-content: center;
 }
 
-.experiment_control_box {
+.experiment_control_box, .archive_dl_box {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -33,12 +34,24 @@ h1 {
     gap: 20px;
 }
 
+.archive_dl_box_name, .experiment_control_box_name {
+    position: absolute;
+    top: -7.5px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #111111;
+    padding: 0 15px;
+    font-size: 0.8rem;
+    line-height: 1;
+    z-index: 2;
+}
+
 .digital-gauge {
     text-align: center;
     border: 3px solid #dadada;
     border-radius: 15px;
     padding: 10px;
-    max-width: 200px;
+    max-width: 300px;
     position: relative;
     background-color: #111111;
     color: #dadada;

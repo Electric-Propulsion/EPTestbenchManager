@@ -106,7 +106,7 @@ class Experiment:
 
             end_time = time.perf_counter()
 
-            log_archive_path = self.compress_log_file_dir(self.run_id, self.run_id)
+            log_archive_path = self._testbench_manager.report_manager.create_archive(self.run_id, self.run_id)
 
             self._testbench_manager.alert_manager.send_alert(
                 f"Experiment **{self.name}** has completed. Completed in {datetime.timedelta(seconds=end_time - self.start_time)}.",
@@ -134,24 +134,6 @@ class Experiment:
             return self.segments[self.current_segment_id].uid
         except IndexError:
             return "no segment"
-        
-    def compress_log_file_dir(self, run_ID: str, output_name_root) -> Path:
-        log_dir = os.path.join(Path(os.path.abspath(__package__)).parent, "eptestbenchmanager", "logs") # what a terrific line of code.
-        for_archive_dir = os.path.join(log_dir, run_ID)
-        output_zip_file_path = os.path.join(log_dir, "archives", f"{output_name_root}.zip")
-        os.makedirs(os.path.dirname(output_zip_file_path), exist_ok=True)
-        print(f" Compressing log file directory: {for_archive_dir}")
-
-        with zipfile.ZipFile(output_zip_file_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
-            for root, dirs, files in os.walk(for_archive_dir):
-                for file in files:
-                    file_path = os.path.join(root, file)
-                    print(file_path)
-                    # Add file to zip, preserving the directory structure
-                    arcname = os.path.relpath(file_path, for_archive_dir)
-                    zipf.write(file_path, arcname)
-        print(f"Directory {for_archive_dir} compressed into {output_zip_file_path}")
-        return output_zip_file_path
 
 
     @property

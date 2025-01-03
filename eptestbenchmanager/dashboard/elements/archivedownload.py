@@ -6,18 +6,16 @@ from pathlib import Path
 from ..dashboardelement import DashboardElement
 
 class ArchiveDownload(DashboardElement):
-    def __init__(self, uid: str, testbench_manager: "TestbenchManager", socketio = None):
+    def __init__(self, uid: str, testbench_manager: "TestbenchManager", report_manager = 'ReportManager', socketio = None):
         super().__init__(uid, socketio)
         self.name = "Archive Download"
-        self.archive_dir = os.path.join(Path(os.path.abspath(__package__)).parent, "eptestbenchmanager", "logs", "archives") # what a terrific line of code.
-        self.archives = [Path(archive).stem for archive in os.listdir(self.archive_dir)]
-        print(self.archives)
+        self._report_manager = report_manager
         self.namespace = f"/{uid}"
         self.socketio.on_namespace(Namespace(self.namespace))
 
     def render_html(self):
         data = {
-            "archives": self.archives,
+            "archives": self._report_manager.archives,
             "uid": self.uid
         }
         value =  render_template("elements/archive_download.html", data=data)
@@ -29,3 +27,6 @@ class ArchiveDownload(DashboardElement):
             "uid": self.uid
         }
         return render_template("elements/archive_download.js", data=data)
+    
+    def update_archives(self):
+        self.socketio.emit("update", {"archives": self._report_manager.archives}, namespace=self.namespace)

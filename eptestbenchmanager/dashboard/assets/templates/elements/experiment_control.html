@@ -1,4 +1,5 @@
 <div id="{{ data.uid }}" class="experiment_control_box">
+    <div class="experiment_control_box_name">Experiment Control</div>
     <label for="{{ data.uid }}_experiment_selector">Select Experiment:</label>
     <select id="{{ data.uid }}_experiment_selector" name="experiments">
         {% for experiment in data.experiments %}

@@ -22,6 +22,7 @@ class DashboardManager:
                page = MainPage(self.app, self.socketio, self.testbench_manager)
                return page.render()
           
+          # Special routes for downloading files
           @self.app.route('/archive/<archive>')
           def download_archive(archive):
                archive_dir = os.path.join(Path(os.path.abspath(__package__)).parent, "eptestbenchmanager", "logs", "archives") # what a terrific line of code.

@@ -9,6 +9,7 @@ from eptestbenchmanager.chat.alert_manager import DiscordAlertManager, AlertSeve
 from eptestbenchmanager.chat.engine import DiscordEngine
 from eptestbenchmanager.chat.chat_manager import DiscordChatManager
 from eptestbenchmanager.dashboard import DashboardManager
+from eptestbenchmanager.report import ReportManager
 
 
 class TestbenchManager:
@@ -56,7 +57,8 @@ class TestbenchManager:
         sleep(2.5)  # just give it a little time to start up
         self.communication_engine.configure({"guild": discord_guild})
 
-
+        # Initialize the report manager
+        self.report_manager = ReportManager(self)
 
         if not delay_experiment_load:
             # Load all the experiments in /experiment_config
