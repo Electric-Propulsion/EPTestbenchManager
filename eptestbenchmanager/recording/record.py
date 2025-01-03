@@ -16,9 +16,7 @@ class Record:
     ):
         self._values = values
         self._times = times
-        self._relative = (
-            relative  # Relative to whenever the all or display property is called
-        )
+        self._relative = relative  # Relative to whenever the all or display property is called
         self._length = len(values)
         self._t0 = t0
 

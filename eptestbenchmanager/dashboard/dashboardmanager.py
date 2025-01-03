@@ -4,7 +4,7 @@ from threading import Thread
 import os
 from pathlib import Path
 
-from .pages import MainPage
+from .pages import MainPage, InstrumentDetail
 from .elements import ExperimentControl
 
 class DashboardManager:
@@ -16,11 +16,21 @@ class DashboardManager:
 
      
      def configure(self):
-          # Set up all the pages, i.e. the routes
+          # Main page route
           @self.app.route('/')
           def index():
-               page = MainPage(self.app, self.socketio, self.testbench_manager)
+               page = self.create_page(MainPage, [self.testbench_manager])
                return page.render()
+          
+          # Instrument detail page routes
+          vints =  self.testbench_manager.connection_manager._virtual_instruments.values()
+          for vint in vints:
+               def make_instrument_detail(vint):
+                    @self.app.route(f'/instrument/{vint.uid}', endpoint=f'instrument_detail_{vint.uid}')
+                    def instrument_detail():
+                         return vint._detail_page.render()
+               make_instrument_detail(vint)
+
           
           # Special routes for downloading files
           @self.app.route('/archive/<archive>')
@@ -39,6 +49,10 @@ class DashboardManager:
           print(args)
           element_object = element_class(*args, **{'socketio': self.socketio})
           return element_object
+     
+     def create_page(self, page_class: 'DashboardPage', args):
+          page_object = page_class(*args, **{'socketio': self.socketio, 'app': self.app})
+          return page_object
 
 
      def run(self):

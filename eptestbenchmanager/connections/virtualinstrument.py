@@ -6,6 +6,7 @@ from epcomms.equipment.base.instrument import Instrument
 from eptestbenchmanager.recording import Recording
 
 from eptestbenchmanager.dashboard.elements import DigitalGauge
+from eptestbenchmanager.dashboard.pages import InstrumentDetail
 
 
 class VirtualInstrument(ABC):
@@ -45,7 +46,7 @@ class VirtualInstrument(ABC):
         self._dependant_composites: list["CompositeVirtualInstrument"] = []
 
         self._rolling_storage = Recording(
-            self._experiment_manager,
+            self.testbench_manager,
             f"{self.name}_rolling_storage",
             self.uid,
             max_samples=rolling_storage_size, rolling=True
@@ -55,8 +56,7 @@ class VirtualInstrument(ABC):
 
         # Attach the UI elements
         self._gauge = self.testbench_manager.dashboard.create_element(DigitalGauge, (self.uid, self.name, self.unit))
-        
-
+        self._detail_page = self.testbench_manager.dashboard.create_page(InstrumentDetail, (self, self.testbench_manager))
 
     @property
     def value(self) -> Union[str, int, float, bool]:
@@ -131,8 +131,9 @@ class VirtualInstrument(ABC):
         Begin a new named recording.
         """
         print(f"Beginning recording {record_id}")
-        self._recordings[record_id] = Recording(self._experiment_manager, record_id, self.uid, max_samples, stored_samples, max_time)
+        self._recordings[record_id] = Recording(self.testbench_manager, record_id, self.uid, max_samples, stored_samples, max_time)
         self._recordings[record_id].start_recording()
+        self._detail_page.update_graphs()
 
 
     def recording_exists(self, record_id) -> bool:

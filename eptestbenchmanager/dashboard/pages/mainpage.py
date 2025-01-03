@@ -2,7 +2,7 @@ from ..dashboardpage import DashboardPage
 from ..elements import ArchiveDownload
 
 class MainPage(DashboardPage):
-    def __init__(self, app, socketio, testbench_manager):
+    def __init__(self, testbench_manager, app, socketio):
         super().__init__(app, socketio, "/")
         vints =  testbench_manager.connection_manager._virtual_instruments.values()
         self.components = [vint._gauge for vint in vints]

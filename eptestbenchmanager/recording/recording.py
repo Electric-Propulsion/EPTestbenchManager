@@ -4,6 +4,7 @@ import os
 import atexit
 from typing import Union
 from . import Record
+from eptestbenchmanager.dashboard.elements import RecordingGraph
 
 
 class Recording:
@@ -13,7 +14,7 @@ class Recording:
 
     def __init__(
         self,
-        experiment_manager,
+        testbench_manager, # experiment_manager
         record_id: str,
         instrument_uid: str,
         max_samples=None,
@@ -22,7 +23,8 @@ class Recording:
         rolling=False,
         t0=None, # optional t_0 parameter for displaying based off of a set start time
     ):
-        self.experiment_manager = experiment_manager
+        self.testbench_manager = testbench_manager
+        self.experiment_manager = testbench_manager.runner
         self.max_samples = max_samples
         self._stored_samples = stored_samples
         self.max_time = max_time_s
@@ -45,6 +47,7 @@ class Recording:
         os.makedirs(self.log_dir, exist_ok=True)
         self._file_id = f"{self.log_dir}/{self.record_id}_{self.instrument_uid}_{time.strftime('%Y%m%d_%H%M%S')}.csv"
 
+        self.graph = self.testbench_manager.dashboard.create_element(RecordingGraph, (self.record_id, self))
 
 
     @property
@@ -58,13 +61,21 @@ class Recording:
         return self._recording
 
     @property
-    def record(self):
+    def record(self): # TODO: for deletion
         return Record(
             self._samples,
             self._times,
             self._using_relative_time,
             self._t0,
         )
+    
+    @property
+    def samples(self):
+        return self._samples
+    
+    @property
+    def times(self):
+        return self._times
 
     def start_recording(self):
         if self._start_time is None:
@@ -101,14 +112,12 @@ class Recording:
                 print("File closed - should fix this")
 
         if self._sample_count <= self._stored_samples:
-            self._samples.append(sample)
-            self._times.append(timestamp)
+            self._append_sample(sample, timestamp)
         else:
             if self._rolling:
                 self._samples.pop(0)
                 self._times.pop(0)
-                self._samples.append(sample)
-                self._times.append(timestamp)
+                self._append_sample(sample, timestamp)
             else: 
                 self._sample_average = (self._sample_average * self._sample_average_count + sample) / (
                                 self._sample_average_count + 1)                
@@ -121,8 +130,7 @@ class Recording:
 
                 if self._sample_average_count == self._sample_averaging_level:
                     self._sample_average_count = 0
-                    self._samples.append(self._sample_average)
-                    self._times.append(self._time_average)
+                    self._append_sample(self._sample_average, self._time_average)
                 if len(self._samples) > 2*self._stored_samples:
                     for i in range(0, len(self._samples)-1, 2):
                         self._samples[i] = (self._samples[i] + self._samples[i + 1]) / 2
@@ -138,3 +146,9 @@ class Recording:
     def close_record_file(self):
         self._file.flush()
         self._file.close()
+
+
+    def _append_sample(self, sample, timestamp):
+        self._samples.append(sample)
+        self._times.append(timestamp)
+        self.graph.append_point(timestamp, sample)

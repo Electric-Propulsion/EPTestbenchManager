@@ -9,7 +9,7 @@ class DashboardPage(ABC):
         self.route = route
 
 
-    def configure(self):
+    def configure(self): # either delete this or start using this
         @self.app.route(self.route)
         def page_content(self):
             return self.render()
