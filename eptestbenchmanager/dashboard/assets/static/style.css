@@ -55,6 +55,8 @@ h1 {
     position: relative;
     background-color: #111111;
     color: #dadada;
+    display: block;
+    text-decoration: none;
 }
 
 .dg_name {
