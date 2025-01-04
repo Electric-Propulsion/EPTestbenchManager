@@ -47,7 +47,7 @@ class VirtualInstrument(ABC):
 
         self._rolling_storage = Recording(
             self.testbench_manager,
-            f"{self.uid}_rolling_storage",
+            "rolling_storage",
             self.uid,
             max_samples=rolling_storage_size, rolling=True
         )
@@ -126,12 +126,12 @@ class VirtualInstrument(ABC):
         except RuntimeError as e:
             print(f"Error updating gauge for {self.name}: {e}") #expected until the dashboard is up and running
 
-    def begin_recording(self, record_id, max_samples=None, stored_samples = 250, max_time=None) -> None:
+    def begin_recording(self, record_id, file_id, max_samples=None, stored_samples = 250, max_time=None) -> None:
         """
         Begin a new named recording.
         """
         print(f"Beginning recording {record_id}")
-        self._recordings[record_id] = Recording(self.testbench_manager, record_id, self.uid, max_samples, stored_samples, max_time)
+        self._recordings[record_id] = Recording(self.testbench_manager, record_id, self.uid, max_samples, stored_samples, max_time, file_id=file_id)
         self._recordings[record_id].start_recording()
         self._detail_page.update_graphs()
 

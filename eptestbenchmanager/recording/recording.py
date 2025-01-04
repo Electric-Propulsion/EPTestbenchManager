@@ -22,6 +22,7 @@ class Recording:
         max_time_s=None,
         rolling=False,
         t0=None, # optional t_0 parameter for displaying based off of a set start time
+        file_id: str = None
     ):
         self.testbench_manager = testbench_manager
         self.experiment_manager = testbench_manager.runner
@@ -42,12 +43,14 @@ class Recording:
         self._recording = False
         self._using_relative_time = self._rolling
         self.record_id = record_id
+        self.file_id = file_id
+        self.uid = f"{instrument_uid}_{record_id}"
         self.instrument_uid = instrument_uid
         self.log_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "logs") # what a terrific line of code.
         os.makedirs(self.log_dir, exist_ok=True)
-        self._file_id = f"{self.log_dir}/{self.record_id}_{self.instrument_uid}_{time.strftime('%Y%m%d_%H%M%S')}.csv"
+        self._file_id = f"{self.log_dir}/{self.file_id}_{self.instrument_uid}_{time.strftime('%Y%m%d_%H%M%S')}.csv"
 
-        self.graph = self.testbench_manager.dashboard.create_element(RecordingGraph, (self.record_id, self))
+        self.graph = self.testbench_manager.dashboard.create_element(RecordingGraph, (self.uid, self))
 
 
     @property
