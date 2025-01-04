@@ -26,6 +26,7 @@ class InstrumentDetail(DashboardPage):
                 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.min.js"></script>
             </head>
             <body>
+                <a href="/" class="home_link">‹</a>
                 <h1>Instrument Detail</h1>
                 <div id="rolling_graph_segment">
                     {self.rolling_graph.render_html()}

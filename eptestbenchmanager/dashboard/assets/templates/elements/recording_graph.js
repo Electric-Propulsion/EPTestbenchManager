@@ -8,11 +8,23 @@ var {{ data.uid }}_data = [{
 var {{ data.uid }}_layout = {
     title: '{{ data.uid }} Graph',
     xaxis: {
-        title: 'horizontal axis'
+        title: 'horizontal axis',
+        color: '#dadada',
+        gridcolor: '#333333',
+        zeroLineColor: '#dadada',
     },
     yaxis: {
-        title: 'vertical axis'
+        title: 'vertical axis',
+        color: '#dadada',
+        gridcolor: '#333333',
+        zeroLineColor: '#dadada',
+    },
+    paper_bgcolor: '#111111',
+    plot_bgcolor: '#111111',
+    font: {
+        color: '#dadada'
     }
+
 };
 
 

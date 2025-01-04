@@ -91,5 +91,18 @@ h1 {
     text-overflow: "";
 }
 
+.home_link {
+    position: fixed;
+    top: 0px;
+    left: 15px;
+    font-size: 52px;
+    text-decoration: none;
+    color: #dadada;
+}
+
+.home_link:hover {
+    color: gray; /* Optional hover effect */
+}
+
 
 
