@@ -3,3 +3,4 @@ from .digitalgauge import DigitalGauge
 from .experimentcontrol import ExperimentControl
 from .archivedownload import ArchiveDownload
 from .recordinggraph import RecordingGraph
+from .reload import Reload

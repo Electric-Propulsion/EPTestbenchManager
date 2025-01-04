@@ -7,6 +7,7 @@ class DigitalGauge(CurrentValueElement):
             "uid": self.uid,
             "name": self.name,
             "unit": self.unit,
+            "link": self.link
         }
         return render_template("elements/digital_gauge.html", data=data)
     

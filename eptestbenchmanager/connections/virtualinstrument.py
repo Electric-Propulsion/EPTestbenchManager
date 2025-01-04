@@ -47,7 +47,7 @@ class VirtualInstrument(ABC):
 
         self._rolling_storage = Recording(
             self.testbench_manager,
-            f"{self.name}_rolling_storage",
+            f"{self.uid}_rolling_storage",
             self.uid,
             max_samples=rolling_storage_size, rolling=True
         )
@@ -55,7 +55,7 @@ class VirtualInstrument(ABC):
         self._recordings: dict[str, Recording] = {}
 
         # Attach the UI elements
-        self._gauge = self.testbench_manager.dashboard.create_element(DigitalGauge, (self.uid, self.name, self.unit))
+        self._gauge = self.testbench_manager.dashboard.create_element(DigitalGauge, (self.uid, self.name, self.uid, self.unit))
         self._detail_page = self.testbench_manager.dashboard.create_page(InstrumentDetail, (self, self.testbench_manager))
 
     @property

@@ -8,14 +8,14 @@ segments: #TODO: swap uid and type
   wait_1:
     name: Wait 1
     type: wait
-    seconds: 1
+    seconds: 30
     recordings:
       - gaussian_noise_1:
           record_id: noise_total
   wait_2:
     name: Wait 2
     type: wait
-    seconds: 1
+    seconds: 30
     recordings:
       - gaussian_noise_2:
           record_id: noise_total

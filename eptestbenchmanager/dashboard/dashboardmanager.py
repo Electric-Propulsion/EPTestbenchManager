@@ -11,7 +11,7 @@ class DashboardManager:
      def __init__(self, testbench_manager: "TestbenchManager"):
           self.testbench_manager = testbench_manager
           self.app = Flask('eptestbenchmanager', static_folder='dashboard/assets/static', template_folder='dashboard/assets/templates')
-          self.socketio = SocketIO(self.app)
+          self.socketio = SocketIO(self.app, cors_allowed_origins="*")
           self.app.config["SECRET_KEY"] = 'testkey!' #TODO: change me!
 
      
@@ -57,4 +57,4 @@ class DashboardManager:
 
      def run(self):
           print("Starting dashboard - this will block the main thread")
-          self.socketio.run(self.app)
+          self.socketio.run(self.app, host='0.0.0.0')

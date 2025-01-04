@@ -11,10 +11,12 @@ class CurrentValueElement(DashboardElement):
             super().__init__(namespace)
             self.element = element
 
-    def __init__(self, uid: str, name: str, unit: str = None, socketio: SocketIO = None,):
+    def __init__(self, uid: str, name: str, linked_instrument_uid: str = None, unit: str = None, socketio: SocketIO = None,):
         super().__init__(uid, socketio)
         self.name = name
         self.value = None
+        print(f"Linked instrument UID: {linked_instrument_uid}")
+        self.link = f"/instrument/{linked_instrument_uid}" if linked_instrument_uid else None
         self.unit = unit
 
         self.namespace = f"/{uid}"

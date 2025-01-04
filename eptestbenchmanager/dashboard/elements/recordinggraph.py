@@ -6,9 +6,7 @@ class RecordingGraph(DashboardElement):
     class RecordingGraphNamespace(Namespace):
         def on_connect(self):
             print(f"New client connected to GraphNamespace {self.element.namespace}")
-            h_axis_data = self.element.recording.times
-            v_axis_data = self.element.recording.samples
-            self.element.update(h_axis_data, v_axis_data)
+            self.element.update()
 
         def __init__(self, namespace, element):
             super().__init__(namespace)
@@ -33,10 +31,15 @@ class RecordingGraph(DashboardElement):
             "namespace": self.namespace,
             "uid": self.uid
         }
+        print(data)
         return render_template("elements/recording_graph.js", data=data)
     
     def append_point(self, h_axis_datapoint, v_axis_datapoint):
         self.socketio.emit("append_point", {"h_axis_datapoint": h_axis_datapoint, "v_axis_datapoint": v_axis_datapoint}, namespace=self.namespace)
 
-    def update(self, h_axis_data, v_axis_data):
+    def update(self):
+        h_axis_data = self.recording.times
+        v_axis_data = self.recording.samples
         self.socketio.emit("update", {"h_axis_data": h_axis_data, "v_axis_data": v_axis_data}, namespace=self.namespace)
+
+    
