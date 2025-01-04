@@ -7,14 +7,15 @@ class InstrumentDetail(DashboardPage):
         super().__init__(app, socketio,f'/instrument/{virtual_instrument.uid}')
         self.testbench_manager = testbench_manager
         self.virtual_instrument = virtual_instrument
+        self.instrument_name = virtual_instrument.name
         self.graphs = []
         self.rolling_graph = virtual_instrument._rolling_storage.graph
         self.reload = Reload('reload', self.socketio)
+        self.gauge = virtual_instrument._gauge
         self.update_graphs()
 
     
     def render(self):
-        print("Rendering Instrument Detail")
         return f"""
         <!DOCTYPE html>
         <html>
@@ -27,7 +28,13 @@ class InstrumentDetail(DashboardPage):
             </head>
             <body>
                 <a href="/" class="home_link">‹</a>
-                <h1>Instrument Detail</h1>
+                <h1>{self.instrument_name} Detail</h1>
+                <div id="gauge_segment" style="display: flex; justify-content: center;">
+                    {self.gauge.render_html()}
+                </div>
+                <script>
+                    {self.gauge.render_js()}
+                </script>
                 <div id="rolling_graph_segment">
                     {self.rolling_graph.render_html()}
                 </div>
