@@ -23,10 +23,18 @@ var {{ data.uid }}_layout = {
 });
 
 {{ data.uid }}_socket.on('append_point', function(data) {
-    Plotly.extendTraces({{ data.uid }}_element, {
+    if ('{{ data.rolling }}' == 'True') {
+        Plotly.extendTraces({{ data.uid }}_element, {
         x: [[data.h_axis_datapoint]],
         y: [[data.v_axis_datapoint]]
-    }, [0]);
+    }, [0], {{ data.max_points }});
+    } else {
+            
+        Plotly.extendTraces({{ data.uid }}_element, {
+            x: [[data.h_axis_datapoint]],
+            y: [[data.v_axis_datapoint]]
+        }, [0]);
+    }
 });
 
 

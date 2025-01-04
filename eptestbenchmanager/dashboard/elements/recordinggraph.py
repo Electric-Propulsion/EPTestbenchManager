@@ -17,6 +17,7 @@ class RecordingGraph(DashboardElement):
         super().__init__(uid, socketio)
         self.recording = recording
         self._rolling = self.recording._rolling
+        self._max_points = self.recording._stored_samples if self._rolling else 0
         self.namespace = f"/{uid}"
         self.socketio.on_namespace(self.RecordingGraphNamespace(self.namespace, self))
 
@@ -29,7 +30,9 @@ class RecordingGraph(DashboardElement):
     def render_js(self):
         data = {
             "namespace": self.namespace,
-            "uid": self.uid
+            "uid": self.uid,
+            "rolling": self._rolling,
+            "max_points": self._max_points
         }
         print(data)
         return render_template("elements/recording_graph.js", data=data)
