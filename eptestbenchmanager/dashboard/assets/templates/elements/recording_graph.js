@@ -6,15 +6,15 @@ var {{ data.uid }}_data = [{
     mode: 'lines+markers'
 }];
 var {{ data.uid }}_layout = {
-    title: '{{ data.uid }} Graph',
+    title: '{{ data.name }} Graph',
     xaxis: {
-        title: 'horizontal axis',
+        title: 'Time (s)',
         color: '#dadada',
         gridcolor: '#333333',
         zeroLineColor: '#dadada',
     },
     yaxis: {
-        title: 'vertical axis',
+        title: '{{data.measurement_name}} ({{ data.measurement_unit }})',
         color: '#dadada',
         gridcolor: '#333333',
         zeroLineColor: '#dadada',

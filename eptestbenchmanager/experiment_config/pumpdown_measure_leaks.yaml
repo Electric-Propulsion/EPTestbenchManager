@@ -15,7 +15,8 @@ segments:
     time_resolution_s: 1
     recordings:
       - vacuum_chamber_pressure:
-          record_id: pressure_total
+          record_id: all_segments
+          name: All Segments
   
   measure_leaks:
     name: Measure Leaks
@@ -27,5 +28,4 @@ segments:
     time_resolution_s: 30
     recordings:
     - vacuum_chamber_pressure:
-        record_id: pressure_total
-
+        record_id: all_segments

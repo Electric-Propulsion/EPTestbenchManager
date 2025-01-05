@@ -1,4 +1,5 @@
 import time
+from datetime import timedelta
 import csv
 import os
 import atexit
@@ -16,7 +17,8 @@ class Recording:
         self,
         testbench_manager, # experiment_manager
         record_id: str,
-        instrument_uid: str,
+        record_name: str,
+        virtual_instrument: "VirtualInstrument",
         max_samples=None,
         stored_samples=250, #picked at random
         max_time_s=None,
@@ -25,6 +27,7 @@ class Recording:
         file_id: str = None
     ):
         self.testbench_manager = testbench_manager
+        self.virtual_instrument = virtual_instrument
         self.experiment_manager = testbench_manager.runner
         self.max_samples = max_samples
         self._stored_samples = stored_samples
@@ -34,6 +37,7 @@ class Recording:
         self._start_time = None
         self._samples = []
         self._times = []
+        self._display_times = []
         self._sample_count = 0
         self._sample_averaging_level = 1
         self._sample_average = 0
@@ -44,8 +48,9 @@ class Recording:
         self._using_relative_time = self._rolling
         self.record_id = record_id
         self.file_id = file_id
-        self.uid = f"{instrument_uid}_{record_id}"
-        self.instrument_uid = instrument_uid
+        self.instrument_uid = virtual_instrument.uid
+        self.uid = f"{self.instrument_uid}_{record_id}"
+        self.name = f"{self.virtual_instrument.name} {record_name}"
         self.log_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "logs") # what a terrific line of code.
         os.makedirs(self.log_dir, exist_ok=True)
         self._file_id = f"{self.log_dir}/{self.file_id}_{self.instrument_uid}_{time.strftime('%Y%m%d_%H%M%S')}.csv"
@@ -150,8 +155,41 @@ class Recording:
         self._file.flush()
         self._file.close()
 
+    def _format_relative_time(self, timestamp: float) -> str:
+        delta = time.time() - timestamp
+        delta_td = timedelta(seconds=delta)
+        days = delta_td.days
+        hours, minutes, seconds = (
+            delta_td.seconds // 3600,
+            (delta_td.seconds // 60) % 60,
+            delta_td.seconds % 60,
+        )
+        millis = delta_td.microseconds // 1000
+        if days > 0:
+            return f"T-{days} days, {hours:02}:{minutes:02}:{seconds:02}.{millis:03}"
+        else:
+            return f"T-{hours:02}:{minutes:02}:{seconds:02}.{millis:03}"
+
+    def _format_absolute_time(self, timestamp: float, t0: float) -> str:
+        abs_time = timestamp - t0
+        days, hours, minutes, seconds, millis = (
+            abs_time // 86400,
+            abs_time // 3600,
+            (abs_time // 60) % 60,
+            abs_time % 60,
+            (abs_time * 1000) % 1000,
+        )
+        if days > 0:
+            return f"T+{days:.0f} days, {hours:02.0f}:{minutes:02.0f}:{seconds:02.0f}.{millis:03.0f}"
+        else:
+            return f"T+{hours:02.0f}:{minutes:02.0f}:{seconds:02.0f}.{millis:03.0f}"
+
 
     def _append_sample(self, sample, timestamp):
         self._samples.append(sample)
         self._times.append(timestamp)
+        if self._using_relative_time:
+            self._display_times.append(self._format_relative_time(timestamp))
+        else:
+            self._display_times.append(self._format_absolute_time(timestamp, self._t0 if self._t0 is not None else self._times[0]))
         self.graph.append_point(timestamp, sample)

@@ -32,7 +32,10 @@ class RecordingGraph(DashboardElement):
             "namespace": self.namespace,
             "uid": self.uid,
             "rolling": self._rolling,
-            "max_points": self._max_points
+            "max_points": self._max_points,
+            "name": self.recording.name,
+            "measurement_name" : self.recording.virtual_instrument.name,
+            "measurement_unit" : self.recording.virtual_instrument.unit
         }
         print(data)
         return render_template("elements/recording_graph.js", data=data)

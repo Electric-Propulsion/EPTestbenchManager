@@ -57,7 +57,8 @@ class ExperimentSegment(ABC):
                 vinstrument.resume_recording(record_id)
             else:
                 file_id = self.generate_file_ID(record_id)
-                vinstrument.begin_recording(record_id, file_id=file_id)
+                record_name = vinstrument_data[vinstrument_id]["record_name"]
+                vinstrument.begin_recording(record_id, record_name, file_id=file_id)
 
     def stop_recordings(self):
         for vinstrument_data in self._recordings:
