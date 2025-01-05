@@ -84,6 +84,10 @@ class Recording:
     @property
     def times(self):
         return self._times
+    
+    @property
+    def display_times(self):
+        return self._display_times
 
     def start_recording(self):
         if self._start_time is None:
@@ -189,7 +193,8 @@ class Recording:
         self._samples.append(sample)
         self._times.append(timestamp)
         if self._using_relative_time:
-            self._display_times.append(self._format_relative_time(timestamp))
+            label = self._format_relative_time(timestamp) 
         else:
-            self._display_times.append(self._format_absolute_time(timestamp, self._t0 if self._t0 is not None else self._times[0]))
-        self.graph.append_point(timestamp, sample)
+            label = self._format_absolute_time(timestamp, self._t0 if self._t0 is not None else self._times[0])
+        self._display_times.append(label)
+        self.graph.append_point(timestamp, sample, label)

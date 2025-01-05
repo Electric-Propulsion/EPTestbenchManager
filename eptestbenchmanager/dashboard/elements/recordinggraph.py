@@ -35,17 +35,19 @@ class RecordingGraph(DashboardElement):
             "max_points": self._max_points,
             "name": self.recording.name,
             "measurement_name" : self.recording.virtual_instrument.name,
-            "measurement_unit" : self.recording.virtual_instrument.unit
+            "measurement_unit" : self.recording.virtual_instrument.unit,
+            "t0": self.recording._t0 if self.recording._t0 is not None else self.recording._times[0]
         }
         print(data)
         return render_template("elements/recording_graph.js", data=data)
     
-    def append_point(self, h_axis_datapoint, v_axis_datapoint):
+    def append_point(self, h_axis_datapoint, v_axis_datapoint, label):
         self.socketio.emit("append_point", {"h_axis_datapoint": h_axis_datapoint, "v_axis_datapoint": v_axis_datapoint}, namespace=self.namespace)
 
     def update(self):
         h_axis_data = self.recording.times
         v_axis_data = self.recording.samples
-        self.socketio.emit("update", {"h_axis_data": h_axis_data, "v_axis_data": v_axis_data}, namespace=self.namespace)
+        labels = self.recording.display_times
+        self.socketio.emit("update", {"h_axis_data": h_axis_data, "v_axis_data": v_axis_data}, namespace=self.namespace)  
 
     
