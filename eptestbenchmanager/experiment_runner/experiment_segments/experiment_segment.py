@@ -47,7 +47,7 @@ class ExperimentSegment(ABC):
         #breakpoint()
         for vinstrument_data in self._recordings:
             vinstrument_id = list(vinstrument_data.keys())[0]
-            record_id = vinstrument_data[vinstrument_id]["record_id"]
+            record_id = self.generate_record_ID(vinstrument_data[vinstrument_id]["record_id"])
             if vinstrument_id not in self._testbench_manager.connection_manager.virtual_instruments:
                 raise ValueError(f"Virtual instrument {vinstrument_id} not found in testbench manager.")
             
@@ -63,7 +63,7 @@ class ExperimentSegment(ABC):
     def stop_recordings(self):
         for vinstrument_data in self._recordings:
             vinstrument_id = list(vinstrument_data.keys())[0]
-            record_id = vinstrument_data[vinstrument_id]["record_id"]
+            record_id = self.generate_record_ID(vinstrument_data[vinstrument_id]["record_id"])
             if vinstrument_id not in self._testbench_manager.connection_manager.virtual_instruments:
                 raise ValueError(f"Virtual instrument {vinstrument_id} not found in testbench manager.")
             
@@ -79,3 +79,6 @@ class ExperimentSegment(ABC):
 
     def generate_file_ID(self, record_id: str):
         return path.join(self.experiment.run_id,record_id)
+    
+    def generate_record_ID(self, record_id: str):
+        return f"{self.experiment.run_id}_{record_id}"
