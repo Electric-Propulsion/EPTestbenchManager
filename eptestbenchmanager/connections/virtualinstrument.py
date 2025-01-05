@@ -56,8 +56,8 @@ class VirtualInstrument(ABC):
         self._recordings: dict[str, Recording] = {}
 
         # Attach the UI elements
-        self._gauge = self.testbench_manager.dashboard.create_element(DigitalGauge, (self.uid, self.name, self.uid, self.unit))
-        self._detail_page = self.testbench_manager.dashboard.create_page(InstrumentDetail, (self, self.testbench_manager))
+        self.gauge = self.testbench_manager.dashboard.create_element(DigitalGauge, (self.uid, self.name, self.uid, self.unit))
+        self.detail_page = self.testbench_manager.dashboard.create_page(InstrumentDetail, (self, self.testbench_manager))
 
     @property
     def value(self) -> Union[str, int, float, bool]:
@@ -75,17 +75,7 @@ class VirtualInstrument(ABC):
 
     @property
     def rolling_storage(self) -> list[Union[str, int, float, bool]]:
-        """
-        Retrieve the rolling storage of the virtual instrument.
-        This method acquires a lock to ensure thread safety, retrieves the
-        value stored in the `_rolling_storage` attribute, and then releases the lock.
-        Returns:
-            The rolling storage of the virtual instrument.
-        """
-        self._lock.acquire()
-        rolling_storage = self._rolling_storage.record.values
-        self._lock.release()
-        return rolling_storage
+        return self._rolling_storage
 
     def get_recording(self, record_id: str) -> list[Union[str, int, float, bool]]:
         """
@@ -123,7 +113,7 @@ class VirtualInstrument(ABC):
             if recording.active:
                 recording.add_sample(value)
         try:
-            self._gauge.set_value(value)
+            self.gauge.set_value(value)
         except RuntimeError as e:
             print(f"Error updating gauge for {self.name}: {e}") #expected until the dashboard is up and running
 
@@ -134,7 +124,7 @@ class VirtualInstrument(ABC):
         print(f"Beginning recording {record_id}")
         self._recordings[record_id] = Recording(self.testbench_manager, record_id, record_name, self, max_samples, stored_samples, max_time, file_id=file_id)
         self._recordings[record_id].start_recording()
-        self._detail_page.update_graphs()
+        self.detail_page.update_graphs()
 
 
     def recording_exists(self, record_id) -> bool:

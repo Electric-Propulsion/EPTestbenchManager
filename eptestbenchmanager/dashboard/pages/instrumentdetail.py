@@ -9,9 +9,9 @@ class InstrumentDetail(DashboardPage):
         self.virtual_instrument = virtual_instrument
         self.instrument_name = virtual_instrument.name
         self.graphs = []
-        self.rolling_graph = virtual_instrument._rolling_storage.graph
+        self.rolling_graph = virtual_instrument.rolling_storage.graph
         self.reload = Reload('reload', self.socketio)
-        self.gauge = virtual_instrument._gauge
+        self.gauge = virtual_instrument.gauge
         self.update_graphs()
 
     

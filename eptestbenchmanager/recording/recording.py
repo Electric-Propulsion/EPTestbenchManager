@@ -144,7 +144,7 @@ class Recording:
 
                     self._sample_average = sample
                     self._time_average = timestamp
-        #print(f"record ID: {self.record_id}, sample count: {self._sample_count}, number of samples: {len(self._samples)}, number of times: {len(self._times)}, value: {sample}, average_count: {self._sample_average_count}, average_level: {self._sample_averaging_level}")
+                    
     def close_record_file(self):
         self._file.flush()
         self._file.close()

@@ -24,7 +24,7 @@ class ExperimentRunner:
             self._current_experiment_uid = uid
             self._experiments[uid].run(operator)
         else:
-            print("No can do. Experiment is already running")
+            print("Cannot start experiment. Experiment is already running")
         # generating reports should occur here too
 
     def remove_experiment(self, uid: str) -> None:

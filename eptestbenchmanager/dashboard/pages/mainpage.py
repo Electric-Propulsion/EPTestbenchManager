@@ -4,8 +4,8 @@ from ..elements import ArchiveDownload
 class MainPage(DashboardPage):
     def __init__(self, testbench_manager, app, socketio):
         super().__init__(app, socketio, "/")
-        vints =  testbench_manager.connection_manager._virtual_instruments.values()
-        self.components = [vint._gauge for vint in vints]
+        vints =  testbench_manager.connection_manager.virtual_instruments.values()
+        self.components = [vint.gauge for vint in vints]
         self.experiment_control = testbench_manager.dashboard.experiment_control
         self.archive_download = testbench_manager.report_manager.ui_element
     def render(self):

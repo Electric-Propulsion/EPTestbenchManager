@@ -38,7 +38,6 @@ class RecordingGraph(DashboardElement):
             "measurement_unit" : self.recording.virtual_instrument.unit,
             "t0": self.recording._t0 if self.recording._t0 is not None else self.recording._times[0]
         }
-        print(data)
         return render_template("elements/recording_graph.js", data=data)
     
     def append_point(self, h_axis_datapoint, v_axis_datapoint, label):

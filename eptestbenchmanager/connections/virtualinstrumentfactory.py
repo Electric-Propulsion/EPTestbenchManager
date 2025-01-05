@@ -32,7 +32,6 @@ class VirtualInstrumentFactory:
             case "noise":
                 return cls._create_noise_instrument(testbench_manager, uid, config)
             case "composite":
-                print(virtual_instruments)
                 return cls._create_composite_instrument(
                     testbench_manager, virtual_instruments, uid, config
                 )
@@ -87,7 +86,6 @@ class VirtualInstrumentFactory:
         Returns:
             NoiseVirtualInstrument: A noise virtual instrument object.
         """
-        print("creating noise")
         instrument = NoiseVirtualInstrument(
             testbench_manager,
             uid=uid,

@@ -15,7 +15,6 @@ class CurrentValueElement(DashboardElement):
         super().__init__(uid, socketio)
         self.name = name
         self.value = None
-        print(f"Linked instrument UID: {linked_instrument_uid}")
         self.link = f"/instrument/{linked_instrument_uid}" if linked_instrument_uid else None
         self.unit = unit
 

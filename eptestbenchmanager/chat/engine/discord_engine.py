@@ -42,8 +42,8 @@ class DiscordEngine(CommunicationEngine):
     def configure(self, config: dict) -> None:
         guild_ids = self._get_guild_ids()
         print("=======")
-        print(guild_ids)
-        print(config["guild"])
+        print(f"Aware of guilds {guild_ids}")
+        print(f"Connecting to guild {config["guild"]}")
         if config["guild"] not in guild_ids:
             raise ValueError("Guild not found")
         self._guild_id = guild_ids[config["guild"]]

@@ -23,12 +23,12 @@ class DashboardManager:
                return page.render()
           
           # Instrument detail page routes
-          vints =  self.testbench_manager.connection_manager._virtual_instruments.values()
+          vints =  self.testbench_manager.connection_manager.virtual_instruments.values()
           for vint in vints:
                def make_instrument_detail(vint):
                     @self.app.route(f'/instrument/{vint.uid}', endpoint=f'instrument_detail_{vint.uid}')
                     def instrument_detail():
-                         return vint._detail_page.render()
+                         return vint.detail_page.render()
                make_instrument_detail(vint)
 
           
@@ -36,7 +36,7 @@ class DashboardManager:
           @self.app.route('/archive/<archive>')
           def download_archive(archive):
                archive_dir = os.path.join(Path(os.path.abspath(__package__)).parent, "eptestbenchmanager", "logs", "archives") # what a terrific line of code.
-               print(f"downloading archive {archive}")
+               print(f"Downloading archive {archive}")
                try:
                     return send_from_directory(archive_dir, f"{archive}")
                except Exception as e:
@@ -46,7 +46,6 @@ class DashboardManager:
           self.experiment_control = self.create_element(ExperimentControl, args=['experiment_control', self.testbench_manager])
 
      def create_element(self, element_class: 'DashboardElement', args):
-          print(args)
           element_object = element_class(*args, **{'socketio': self.socketio})
           return element_object
      

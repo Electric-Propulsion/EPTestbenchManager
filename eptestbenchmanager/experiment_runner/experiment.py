@@ -85,6 +85,7 @@ class Experiment:
                 except AbortingSegmentFailure as e:
 
                     # TODO: indicate somehow that we're aborting
+                    print("Aborting segment")
                     print(e)
                     print(segment.data)
 

@@ -21,9 +21,7 @@ class ExperimentControl(DashboardElement):
             "operators": self.operators,
             "uid": self.uid
         }
-        print(data)
         value =  render_template("elements/experiment_control.html", data=data)
-        print(value)
         return value
     
     def render_js(self):

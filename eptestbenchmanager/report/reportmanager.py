@@ -46,7 +46,6 @@ class ReportManager:
             for root, dirs, files in os.walk(run_log_dir):
                 for file in files:
                     file_path = os.path.join(root, file)
-                    print(file_path)
                     # Add file to zip, preserving the directory structure
                     arcname = os.path.relpath(file_path, run_log_dir)
                     zipf.write(file_path, arcname)
