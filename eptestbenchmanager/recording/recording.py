@@ -4,7 +4,6 @@ import csv
 import os
 import atexit
 from typing import Union
-from . import Record
 from eptestbenchmanager.dashboard.elements import RecordingGraph
 
 
@@ -68,15 +67,6 @@ class Recording:
                 return False
         return self._recording
 
-    @property
-    def record(self): # TODO: for deletion
-        return Record(
-            self._samples,
-            self._times,
-            self._using_relative_time,
-            self._t0,
-        )
-    
     @property
     def samples(self):
         return self._samples
