@@ -46,16 +46,22 @@ function remapTickLabels(data) {
     return { tickvals, ticktext };
 }
 
-function formatRelativeTime(timestamp) {
-    const now = Date.now();
-    const delta = now - timestamp * 1000; // Convert seconds to milliseconds
+// Function to format relative time for rolling graphs
+function formatRelativeTimeDynamic(timestamp) {
+    const now = Date.now(); // Client-side current time in ms
+    const delta = now - timestamp * 1000; // Convert server timestamp to ms
     const deltaInSeconds = Math.floor(delta / 1000);
-    
+
     const days = Math.floor(deltaInSeconds / (24 * 3600));
     const hours = Math.floor((deltaInSeconds % (24 * 3600)) / 3600);
     const minutes = Math.floor((deltaInSeconds % 3600) / 60);
     const seconds = deltaInSeconds % 60;
-    const millis = delta % 1000;
+    const millis = Math.floor(delta % 1000); // Truncate to three digits
+
+    if (deltaInSeconds < 0) {
+        // Cap at T-0:00
+        return "T-0:00.000";
+    }
 
     if (days > 0) {
         return `T-${days} days, ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(millis).padStart(3, '0')}`;
@@ -64,6 +70,7 @@ function formatRelativeTime(timestamp) {
     }
 }
 
+// Function to format absolute time for non-rolling graphs
 function formatAbsoluteTime(timestamp) {
     const absTime = timestamp - {{ data.t0 }}; // Absolute time difference in seconds
 
@@ -80,47 +87,61 @@ function formatAbsoluteTime(timestamp) {
     }
 }
 
-
+// Generate labels based on mode (rolling or absolute)
 function generateLabel(timestamp) {
-    if ('{{ data.rolling }}' == 'True') { 
-        return formatRelativeTime(timestamp);
-    }
-    else {
+    if ('{{ data.rolling }}' === 'True') {
+        return formatRelativeTimeDynamic(timestamp);
+    } else {
         return formatAbsoluteTime(timestamp);
     }
 }
 
+// Update rolling labels for all points
+function updateRollingLabels(data) {
+    return data.h_axis_data.map((timestamp) => formatRelativeTimeDynamic(timestamp));
+}
 
+// Socket event: Update graph with new data
 {{ data.uid }}_socket.on('update', function(data) {
-    {{ data.uid }}_data[0].x = data.h_axis_data; // Original timestamps
-    {{ data.uid }}_data[0].y = data.v_axis_data;
-    {{ data.uid }}_data[0].text = data.h_axis_data.map(generateLabel) || data.h_axis_data; // Custom hover labels
+    if ('{{ data.rolling }}' === 'True') {
+        {{ data.uid }}_data[0].x = data.h_axis_data;
+        {{ data.uid }}_data[0].y = data.v_axis_data;
+        {{ data.uid }}_data[0].text = updateRollingLabels(data);
+    } else {
+        {{ data.uid }}_data[0].x = data.h_axis_data;
+        {{ data.uid }}_data[0].y = data.v_axis_data;
+        {{ data.uid }}_data[0].text = data.h_axis_data.map(generateLabel);
+    }
 
-    // Generate tickvals and ticktext
     const { tickvals, ticktext } = remapTickLabels(data);
-
-    // Update layout with remapped ticks
     {{ data.uid }}_layout.xaxis.tickvals = tickvals;
     {{ data.uid }}_layout.xaxis.ticktext = ticktext;
-    {{ data.uid }}_layout.xaxis.tickmode = 'array'; // Explicitly set tickmode to array
+    {{ data.uid }}_layout.xaxis.tickmode = 'array';
 
-    Plotly.newPlot({{ data.uid }}_element, {{ data.uid }}_data, {{ data.uid }}_layout);
+    Plotly.react({{ data.uid }}_element, {{ data.uid }}_data, {{ data.uid }}_layout);
 });
 
+// Socket event: Append a single point to the graph
 {{ data.uid }}_socket.on('append_point', function(data) {
+    const newTimestamp = data.h_axis_datapoint;
+    const newValue = data.v_axis_datapoint;
+
     const newPoint = {
-        x: [[data.h_axis_datapoint]],
-        y: [[data.v_axis_datapoint]],
-        text: [[generateLabel(data.h_axis_datapoint) || data.h_axis_datapoint]] // Add hover label
+        x: [[newTimestamp]],
+        y: [[newValue]],
+        text: [[generateLabel(newTimestamp)]]
     };
 
-    if ('{{ data.rolling }}' == 'True') {
+    if ('{{ data.rolling }}' === 'True') {
         Plotly.extendTraces({{ data.uid }}_element, newPoint, [0], {{ data.max_points }});
+        const updatedLabels = {{ data.uid }}_data[0].x.map((timestamp) =>
+            formatRelativeTimeDynamic(timestamp)
+        );
+        {{ data.uid }}_data[0].text = updatedLabels;
     } else {
         Plotly.extendTraces({{ data.uid }}_element, newPoint, [0]);
     }
 
-    // Update tick values and labels for new data
     const xValues = {{ data.uid }}_data[0].x;
     const labels = {{ data.uid }}_data[0].text;
 
@@ -135,5 +156,3 @@ function generateLabel(timestamp) {
         'xaxis.tickmode': 'array'
     });
 });
-
-
