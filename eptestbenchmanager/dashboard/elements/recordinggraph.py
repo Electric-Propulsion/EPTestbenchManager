@@ -29,7 +29,8 @@ class RecordingGraph(DashboardElement):
         def on_connect(self):
             """Handles new client connections.
 
-            Emits an update event when a new client connects, so the client gets the full graph history.
+            Emits an update event when a new client connects, so the client gets the full graph
+            history.
             """
             print(f"New client connected to GraphNamespace {self.element.namespace}")
             self.element.update()
@@ -90,7 +91,7 @@ class RecordingGraph(DashboardElement):
         }
         return render_template("elements/recording_graph.js", data=data)
 
-    def append_point(self, h_axis_datapoint, v_axis_datapoint, label):
+    def append_point(self, h_axis_datapoint, v_axis_datapoint):
         """Appends a new data point to the graph.
 
         Args:

@@ -35,7 +35,11 @@ class NoiseVirtualInstrument(PollingVirtualInstrument):
         """
         self._mean = mean
         self._standard_deviation = standard_deviation
-        getter_function = lambda: np.random.normal(self._mean, self._standard_deviation)
+        getter_function = (
+            lambda: np.random.normal(  # pylint: disable=unnecessary-lambda-assignment
+                self._mean, self._standard_deviation
+            )
+        )
         super().__init__(
             testbench_manager, uid, name, None, None, getter_function, 1000, unit
         )

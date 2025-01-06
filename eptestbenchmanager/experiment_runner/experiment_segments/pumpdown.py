@@ -1,6 +1,6 @@
 from operator import ge
-from . import ExperimentSegment, ThresholdLastNValues, Timeout, AbortingSegmentFailure
 import time
+from . import ExperimentSegment, ThresholdLastNValues, Timeout, AbortingSegmentFailure
 
 
 class Pumpdown(ExperimentSegment):
@@ -14,7 +14,8 @@ class Pumpdown(ExperimentSegment):
         """Configures the pumpdown segment with the provided settings.
 
         Args:
-            config (dict): Configuration dictionary containing setpoint, timeout, and other settings.
+            config (dict): Configuration dictionary containing setpoint, timeout, and other
+            settings.
         """
         self.setpoint_mbar = config["setpoint_mbar"]
         self.timeout_time_minutes = config["timeout"]["minutes"]
@@ -55,7 +56,7 @@ class Pumpdown(ExperimentSegment):
 
                     if self.timeout_action != "continue":
                         raise AbortingSegmentFailure(
-                            f"{self.uid} segment failed, aborting the experiment. (Reason: {self.data['termination']['reason']}"
+                            f"{self.uid} segment failed, aborting the experiment. (Reason: {self.data['termination']['reason']}"  # pylint: disable=line-too-long
                         )
                     return
 
@@ -86,4 +87,3 @@ class Pumpdown(ExperimentSegment):
 
         This method is a placeholder and should be implemented to generate a detailed report.
         """
-        pass

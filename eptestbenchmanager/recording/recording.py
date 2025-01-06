@@ -1,10 +1,12 @@
 import time
-from datetime import timedelta
 import csv
 import os
 import atexit
-from typing import Union
+from typing import TYPE_CHECKING
 from eptestbenchmanager.dashboard.elements import RecordingGraph
+
+if TYPE_CHECKING:
+    from eptestbenchmanager.connections import VirtualInstrument
 
 
 class Recording:
@@ -68,6 +70,8 @@ class Recording:
             rolling: Whether the recording is rolling.
             t0: The start time for displaying.
             file_id: The ID of the file.
+            _file: The actual file object.
+            _csv_writer: The CSV writer object.
         """
         self.testbench_manager = testbench_manager
         self.virtual_instrument = virtual_instrument
@@ -98,11 +102,14 @@ class Recording:
             os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "logs"
         )
         os.makedirs(self.log_dir, exist_ok=True)
-        self._file_id = f"{self.log_dir}/{self.file_id}_{self.instrument_uid}_{time.strftime('%Y%m%d_%H%M%S')}.csv"
+        self._file_id = f"{self.log_dir}/{self.file_id}_{self.instrument_uid}_{time.strftime('%Y%m%d_%H%M%S')}.csv"  # pylint: disable=line-too-long
 
         self.graph = self.testbench_manager.dashboard.create_element(
             RecordingGraph, (self.uid, self)
         )
+
+        self._file = None  # will be set in start_recording
+        self._csv_writer = None  # will be set in start_recording
 
     @property
     def active(self):
@@ -159,7 +166,7 @@ class Recording:
         self._recording = True
         if not self._rolling:
             os.makedirs(os.path.dirname(self._file_id), exist_ok=True)
-            self._file = open(self._file_id, mode="a", newline="")
+            self._file = open(self._file_id, mode="a", newline="", encoding="utf-8")
             self._csv_writer = csv.writer(self._file, lineterminator="\n")
             if self._file.tell() == 0:
                 self._csv_writer.writerow(["Time", "Value", "Segment UID"])
@@ -238,54 +245,6 @@ class Recording:
         self._file.flush()
         self._file.close()
 
-    def _format_relative_time(self, timestamp: float) -> str:
-        """
-        Formats the relative time.
-
-        Args:
-            timestamp: The timestamp to format.
-
-        Returns:
-            str: The formatted relative time.
-        """
-        delta = time.time() - timestamp
-        delta_td = timedelta(seconds=delta)
-        days = delta_td.days
-        hours, minutes, seconds = (
-            delta_td.seconds // 3600,
-            (delta_td.seconds // 60) % 60,
-            delta_td.seconds % 60,
-        )
-        millis = delta_td.microseconds // 1000
-        if days > 0:
-            return f"T-{days} days, {hours:02}:{minutes:02}:{seconds:02}.{millis:03}"
-        else:
-            return f"T-{hours:02}:{minutes:02}:{seconds:02}.{millis:03}"
-
-    def _format_absolute_time(self, timestamp: float, t0: float) -> str:
-        """
-        Formats the absolute time.
-
-        Args:
-            timestamp: The timestamp to format.
-            t0: The start time.
-
-        Returns:
-            str: The formatted absolute time.
-        """
-        abs_time = timestamp - t0
-        days, hours, minutes, seconds, millis = (
-            abs_time // 86400,
-            abs_time // 3600,
-            (abs_time // 60) % 60,
-            abs_time % 60,
-            (abs_time * 1000) % 1000,
-        )
-        if days > 0:
-            return f"T+{days:.0f} days, {hours:02.0f}:{minutes:02.0f}:{seconds:02.0f}.{millis:03.0f}"
-        else:
-            return f"T+{hours:02.0f}:{minutes:02.0f}:{seconds:02.0f}.{millis:03.0f}"
-
     def _append_sample(self, sample, timestamp):
         """
         Appends a sample to the recording.
@@ -296,11 +255,4 @@ class Recording:
         """
         self._samples.append(sample)
         self._times.append(timestamp)
-        if self._using_relative_time:
-            label = self._format_relative_time(timestamp)
-        else:
-            label = self._format_absolute_time(
-                timestamp, self._t0 if self._t0 is not None else self._times[0]
-            )
-        self._display_times.append(label)
-        self.graph.append_point(timestamp, sample, label)
+        self.graph.append_point(timestamp, sample)

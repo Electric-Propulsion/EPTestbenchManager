@@ -145,7 +145,7 @@ class VirtualInstrumentFactory:
             ]
         except KeyError as e:
             raise ValueError(
-                f"Invalid instrument UID ({e}). Ensure all parent instruments are defined before composite instruments."
+                f"Invalid instrument UID ({e}). Ensure all parent instruments are defined before composite instruments."  # pylint: disable=line-too-long
             ) from e
 
         composition_function = cls._get_composition_function(
@@ -173,7 +173,8 @@ class VirtualInstrumentFactory:
             callable: The composition function.
 
         Raises:
-            ValueError: If the composition function is invalid or if 'divide' is used with incorrect number of instruments.
+            ValueError: If the composition function is invalid or if 'divide' is used with incorrect
+            number of instruments.
         """
         match function_name:
             case "sum":

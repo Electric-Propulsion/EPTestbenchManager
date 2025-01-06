@@ -1,14 +1,16 @@
 from threading import Thread, Lock
-import time, datetime
+import time
+import datetime
+from io import StringIO
+from typing import TYPE_CHECKING
 from eptestbenchmanager.chat.alert_manager import AlertSeverity
 from .experiment_segments.experiment_segment import (
     ExperimentSegment,
     AbortingSegmentFailure,
 )
-from io import StringIO
-import os
-from pathlib import Path
-import zipfile
+
+if TYPE_CHECKING:
+    from eptestbenchmanager.manager import TestbenchManager
 
 
 class Experiment:
@@ -50,12 +52,14 @@ class Experiment:
         self.description: str = description
         self.segments: list[ExperimentSegment] = segments
         self.current_segment_id = -1
-        self._experiment_lock: Lock() = experiment_lock
+        self._experiment_lock: Lock = experiment_lock
         self.operator: str = None
         self._testbench_manager = testbench_manager
         self.run_id: str = None  # Not defined until the first run
         for segment in self.segments:  # Inject the experiment into the segments
             segment.inject_experiment(self)
+        self._runner_thread: Thread = None
+        self.start_time: float = None
 
     def run(self, operator: str) -> None:
         """Starts the experiment by creating and starting a new thread.
@@ -75,7 +79,7 @@ class Experiment:
         self.start_time = time.perf_counter()
 
         self._testbench_manager.alert_manager.send_alert(
-            f"Starting experiment **{self.name}**. ({len(self.segments)} segments)\nRun ID: {self.run_id}",
+            f"Starting experiment **{self.name}**. ({len(self.segments)} segments)\nRun ID: {self.run_id}",  # pylint: disable=line-too-long
             severity=AlertSeverity.INFO,
             target=self.operator,
         )
@@ -99,7 +103,12 @@ class Experiment:
 
                 try:
                     self._testbench_manager.alert_manager.send_alert(
-                        f"Experiment **{self.name}** is running segment **{self.segments[self.current_segment_id].uid}**. Elapsed time: {datetime.timedelta(seconds=segment_start_time - self.start_time)}. ({self.current_segment_id+1}/{len(self.segments)})",
+                        (
+                            f"Experiment **{self.name}** is running segment "
+                            f"**{self.segments[self.current_segment_id].uid}**. Elapsed time: "
+                            f"{datetime.timedelta(seconds=segment_start_time - self.start_time)}. "
+                            f"({self.current_segment_id+1}/{len(self.segments)})"
+                        ),
                         severity=AlertSeverity.INFO,
                         target=self.operator,
                     )
@@ -116,7 +125,12 @@ class Experiment:
                     print(segment.data)
 
                     self._testbench_manager.alert_manager.send_alert(
-                        f"Experiment **{self.name}** has aborted at segment **{self.segments[self.current_segment_id].uid}**. Elapsed time: {datetime.timedelta(seconds=segment_start_time - self.start_time)}  (reason: {e})",
+                        (
+                            f"Experiment **{self.name}** has aborted at segment "
+                            f"**{self.segments[self.current_segment_id].uid}**. Elapsed time: "
+                            f"{datetime.timedelta(seconds=segment_start_time - self.start_time)} "
+                            f"(reason: {e})"
+                        ),
                         severity=AlertSeverity.INFO,
                         target=self.operator,
                     )
@@ -137,7 +151,10 @@ class Experiment:
             )
 
             self._testbench_manager.alert_manager.send_alert(
-                f"Experiment **{self.name}** has completed. Completed in {datetime.timedelta(seconds=end_time - self.start_time)}.",
+                (
+                    f"Experiment **{self.name}** has completed. Completed in "
+                    f"{datetime.timedelta(seconds=end_time - self.start_time)}."
+                ),
                 severity=AlertSeverity.INFO,
                 target=self.operator,
             )
@@ -178,4 +195,4 @@ class Experiment:
         Returns:
             None
         """
-        pass  # TODO: need to get just the rule from the active segment?
+        # TODO: need to get just the rule from the active segment?

@@ -1,14 +1,15 @@
 from abc import ABC, abstractmethod
 from threading import Thread
 from os import path
-
+from typing import TYPE_CHECKING
 from eptestbenchmanager.monitor import Rule
+
+if TYPE_CHECKING:
+    from eptestbenchmanager.manager import TestbenchManager
 
 
 class AbortingSegmentFailure(Exception):
     """Exception raised to indicate that the experiment should terminate."""
-
-    pass
 
 
 class ExperimentSegment(ABC):
@@ -103,7 +104,7 @@ class ExperimentSegment(ABC):
         """
         for vinstrument_data in self._recordings:
             vinstrument_id = list(vinstrument_data.keys())[0]
-            record_id = self.generate_record_ID(
+            record_id = self.generate_record_id(
                 vinstrument_data[vinstrument_id]["record_id"]
             )
             if (
@@ -123,7 +124,7 @@ class ExperimentSegment(ABC):
             if vinstrument.recording_exists(record_id):
                 vinstrument.resume_recording(record_id)
             else:
-                file_id = self.generate_file_ID(record_id)
+                file_id = self.generate_file_id(record_id)
                 record_name = vinstrument_data[vinstrument_id]["record_name"]
                 vinstrument.begin_recording(record_id, record_name, file_id=file_id)
 
@@ -135,7 +136,7 @@ class ExperimentSegment(ABC):
         """
         for vinstrument_data in self._recordings:
             vinstrument_id = list(vinstrument_data.keys())[0]
-            record_id = self.generate_record_ID(
+            record_id = self.generate_record_id(
                 vinstrument_data[vinstrument_id]["record_id"]
             )
             if (
@@ -161,7 +162,7 @@ class ExperimentSegment(ABC):
         """Performs post-run operations for the segment."""
         self.stop_recordings()
 
-    def generate_file_ID(self, record_id: str) -> str:
+    def generate_file_id(self, record_id: str) -> str:  # pylint disable=invalid-name
         """Generates a file ID for the recording.
 
         Args:
@@ -172,7 +173,7 @@ class ExperimentSegment(ABC):
         """
         return path.join(self.experiment.run_id, record_id)
 
-    def generate_record_ID(self, record_id: str) -> str:
+    def generate_record_id(self, record_id: str) -> str:  # pylint disable=invalid-name
         """Generates a record ID for the recording.
 
         Args:

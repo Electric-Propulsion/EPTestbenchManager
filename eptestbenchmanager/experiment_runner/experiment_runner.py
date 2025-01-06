@@ -1,7 +1,11 @@
 from io import StringIO
 from threading import Lock
+from typing import TYPE_CHECKING
 from .experiment import Experiment
 from .experiment_factory import ExperimentFactory
+
+if TYPE_CHECKING:
+    from eptestbenchmanager.manager import TestbenchManager
 
 
 class ExperimentRunner:

@@ -5,7 +5,7 @@ from time import sleep
 from eptestbenchmanager.connections import ConnectionManager
 from eptestbenchmanager.monitor import TestbenchMonitor
 from eptestbenchmanager.experiment_runner import ExperimentRunner
-from eptestbenchmanager.chat.alert_manager import DiscordAlertManager, AlertSeverity
+from eptestbenchmanager.chat.alert_manager import DiscordAlertManager
 from eptestbenchmanager.chat.engine import DiscordEngine
 from eptestbenchmanager.chat.chat_manager import DiscordChatManager
 from eptestbenchmanager.dashboard import DashboardManager
@@ -17,13 +17,14 @@ class TestbenchManager:
 
     Attributes:
         monitor (TestbenchMonitor): Monitors the testbench and evaluates rules.#TODO: Implement this
-        connection_manager (ConnectionManager): Manages connections with physical and virtual instruments.
+        connection_manager (ConnectionManager): Manages connections with physical and virtual
+        instruments.
         communication_engine (DiscordEngine): Engine that plugs into alert and chat managers.
         alert_manager (DiscordAlertManager): Manages sending alerts.
         chat_manager (DiscordChatManager): Manages chat commands and responses.
         runner (ExperimentRunner): Runs experiments.
         dashboard (DashboardManager): Manages the web GUI dashboard.
-        report_manager (ReportManager): Manages reports/archives. #TODO: reports are not implemented yet
+        report_manager (ReportManager): Manages reports/archives. #TODO: not implemented yet
     """
 
     def __init__(self):
@@ -34,6 +35,8 @@ class TestbenchManager:
         self.alert_manager = DiscordAlertManager(self.communication_engine)
         self.chat_manager = DiscordChatManager(self.communication_engine, self)
         self.runner: ExperimentRunner = None
+        self.dashboard: DashboardManager = DashboardManager(self)
+        self.report_manager = ReportManager(self)
 
     def start_app(
         self,
@@ -48,8 +51,6 @@ class TestbenchManager:
             delay_experiment_load (bool): If True, delays loading the experiment configurations.
             discord_guild (str): The Discord guild name for communication.
         """
-
-        self.dashboard = DashboardManager(self)
 
         # Initialize the connection manager
         if not delay_apparatus_load:
@@ -72,9 +73,6 @@ class TestbenchManager:
         self.communication_engine.run()
         sleep(2.5)  # just give it a little time to start up
         self.communication_engine.configure({"guild": discord_guild})
-
-        # Initialize the report manager
-        self.report_manager = ReportManager(self)
 
         if not delay_experiment_load:
             # Load all the experiments in /experiment_config

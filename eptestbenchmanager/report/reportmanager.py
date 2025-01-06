@@ -1,15 +1,18 @@
 from pathlib import Path
 import os
 import zipfile
-
+from typing import TYPE_CHECKING
 from eptestbenchmanager.dashboard.elements import ArchiveDownload
+
+if TYPE_CHECKING:
+    from eptestbenchmanager.manager import TestbenchManager
 
 
 class ReportManager:
-    """Manages reports (#TODO) and archives and log directories for the EPTestbenchManager.
+    """Manages reports (#TODO) and archives and log directories for the TestbenchManager.
 
     Attributes:
-        testbench_manager (EPTestbenchManager): Global TestbenchManager object.
+        testbench_manager (TestbenchManager): Global TestbenchManager object.
         _archive_dir (str): Directory path for storing archives.
         _log_dir (str): Directory path for storing logs.
         archives (list): List of archive names.
@@ -18,14 +21,14 @@ class ReportManager:
 
     def __init__(
         self,
-        testbench_manager: "EPTestbenchManager",
+        testbench_manager: "TestbenchManager",
         archive_dir: str = None,
         log_dir: str = None,
     ):
         """Initializes ReportManager with given directories and testbench manager.
 
         Args:
-            testbench_manager (EPTestbenchManager): Global TestbenchManager object.
+            testbench_manager (TestbenchManager): Global TestbenchManager object.
             archive_dir (str, optional): Directory path for storing archives. Defaults to None.
             log_dir (str, optional): Directory path for storing logs. Defaults to None.
         """
@@ -90,23 +93,23 @@ class ReportManager:
         """
         return self._log_dir
 
-    def create_archive(self, run_ID, output_name_root) -> str:
+    def create_archive(self, run_id, output_name_root) -> str:
         """Creates a zip archive of the log directory for a specific run.
 
         Args:
-            run_ID (str): Identifier for the run.
+            run_id (str): Identifier for the run.
             output_name_root (str): Root name for the output archive file.
 
         Returns:
             str: Path to the created archive file.
         """
-        run_log_dir = os.path.join(self.log_dir, run_ID)
+        run_log_dir = os.path.join(self.log_dir, run_id)
         output_archive_path = os.path.join(self.archive_dir, f"{output_name_root}.zip")
         os.makedirs(os.path.dirname(output_archive_path), exist_ok=True)
         print(f" Compressing log file directory: {run_log_dir}")
 
         with zipfile.ZipFile(output_archive_path, "w", zipfile.ZIP_DEFLATED) as zipf:
-            for root, dirs, files in os.walk(run_log_dir):
+            for root, _, files in os.walk(run_log_dir):
                 for file in files:
                     file_path = os.path.join(root, file)
                     arcname = os.path.relpath(file_path, run_log_dir)
