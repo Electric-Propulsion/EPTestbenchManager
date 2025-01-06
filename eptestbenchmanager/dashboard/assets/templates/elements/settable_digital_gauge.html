@@ -1,7 +1,8 @@
 <a href="{{ data.link }}" id="{{ data.uid }}" class="digital-gauge">
     <div class="dg_box">
         <div class="dg_name">{{ data.name }}</div>
-        <input id = "{{ data.uid }}_value_entry" class="dg_value_entry" type="number" value=""></input>
+        <input id = "{{ data.uid }}_value_entry" class="dg_value_entry" type="text"
+        inputmode="numeric" value=""></input>
         <div class="dg_unit">{{ data.unit }}</div>
     </div>
 </a>

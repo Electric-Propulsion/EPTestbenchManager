@@ -18,7 +18,23 @@ var {{ data.uid }}_socket = io('{{ data.namespace }}');
             event.preventDefault(); // Prevents the default "link activation" action
             // Handle Enter key behavior if necessary (e.g., submit or process the value)
             {{ data.uid }}_socket.emit('set_value', { value: event.target.value });
+            {{ data.uid }}_entry_element.classList.remove('unsaved');
         }
     });
+
+// Add input event listener to detect when the value changes
+{{ data.uid }}_entry_element.addEventListener('input', function() {
+    // Add the "unsaved" class to indicate the value has changed
+    {{ data.uid }}_entry_element.classList.add('unsaved');
+});
+
+// Add blur event listener to handle the user clicking away
+{{ data.uid }}_entry_element.addEventListener('blur', function() {
+    // If the input has been changed (unsaved), keep the "unsaved" class
+    if ({{ data.uid }}_entry_element.value !== '' && {{ data.uid }}_entry_element.classList.contains('unsaved')) {
+        {{ data.uid }}_entry_element.classList.add('unsaved'); // Keep the red state
+    }
+});
+
 
 

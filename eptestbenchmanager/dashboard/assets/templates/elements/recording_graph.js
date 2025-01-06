@@ -156,3 +156,31 @@ function updateRollingLabels(data) {
         'xaxis.tickmode': 'array'
     });
 });
+
+// Function to update rolling labels dynamically at regular intervals
+function updateRollingGraphLabelsPeriodically(interval) {
+    if ('{{ data.rolling }}' === 'True') {
+        setInterval(() => {
+            // Update the labels for all points in the rolling graph
+            const updatedLabels = {{ data.uid }}_data[0].x.map((timestamp) =>
+                formatRelativeTimeDynamic(timestamp)
+            );
+            {{ data.uid }}_data[0].text = updatedLabels;
+
+            // Reapply tick labels and tick values
+            const { tickvals, ticktext } = remapTickLabels({
+                h_axis_data: {{ data.uid }}_data[0].x,
+                labels: updatedLabels
+            });
+
+            Plotly.relayout({{ data.uid }}_element, {
+                'xaxis.tickvals': tickvals,
+                'xaxis.ticktext': ticktext,
+                'xaxis.tickmode': 'array'
+            });
+        }, interval);
+    }
+}
+
+// Call the function to start periodic updates (e.g., every 1 second)
+updateRollingGraphLabelsPeriodically(1000);
