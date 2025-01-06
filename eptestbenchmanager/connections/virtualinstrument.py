@@ -69,9 +69,10 @@ class VirtualInstrument(ABC):
         self._recordings: dict[str, Recording] = {}
 
         # Attach the UI elements
-        self.gauge = self.testbench_manager.dashboard.create_element(
-            DigitalGauge, (self.uid, self.name, self.uid, self.unit)
-        )
+        if not hasattr(self, "gauge"):
+            self.gauge = self.testbench_manager.dashboard.create_element(
+                DigitalGauge, (self.uid, self.name, self.uid, self.unit)
+            )
         self.detail_page = self.testbench_manager.dashboard.create_page(
             InstrumentDetail, (self, self.testbench_manager)
         )

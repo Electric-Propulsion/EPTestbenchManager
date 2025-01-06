@@ -5,6 +5,7 @@ from . import (
     PollingVirtualInstrument,
     NoiseVirtualInstrument,
     CompositeVirtualInstrument,
+    ManualVirtualInstrument
 )
 
 
@@ -42,6 +43,8 @@ class VirtualInstrumentFactory:
                 )
             case "noise":
                 return cls._create_noise_instrument(testbench_manager, uid, config)
+            case "manual":
+                return cls.create_manual_instrument(testbench_manager, uid, config)
             case "composite":
                 return cls._create_composite_instrument(
                     testbench_manager, virtual_instruments, uid, config
@@ -113,6 +116,28 @@ class VirtualInstrumentFactory:
             name=config["name"],
             mean=config["mean"],
             standard_deviation=config["standard_deviation"],
+            unit=config.get("unit", None),
+        )
+        return instrument
+    
+    @classmethod
+    def create_manual_instrument(
+        cls, testbench_manager, uid: str, config: dict
+    ) -> ManualVirtualInstrument:
+        """Creates a manual virtual instrument from a configuration dictionary.
+
+        Args:
+            testbench_manager: Global TestbenchManager object.
+            uid (str): Unique identifier for the virtual instrument.
+            config (dict): Configuration dictionary for the virtual instrument.
+
+        Returns:
+            ManualVirtualInstrument: A manual virtual instrument object.
+        """
+        instrument = ManualVirtualInstrument(
+            testbench_manager,
+            uid=uid,
+            name=config["name"],
             unit=config.get("unit", None),
         )
         return instrument

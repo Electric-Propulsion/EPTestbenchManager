@@ -39,6 +39,10 @@ virtual_instruments:
     instruments:
       - gaussian_noise_1
       - gaussian_noise_2
+
+  manual_1:
+    type: manual
+    name: Manual 1
   
 
 

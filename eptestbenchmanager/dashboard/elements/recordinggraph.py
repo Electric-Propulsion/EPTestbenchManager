@@ -75,6 +75,10 @@ class RecordingGraph(DashboardElement):
         Returns:
             str: Rendered JavaScript template for the recording graph.
         """
+        try:
+            default_t0 = self.recording.times[0]
+        except IndexError:
+            default_t0 = 0
         data = {
             "namespace": self.namespace,
             "uid": self.uid,
@@ -86,7 +90,7 @@ class RecordingGraph(DashboardElement):
             "t0": (
                 self.recording.t0
                 if self.recording.t0 is not None
-                else self.recording.times[0]
+                else default_t0
             ),
         }
         return render_template("elements/recording_graph.js", data=data)
