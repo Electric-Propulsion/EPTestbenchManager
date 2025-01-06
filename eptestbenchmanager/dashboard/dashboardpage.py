@@ -1,6 +1,10 @@
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
 from flask import Flask
 from flask_socketio import SocketIO
+
+if TYPE_CHECKING:
+    from eptestbenchmanager.dashboard import DashboardElement
 
 
 class DashboardPage(ABC):

@@ -1,9 +1,7 @@
 from pathlib import Path
-from os.path import join
-from yaml import load, FullLoader
 from typing import Union
-import epcomms.equipment
 import sys
+from yaml import load, FullLoader
 from . import (
     VirtualInstrumentFactory,
     PollingVirtualInstrument,
@@ -27,7 +25,8 @@ class ConnectionManager:
 
         Args:
             testbench_manager: The testbench manager.
-            config_file_path (Union[Path, None], optional): Path to the configuration file. Defaults to None.
+            config_file_path (Union[Path, None], optional): Path to the configuration file.
+            Defaults to None.
         """
         self._physical_instruments = {}
         self._virtual_instruments = {}

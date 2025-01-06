@@ -1,7 +1,10 @@
+from typing import TYPE_CHECKING
 from flask import render_template
-from flask_socketio import emit, Namespace
-
+from flask_socketio import Namespace
 from ..dashboardelement import DashboardElement
+
+if TYPE_CHECKING:
+    from eptestbenchmanager.manager import TestbenchManager
 
 
 class ExperimentControl(DashboardElement):
@@ -79,10 +82,10 @@ class ExperimentControl(DashboardElement):
                 print(f"Error starting experiment: {e}")
 
         @self.socketio.on("stop_experiment", namespace=self.namespace)
-        def stop_experiment(data):
+        def stop_experiment():
             """Handles the stop_experiment event.
 
             Args:
                 data (dict): Data containing experiment_uid and operator.
             """
-            print(f"experiment stopping")
+            print("experiment stopping")

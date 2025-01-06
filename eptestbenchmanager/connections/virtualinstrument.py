@@ -1,12 +1,13 @@
-from typing import Union
+from typing import Union, TYPE_CHECKING
 from threading import Lock
 from abc import ABC, abstractmethod
-from functools import partial
-from epcomms.equipment.base.instrument import Instrument
 from eptestbenchmanager.recording import Recording
 
 from eptestbenchmanager.dashboard.elements import DigitalGauge
 from eptestbenchmanager.dashboard.pages import InstrumentDetail
+
+if TYPE_CHECKING:
+    from eptestbenchmanager.connections import CompositeVirtualInstrument
 
 
 class VirtualInstrument(ABC):
@@ -17,10 +18,13 @@ class VirtualInstrument(ABC):
         uid (str): Unique identifier for the virtual instrument.
         name (str): Name of the virtual instrument.
         rolling_storage_size (int): The number of values to store in the rolling storage.
-        _physical_instrument (Instrument): The physical instrument associated with this virtual instrument.
-        _setter_function (Union[callable, None]): A function to set the value of the instrument, assumed to be threadsafe.
+        _physical_instrument (Instrument): The physical instrument associated with this virtual
+        instrument.
+        _setter_function (Union[callable, None]): A function to set the value of the instrument,
+        assumed to be threadsafe.
         _value (Union[str, int, float, bool, None]): The current value of the instrument.
-        _lock (Lock): A threading lock to ensure thread safety when accessing or modifying the value.
+        _lock (Lock): A threading lock to ensure thread safety when accessing or modifying the
+        value.
     """
 
     def __init__(  # pylint: disable=too-many-arguments #(This is built by a factory)
@@ -39,7 +43,8 @@ class VirtualInstrument(ABC):
             uid (str): Unique identifier for the virtual instrument.
             name (str): Name of the virtual instrument.
             unit (str, optional): Unit of measurement for the instrument. Defaults to None.
-            rolling_storage_size (int, optional): The number of values to store in the rolling storage. Defaults to 250.
+            rolling_storage_size (int, optional): The number of values to store in the rolling
+            storage. Defaults to 250.
         """
         self._experiment_manager = testbench_manager.runner
         self.testbench_manager = testbench_manager
@@ -76,8 +81,8 @@ class VirtualInstrument(ABC):
         """
         Retrieve the current value of the virtual instrument.
 
-        This method acquires a lock to ensure thread safety, retrieves the value stored in the `_value` attribute,
-        and then releases the lock.
+        This method acquires a lock to ensure thread safety, retrieves the value stored in the
+        `_value` attribute, and then releases the lock.
 
         Returns:
             Union[str, int, float, bool]: The current value of the virtual instrument.
@@ -101,9 +106,9 @@ class VirtualInstrument(ABC):
         """
         Set the value of the virtual instrument.
 
-        This method acquires a lock to ensure thread safety, sets the value stored in the `_value` attribute,
-        and then releases the lock. It also updates dependant composites, rolling storage, active recordings,
-        and the UI gauge component.
+        This method acquires a lock to ensure thread safety, sets the value stored in the `_value`
+        attribute, and then releases the lock. It also updates dependant composites,
+        rolling storage, active recordings, and the UI gauge component.
 
         Args:
             value (Union[str, int, float, bool]): The value to set.
@@ -148,7 +153,8 @@ class VirtualInstrument(ABC):
             record_id: The ID of the recording.
             record_name: The name of the recording.
             file_id: The file ID for the recording.
-            max_samples (optional): The maximum number of samples for the recording. Defaults to None.
+            max_samples (optional): The maximum number of samples for the recording.
+            Defaults to None.
             stored_samples (optional): The number of samples to store. Defaults to 250.
             max_time (optional): The maximum time for the recording. Defaults to None.
         """
@@ -216,11 +222,13 @@ class VirtualInstrument(ABC):
         Sends a command to the virtual instrument.
 
         Args:
-            command (Union[str, int, float, bool]): The command to be sent to the instrument. This can be a string, integer, float, or boolean value.
+            command (Union[str, int, float, bool]): The command to be sent to the instrument.
+            This can be a string, integer, float, or boolean value.
 
         Raises:
-            NotImplementedError: Always raised to indicate that the instrument does not accept commands.
+            NotImplementedError: Always raised to indicate that the instrument does not accept
+            commands.
         """
         raise NotImplementedError(
-            f"{self.name} (type: {self.__class__.__name__}, uid: {self.uid}) does not accept commands"
+            f"{self.name} (type: {self.__class__.__name__}, uid: {self.uid}) does not accept commands"  # pylint: disable=line-too-long
         )

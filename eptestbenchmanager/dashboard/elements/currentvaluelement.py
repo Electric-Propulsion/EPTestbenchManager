@@ -1,5 +1,5 @@
-from ..dashboardelement import DashboardElement
 from flask_socketio import emit, Namespace, SocketIO
+from ..dashboardelement import DashboardElement
 
 
 class CurrentValueElement(DashboardElement):

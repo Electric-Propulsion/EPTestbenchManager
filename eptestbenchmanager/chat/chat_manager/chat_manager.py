@@ -1,5 +1,9 @@
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
 from eptestbenchmanager.chat.engine import CommunicationEngine
+
+if TYPE_CHECKING:
+    from eptestbenchmanager.manager import TestbenchManager
 
 
 class ChatManager(ABC):

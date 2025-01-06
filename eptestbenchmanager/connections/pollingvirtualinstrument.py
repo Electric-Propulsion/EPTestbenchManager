@@ -1,5 +1,5 @@
 from typing import Union
-from threading import Lock, Thread, Event
+from threading import Thread, Event
 from time import monotonic, sleep
 from epcomms.equipment.base.instrument import Instrument
 from . import VirtualInstrument
@@ -10,7 +10,8 @@ class PollingVirtualInstrument(VirtualInstrument):
 
     Attributes:
         _physical_instrument (Instrument): The physical instrument being polled.
-        _setter_function (Union[callable, None]): Function to command the physical instrument with a value.
+        _setter_function (Union[callable, None]): Function to command the physical instrument with a
+        value.
         _getter_function (Union[callable, None]): Function to get the physical instrument value.
         _polling_interval (int): Interval between polls in milliseconds.
         _polling_thread (Thread): Thread that runs the polling loop.

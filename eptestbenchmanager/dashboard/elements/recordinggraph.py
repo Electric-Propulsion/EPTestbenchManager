@@ -1,6 +1,10 @@
-from ..dashboardelement import DashboardElement
-from flask_socketio import Namespace, emit, SocketIO
+from typing import TYPE_CHECKING
+from flask_socketio import Namespace, SocketIO
 from flask import render_template
+from ..dashboardelement import DashboardElement
+
+if TYPE_CHECKING:
+    from eptestbenchmanager.manager import Recording
 
 
 class RecordingGraph(DashboardElement):

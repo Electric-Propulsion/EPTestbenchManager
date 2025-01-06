@@ -1,9 +1,12 @@
-from flask import render_template, send_from_directory
-from flask_socketio import emit, Namespace
-import os
-from pathlib import Path
+from typing import TYPE_CHECKING
+from flask import render_template
+from flask_socketio import Namespace
 
 from ..dashboardelement import DashboardElement
+
+if TYPE_CHECKING:
+    from eptestbenchmanager.manager import TestbenchManager
+    from eptestbenchmanager.report import ReportManager
 
 
 class ArchiveDownload(DashboardElement):
@@ -32,13 +35,17 @@ class ArchiveDownload(DashboardElement):
             uid (str): Unique identifier for the element.
             testbench_manager (TestbenchManager): Global TestbenchManager object.
             report_manager (ReportManager, optional): Manager for reports. Defaults to None.
-            socketio (SocketIO, optional): SocketIO instance for real-time communication. Defaults to None.
+            socketio (SocketIO, optional): SocketIO instance for real-time communication.
+            Defaults to None.
         """
         super().__init__(uid, socketio)
         self.name = "Archive Download"
         self._report_manager = report_manager
         self.namespace = f"/{uid}"
         self.socketio.on_namespace(Namespace(self.namespace))
+        self.testbench_manager = (
+            testbench_manager  # TODO: evaluate if this is necessary
+        )
 
     def render_html(self):
         """Renders the HTML for the archive download element.

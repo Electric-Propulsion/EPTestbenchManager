@@ -12,13 +12,23 @@ class DiscordChatManager(ChatManager):
     future.
     """
 
+    def __init__(self, engine, testbench_manager):
+        """Initializes the DiscordChatManager with the provided communication engine and testbench manager.
+
+                Args:
+                    engine (CommunicationEngine): The discord engine to use for sending messages.
+                    testbench_manager (TestbenchManager): Global testbench manager instance.
+        .
+        """
+        super().__init__(engine, testbench_manager)
+        self.command_character = "/"
+
     def configure(self) -> None:
         """Configures the message processor for Discord chat.
 
         Sets the command character and assigns the message processing function.
         """
         self._engine.configure_message_processor(self.process_message)
-        self.command_character = "/"
 
     def process_message(self, message: str, channel: str, user: int) -> None:
         """Processes an incoming message and executes the corresponding command.

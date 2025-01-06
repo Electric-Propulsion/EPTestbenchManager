@@ -21,7 +21,8 @@ class DiscordAlertManager(AlertManager):
         Args:
             message (str): The alert message to send.
             severity (AlertSeverity): The severity level of the alert.
-            target (Union[str, list[str], None], optional): The target user(s) to mention. Defaults to None.
+            target (Union[str, list[str], None], optional): The target user(s) to mention.
+            Defaults to None.
         """
         if target is not None:
             try:

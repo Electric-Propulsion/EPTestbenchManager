@@ -1,11 +1,15 @@
-from flask import Flask, render_template, send_from_directory
-from flask_socketio import SocketIO, emit, Namespace
-from threading import Thread
 import os
 from pathlib import Path
+from typing import TYPE_CHECKING
+from flask import Flask, send_from_directory
+from flask_socketio import SocketIO
 
-from .pages import MainPage, InstrumentDetail
+from .pages import MainPage
 from .elements import ExperimentControl
+
+if TYPE_CHECKING:
+    from eptestbenchmanager.manager import TestbenchManager
+    from eptestbenchmanager.dashboard import DashboardElement, DashboardPage
 
 
 class DashboardManager:
@@ -72,8 +76,13 @@ class DashboardManager:
                 print(f"Error starting experiment: {e}")
 
         # set up the experiment control elements
-        self.experiment_control = self.create_element(
-            ExperimentControl, args=["experiment_control", self.testbench_manager]
+        # This must be done in the configure method so that the experiment runner is able to load
+        # experiments before the experiment control element is created, but the dashboard manager
+        # must be created first.
+        self.experiment_control = (  # pylint: disable=attribute-defined-outside-init
+            self.create_element(
+                ExperimentControl, args=["experiment_control", self.testbench_manager]
+            )
         )
 
     def create_element(self, element_class: "DashboardElement", args):
