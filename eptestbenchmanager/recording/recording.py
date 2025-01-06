@@ -21,7 +21,7 @@ class Recording:
         _stored_samples: The number of samples hold for rolling recordings.
         max_time: The maximum time to record.
         _rolling: Whether the recording is rolling.
-        _t0: The start time for displaying.
+        t0: The start time for displaying.
         _start_time: The start time of the recording.
         _samples: The list of recorded samples.
         _times: The list of recorded times, in timestamp format
@@ -80,7 +80,7 @@ class Recording:
         self._stored_samples = stored_samples
         self.max_time = max_time_s
         self._rolling = rolling
-        self._t0 = t0
+        self.t0 = t0
         self._start_time = None
         self._samples = []
         self._times = []

@@ -84,9 +84,9 @@ class RecordingGraph(DashboardElement):
             "measurement_name": self.recording.virtual_instrument.name,
             "measurement_unit": self.recording.virtual_instrument.unit,
             "t0": (
-                self.recording._t0
-                if self.recording._t0 is not None
-                else self.recording._times[0]
+                self.recording.t0
+                if self.recording.t0 is not None
+                else self.recording.times[0]
             ),
         }
         return render_template("elements/recording_graph.js", data=data)

@@ -8,6 +8,14 @@ class ExperimentStatusVirtualInstrument(VirtualInstrument):
     It does not support sending commands.
     """
 
+    def set_value(self, value):
+        """Sets the value of the instrument. This method is used to update the experiment status.
+
+        Args:
+            value: The value to be set.
+        """
+        self._set_value(value)
+
     def command(self, command):
         """Raises NotImplementedError as this instrument does not support commands.
 

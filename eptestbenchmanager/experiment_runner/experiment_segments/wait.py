@@ -29,4 +29,3 @@ class Wait(ExperimentSegment):
 
         This method is currently a placeholder and does not generate any report.
         """
-        pass

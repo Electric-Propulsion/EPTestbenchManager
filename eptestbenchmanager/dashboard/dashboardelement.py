@@ -15,7 +15,8 @@ class DashboardElement(ABC):
 
         Args:
             uid (str): Unique identifier for the dashboard element.
-            socketio (SocketIO, optional): SocketIO instance for real-time communication. Defaults to None.
+            socketio (SocketIO, optional): SocketIO instance for real-time communication.
+            Defaults to None.
         """
         self.uid = uid
         self.socketio = socketio

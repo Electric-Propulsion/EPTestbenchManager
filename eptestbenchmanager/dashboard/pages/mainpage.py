@@ -1,13 +1,12 @@
 from ..dashboardpage import DashboardPage
-from ..elements import ArchiveDownload
 
 
 class MainPage(DashboardPage):
     """MainPage class for the dashboard.
 
-    This class represents the main page of the dashboard, inheriting from DashboardPage. It initializes
-    the components, experiment control, and archive download elements, and provides a method to render
-    the HTML and JavaScript for the page.
+    This class represents the main page of the dashboard, inheriting from DashboardPage. It
+    initializes the components, experiment control, and archive download elements, and provides a
+    method to render the HTML and JavaScript for the page.
 
     Attributes:
         components (list): List of gauge components from virtual instruments.

@@ -1,6 +1,6 @@
 from operator import ge
-from . import Pumpdown, Timeout, ThresholdLastNValues, AbortingSegmentFailure
 import time
+from . import Pumpdown, Timeout, ThresholdLastNValues, AbortingSegmentFailure
 
 
 class MeasureLeaks(Pumpdown):

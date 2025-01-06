@@ -232,3 +232,13 @@ class VirtualInstrument(ABC):
         raise NotImplementedError(
             f"{self.name} (type: {self.__class__.__name__}, uid: {self.uid}) does not accept commands"  # pylint: disable=line-too-long
         )
+
+    @property
+    def recordings(self) -> dict[str, Recording]:
+        """
+        Retrieve the recordings associated with the virtual instrument.
+
+        Returns:
+            dict[str, Recording]: A dictionary of recordings associated with the virtual instrument.
+        """
+        return self._recordings

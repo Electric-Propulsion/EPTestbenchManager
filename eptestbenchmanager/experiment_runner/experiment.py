@@ -93,13 +93,13 @@ class Experiment:
                 # Update the appropriate virtual instruments
                 self._testbench_manager.connection_manager.virtual_instruments[
                     "experiment_current_segment_id"
-                ]._set_value(self.current_segment_id)
+                ].set_value(self.current_segment_id)
                 self._testbench_manager.connection_manager.virtual_instruments[
                     "experiment_current_segment_uid"
-                ]._set_value(segment.uid)
+                ].set_value(segment.uid)
                 self._testbench_manager.connection_manager.virtual_instruments[
                     "experiment_current_segment_name"
-                ]._set_value(segment.name)
+                ].set_value(segment.name)
 
                 try:
                     self._testbench_manager.alert_manager.send_alert(

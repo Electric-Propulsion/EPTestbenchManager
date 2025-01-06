@@ -83,8 +83,7 @@ class InstrumentDetail(DashboardPage):
         """Updates the list of graphs associated with the instrument."""
         old_graphs = self.graphs
         self.graphs = [
-            recording.graph
-            for recording in self.virtual_instrument._recordings.values()
+            recording.graph for recording in self.virtual_instrument.recordings.values()
         ]
 
         self.reload.reload()

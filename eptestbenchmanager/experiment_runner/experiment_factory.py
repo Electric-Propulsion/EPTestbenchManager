@@ -1,8 +1,12 @@
 from io import StringIO
-from yaml import load, FullLoader
 from threading import Lock
+from typing import TYPE_CHECKING
+from yaml import load, FullLoader
 from .experiment import Experiment
-from .experiment_segments import ExperimentSegment, Pumpdown, MeasureLeaks, Wait
+from .experiment_segments import Pumpdown, MeasureLeaks, Wait
+
+if TYPE_CHECKING:
+    from eptestbenchmanager.manager import TestbenchManager
 
 
 class ExperimentFactory:

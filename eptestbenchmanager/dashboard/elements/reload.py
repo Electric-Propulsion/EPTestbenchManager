@@ -1,6 +1,6 @@
-from ..dashboardelement import DashboardElement
-from flask_socketio import emit, Namespace, SocketIO
+from flask_socketio import Namespace, SocketIO
 from flask import render_template
+from ..dashboardelement import DashboardElement
 
 
 class Reload(DashboardElement):
