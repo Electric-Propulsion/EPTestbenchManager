@@ -3,6 +3,23 @@ from . import VirtualInstrument
 
 
 class CompositeVirtualInstrument(VirtualInstrument):
+    """A composite virtual instrument that combines multiple virtual instruments.
+
+    This class allows for the combination of multiple virtual instruments into a single
+    composite instrument. The values of the individual instruments are combined using a
+    user-defined composition function.
+
+    Attributes:
+        testbench_manager: The testbench manager instance.
+        uid: The unique identifier for the instrument.
+        name: The name of the instrument.
+        composition_function: A callable that combines the values of the instruments.
+        instruments: A list of VirtualInstrument instances to be combined.
+        unit: The unit of measurement for the instrument.
+        update_semaphore: A semaphore to control the update loop.
+        _update_thread: A thread that runs the update loop.
+    """
+
     def __init__(
         self,
         testbench_manager,
@@ -12,6 +29,16 @@ class CompositeVirtualInstrument(VirtualInstrument):
         instruments: list[VirtualInstrument],
         unit: str = None,
     ) -> None:
+        """Initializes the CompositeVirtualInstrument.
+
+        Args:
+            testbench_manager: The testbench manager instance.
+            uid: The unique identifier for the instrument.
+            name: The name of the instrument.
+            composition_function: A callable that combines the values of the instruments.
+            instruments: A list of VirtualInstrument instances to be combined.
+            unit: The unit of measurement for the instrument. Defaults to None.
+        """
         super().__init__(testbench_manager, uid, name, unit)
         self._instruments = instruments
         self._composition_function = composition_function
@@ -24,19 +51,36 @@ class CompositeVirtualInstrument(VirtualInstrument):
             instrument.register_dependant_composite(self)
 
     def _updating_loop(self) -> None:
+        """The loop that updates the composite instrument's value.
+
+        This loop runs in a separate thread and updates the value of the composite
+        instrument by applying the composition function to the values of the individual
+        instruments.
+        """
         while True:
             self.update_semaphore.acquire()
             try:
                 new_value = self._composition_function(
                     [instrument.value for instrument in self._instruments]
-                    )
+                )
             except TypeError as e:
                 print(f"Error in composition function for {self.name}: {e}")
                 new_value = None
             self._set_value(new_value)
-            
+
     def start_updating(self) -> None:
+        """Starts the update loop in a separate thread."""
         self._update_thread.start()
 
     def command(self, command: float) -> None:
-        super().command(command)
+        """Raises NotImplementedError as this instrument does not support commands.
+
+        Args:
+            command (str): The command to be sent to the instrument.
+
+        Raises:
+            NotImplementedError: Always raised as this instrument does not support commands.
+        """
+        raise NotImplementedError(
+            "CompositeVirtualInstrument does not support commands"
+        )

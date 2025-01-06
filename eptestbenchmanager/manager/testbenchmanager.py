@@ -13,8 +13,21 @@ from eptestbenchmanager.report import ReportManager
 
 
 class TestbenchManager:
+    """Manages the testbench operations including connections, monitoring, and communication.
+
+    Attributes:
+        monitor (TestbenchMonitor): Monitors the testbench and evaluates rules.#TODO: Implement this
+        connection_manager (ConnectionManager): Manages connections with physical and virtual instruments.
+        communication_engine (DiscordEngine): Engine that plugs into alert and chat managers.
+        alert_manager (DiscordAlertManager): Manages sending alerts.
+        chat_manager (DiscordChatManager): Manages chat commands and responses.
+        runner (ExperimentRunner): Runs experiments.
+        dashboard (DashboardManager): Manages the web GUI dashboard.
+        report_manager (ReportManager): Manages reports/archives. #TODO: reports are not implemented yet
+    """
 
     def __init__(self):
+        """Initializes the TestbenchManager with default attributes."""
         self.monitor: TestbenchMonitor = None
         self.connection_manager: ConnectionManager = None
         self.communication_engine = DiscordEngine()
@@ -28,13 +41,18 @@ class TestbenchManager:
         delay_experiment_load: bool = False,
         discord_guild: str = "Festus's bot test server",
     ):
-        
-        self.dashboard = DashboardManager(self)
+        """Starts the application with optional delays for loading apparatus and experiments.
 
+        Args:
+            delay_apparatus_load (bool): If True, delays loading the apparatus configuration.
+            delay_experiment_load (bool): If True, delays loading the experiment configurations.
+            discord_guild (str): The Discord guild name for communication.
+        """
+
+        self.dashboard = DashboardManager(self)
 
         # Initialize the connection manager
         if not delay_apparatus_load:
-            # Assume apparatus config is in ../config/apparatus_config.yaml
             apparatus_config_file_path = path.join(
                 Path(__file__).parent.parent, Path("config/apparatus_config.yaml")
             )
@@ -44,7 +62,6 @@ class TestbenchManager:
         # Initialize the experiment runner
         self.runner = ExperimentRunner(self)
 
-
         self.connection_manager = ConnectionManager(self, apparatus_config_file_path)
 
         # Configure the chat stuff
@@ -52,7 +69,6 @@ class TestbenchManager:
 
         # Start everything
         self.connection_manager.run()
-
         self.communication_engine.run()
         sleep(2.5)  # just give it a little time to start up
         self.communication_engine.configure({"guild": discord_guild})

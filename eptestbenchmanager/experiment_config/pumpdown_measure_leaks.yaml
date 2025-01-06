@@ -16,7 +16,7 @@ segments:
     recordings:
       - vacuum_chamber_pressure:
           record_id: all_segments
-          name: All Segments
+          record_name: All Segments
   
   measure_leaks:
     name: Measure Leaks

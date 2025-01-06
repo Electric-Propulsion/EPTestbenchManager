@@ -1,14 +1,40 @@
 from ..dashboardpage import DashboardPage
 from ..elements import ArchiveDownload
 
+
 class MainPage(DashboardPage):
+    """MainPage class for the dashboard.
+
+    This class represents the main page of the dashboard, inheriting from DashboardPage. It initializes
+    the components, experiment control, and archive download elements, and provides a method to render
+    the HTML and JavaScript for the page.
+
+    Attributes:
+        components (list): List of gauge components from virtual instruments.
+        experiment_control (ExperimentControl): The experiment control element.
+        archive_download (ArchiveDownload): The archive download element.
+    """
+
     def __init__(self, testbench_manager, app, socketio):
+        """Initializes the MainPage with the given parameters.
+
+        Args:
+            testbench_manager (TestbenchManager): The testbench manager instance.
+            app (Flask): The Flask application instance.
+            socketio (SocketIO): The SocketIO instance.
+        """
         super().__init__(app, socketio, "/")
-        vints =  testbench_manager.connection_manager.virtual_instruments.values()
+        vints = testbench_manager.connection_manager.virtual_instruments.values()
         self.components = [vint.gauge for vint in vints]
         self.experiment_control = testbench_manager.dashboard.experiment_control
         self.archive_download = testbench_manager.report_manager.ui_element
+
     def render(self):
+        """Renders the HTML and JavaScript for the main page.
+
+        Returns:
+            str: The HTML and JavaScript content for the main page.
+        """
         return f"""
         <!DOCTYPE html>
         <html>

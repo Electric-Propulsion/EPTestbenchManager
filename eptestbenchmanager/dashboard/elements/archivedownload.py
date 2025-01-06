@@ -5,8 +5,35 @@ from pathlib import Path
 
 from ..dashboardelement import DashboardElement
 
+
 class ArchiveDownload(DashboardElement):
-    def __init__(self, uid: str, testbench_manager: "TestbenchManager", report_manager = 'ReportManager', socketio = None):
+    """Class for handling archive downloads in the dashboard.
+
+        Attributes:
+            uid (str): Unique identifier for the element.
+            testbench_manager (TestbenchManager):           # set up the experiment control elements
+    .
+            report_manager (ReportManager): Manager for reports.
+            socketio (SocketIO): SocketIO instance for real-time communication.
+            name (str): Name of the element.
+            namespace (str): Namespace for SocketIO communication.
+    """
+
+    def __init__(
+        self,
+        uid: str,
+        testbench_manager: "TestbenchManager",
+        report_manager: "ReportManager" = None,
+        socketio=None,
+    ):
+        """Initializes ArchiveDownload with the given parameters.
+
+        Args:
+            uid (str): Unique identifier for the element.
+            testbench_manager (TestbenchManager): Global TestbenchManager object.
+            report_manager (ReportManager, optional): Manager for reports. Defaults to None.
+            socketio (SocketIO, optional): SocketIO instance for real-time communication. Defaults to None.
+        """
         super().__init__(uid, socketio)
         self.name = "Archive Download"
         self._report_manager = report_manager
@@ -14,19 +41,32 @@ class ArchiveDownload(DashboardElement):
         self.socketio.on_namespace(Namespace(self.namespace))
 
     def render_html(self):
-        data = {
-            "archives": self._report_manager.archives,
-            "uid": self.uid
-        }
-        value =  render_template("elements/archive_download.html", data=data)
+        """Renders the HTML for the archive download element.
+
+        Returns:
+            str: Rendered HTML content.
+        """
+        data = {"archives": self._report_manager.archives, "uid": self.uid}
+        value = render_template("elements/archive_download.html", data=data)
         return value
-    
+
     def render_js(self):
-        data = {
-            "namespace": self.namespace,
-            "uid": self.uid
-        }
+        """Renders the JavaScript for the archive download element.
+
+        Returns:
+            str: Rendered JavaScript content.
+        """
+        data = {"namespace": self.namespace, "uid": self.uid}
         return render_template("elements/archive_download.js", data=data)
-    
+
     def update_archives(self):
-        self.socketio.emit("update", {"archives": self._report_manager.archives}, namespace=self.namespace)
+        """Emits an update event with the current archives.
+
+        Emits:
+            update: Event with the current archives.
+        """
+        self.socketio.emit(
+            "update",
+            {"archives": self._report_manager.archives},
+            namespace=self.namespace,
+        )
