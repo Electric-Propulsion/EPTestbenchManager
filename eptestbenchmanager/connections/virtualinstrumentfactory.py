@@ -5,7 +5,7 @@ from . import (
     PollingVirtualInstrument,
     NoiseVirtualInstrument,
     CompositeVirtualInstrument,
-    ManualVirtualInstrument
+    ManualVirtualInstrument,
 )
 
 
@@ -73,14 +73,26 @@ class VirtualInstrumentFactory:
         """
         physical_instrument = physical_instruments[config["physical_instrument"]]
 
+        setter_arguments = config.get("setter_arguments", {})
         setter_function = (
-            getattr(physical_instrument, config["setter_function"])
+            (
+                lambda value: getattr(physical_instrument, config["setter_function"])(
+                    value, **setter_arguments
+                )
+            )
             if config["setter_function"] != "None"
             else None
         )
 
+        getter_arguments = config.get("getter_arguments", {})
         getter_function = (
-            getattr(physical_instrument, config["getter_function"])
+            (
+                lambda: (
+                    getattr(physical_instrument, config["getter_function"])(
+                        **getter_arguments
+                    )
+                )
+            )
             if config["getter_function"] != "None"
             else None
         )
@@ -119,7 +131,7 @@ class VirtualInstrumentFactory:
             unit=config.get("unit", None),
         )
         return instrument
-    
+
     @classmethod
     def create_manual_instrument(
         cls, testbench_manager, uid: str, config: dict

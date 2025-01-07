@@ -29,9 +29,9 @@ virtual_instruments:
   #   name: Vacuum Chamber Pressure
   #   physical_instrument: vacuum_controller
   #   getter_function: get_pressure_gauge_1
-  #   getter_arguments: []
+  #   getter_arguments: {}
   #   setter_function: None
-  #   setter_arguments: []
+  #   setter_arguments: {}
   #   polling_interval: 200
   #   unit: mBar
     type: noise
@@ -49,9 +49,10 @@ virtual_instruments:
     name: Filament Voltage
     physical_instrument: test_instrument
     getter_function: get_noise
-    getter_arguments: []
-    setter_function: echo
-    setter_arguments: []
+    getter_arguments: {}
+    setter_function: echo_count
+    setter_arguments: 
+      count: 2
     polling_interval: 200
 
   bias_voltage:
@@ -59,9 +60,9 @@ virtual_instruments:
     name: Bias Voltage
     physical_instrument: test_instrument
     getter_function: get_noise
-    getter_arguments: []
+    getter_arguments: {}
     setter_function: echo
-    setter_arguments: []
+    setter_arguments: {}
     polling_interval: 200
 
   filament_current:
@@ -69,9 +70,9 @@ virtual_instruments:
     name: Filament Current
     physical_instrument: test_instrument
     getter_function: get_noise
-    getter_arguments: []
+    getter_arguments: {}
     setter_function: None
-    setter_arguments: []
+    setter_arguments: {}
     polling_interval: 200
 
   filament_current_limit:
@@ -79,9 +80,9 @@ virtual_instruments:
     name: Filament Current
     physical_instrument: test_instrument
     getter_function: get_noise
-    getter_arguments: []
+    getter_arguments: {}
     setter_function: echo
-    setter_arguments: []
+    setter_arguments: {}
     polling_interval: 200
 
   bias_current:
@@ -89,9 +90,9 @@ virtual_instruments:
     name: Bias Current Limit
     physical_instrument: test_instrument
     getter_function: get_noise
-    getter_arguments: []
+    getter_arguments: {}
     setter_function: None
-    setter_arguments: []
+    setter_arguments: {}
     polling_interval: 200
 
   bias_current_limit:
@@ -99,9 +100,9 @@ virtual_instruments:
     name: Bias Current Limit
     physical_instrument: test_instrument
     getter_function: get_noise
-    getter_arguments: []
+    getter_arguments: {}
     setter_function: echo
-    setter_arguments: []
+    setter_arguments: {}
     polling_interval: 200
 
   emitted_current:
@@ -109,9 +110,9 @@ virtual_instruments:
     name: Emitted Current
     physical_instrument: test_instrument
     getter_function: get_noise
-    getter_arguments: []
+    getter_arguments: {}
     setter_function: None
-    setter_arguments: []
+    setter_arguments: {}
     polling_interval: 200
 
   
