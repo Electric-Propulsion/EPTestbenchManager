@@ -4,3 +4,4 @@ from .experiment_segment import ExperimentSegment, AbortingSegmentFailure
 from .pumpdown import Pumpdown
 from .measure_leaks import MeasureLeaks
 from .wait import Wait
+from .hold_iso_filament import HoldIsoFilament

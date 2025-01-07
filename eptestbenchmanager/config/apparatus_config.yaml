@@ -4,6 +4,21 @@ physical_instruments:
     arguments:
       device_location: /dev/ttyUSB0
 
+  multimeter:
+    class: epcomms.equipment.multimeter.KeysightEDU34450A
+    arguments:
+      resource_name: TCPIP::192.168.0.121::INSTR
+
+  lv_psu:
+    class: epcomms.equipment.powersupply.KeysightEDU36311A
+    arguments:
+      resourec_name: TCPIP::192.168.0.145::INSTR
+
+  flow_controller: 
+    class: epcomms.equipment.flowcontroller.AlicatEIP
+    arguments:
+      routing_path: 192.168.0.172
+
 virtual_instruments:
   vacuum_chamber_pressure:
     type: polling
@@ -20,6 +35,8 @@ virtual_instruments:
     type: manual
     name: High Voltage PSU
     unit: V
+
+  
   
 
 

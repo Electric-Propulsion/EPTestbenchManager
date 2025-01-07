@@ -1,0 +1,80 @@
+experiment:
+  uid: iso_emission_stepup
+  name: Isotropic Emission Filament Voltage Stepup
+  description: |
+    This experiment progressively steps through filament voltages, holding the bias voltage constant
+
+segments:
+  zero:
+    name: Zero Voltages
+    type: hold_iso_filament
+    filament_voltage: 0
+    bias_voltage: 0
+    hold_s: 5
+    recordings:
+      - vacuum_chamber_pressure:
+          record_id: pressure
+          record_name: Pressure
+      - filament_voltage:
+          record_id: filament_voltage
+          record_name: Filament Voltage
+      - bias_voltage:
+          record_id: bias_voltage
+          record_name: Bias Voltage
+      - filament_current:
+          record_id: filament_curret
+          record_name: Filament Current
+      - emitted_currnet:
+          record_ud: emitted_current
+          record_name: Emitted Current
+
+  step_filament_voltages:
+    name: Filament Voltage Step
+    type: linear_step
+    min_value: 0
+    max_value: 6
+    step_size: 0.1
+    segment: hold_iso_filament
+    variable: filament_voltage
+    constants:
+      bias_voltage: 30
+      hold_s: 1
+    recordings:
+      - vacuum_chamber_pressure:
+          record_id: pressure
+          record_name: Pressure
+      - filament_voltage:
+          record_id: filament_voltage
+          record_name: Filament Voltage
+      - bias_voltage:
+          record_id: bias_voltage
+          record_name: Bias Voltage
+      - filament_current:
+          record_id: filament_curret
+          record_name: Filament Current
+      - emitted_currnet:
+          record_ud: emitted_current
+          record_name: Emitted Current
+
+    rezero:
+      name: Rezero Voltages
+      type: hold_iso_filament
+      filament_voltage: 0
+      bias_voltage: 0
+      hold_s: 5
+    recordings:
+      - vacuum_chamber_pressure:
+          record_id: pressure
+          record_name: Pressure
+      - filament_voltage:
+          record_id: filament_voltage
+          record_name: Filament Voltage
+      - bias_voltage:
+          record_id: bias_voltage
+          record_name: Bias Voltage
+      - filament_current:
+          record_id: filament_curret
+          record_name: Filament Current
+      - emitted_currnet:
+          record_ud: emitted_current
+          record_name: Emitted Current
