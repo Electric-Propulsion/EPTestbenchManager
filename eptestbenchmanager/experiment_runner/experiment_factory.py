@@ -3,7 +3,7 @@ from threading import Lock
 from typing import TYPE_CHECKING
 from yaml import load, FullLoader
 from .experiment import Experiment
-from .experiment_segments import Pumpdown, MeasureLeaks, Wait
+from .experiment_segments import Pumpdown, MeasureLeaks, Wait, HoldIsoFilament, LinearStep
 
 if TYPE_CHECKING:
     from eptestbenchmanager.manager import TestbenchManager
@@ -79,5 +79,9 @@ class ExperimentFactory:
                 return MeasureLeaks
             case "wait":
                 return Wait
+            case "hold_iso_filament":
+                return HoldIsoFilament
+            case "linear_step":
+                return LinearStep
             case _:
                 raise ValueError(f"Unknown segment type: {segment_type}")

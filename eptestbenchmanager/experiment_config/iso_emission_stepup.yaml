@@ -9,7 +9,9 @@ segments:
     name: Zero Voltages
     type: hold_iso_filament
     filament_voltage: 0
+    filament_current_limit: 0
     bias_voltage: 0
+    bias_current_limit: 0
     hold_s: 5
     recordings:
       - vacuum_chamber_pressure:
@@ -37,7 +39,9 @@ segments:
     segment: hold_iso_filament
     variable: filament_voltage
     constants:
+      filament_current_limit: 3
       bias_voltage: 30
+      bias_current_limit: 0.5
       hold_s: 1
     recordings:
       - vacuum_chamber_pressure:
@@ -60,7 +64,9 @@ segments:
       name: Rezero Voltages
       type: hold_iso_filament
       filament_voltage: 0
+      filament_current_limit: 0
       bias_voltage: 0
+      bias_current_limit: 0
       hold_s: 5
     recordings:
       - vacuum_chamber_pressure:
