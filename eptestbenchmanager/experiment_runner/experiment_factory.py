@@ -1,9 +1,16 @@
 from io import StringIO
 from threading import Lock
 from typing import TYPE_CHECKING
+from collections.abc import Iterable
 from yaml import load, FullLoader
 from .experiment import Experiment
-from .experiment_segments import Pumpdown, MeasureLeaks, Wait, HoldIsoFilament, LinearStep
+from .experiment_segments import (
+    Pumpdown,
+    MeasureLeaks,
+    Wait,
+    HoldIsoFilament,
+    LinearStep,
+)
 
 if TYPE_CHECKING:
     from eptestbenchmanager.manager import TestbenchManager
@@ -48,10 +55,14 @@ class ExperimentFactory:
         for segment_uid, segment_config in config["segments"].items():
             segment_type = segment_config["type"]
             segment_name = segment_config["name"]
+            # 'segment' could be a single segment or a list of segments
             segment = cls.get_class(segment_type)(
                 segment_uid, segment_name, segment_config, testbench_manager
             )
-            segments.append(segment)
+            if isinstance(segment, Iterable):
+                segments.extend(segment)
+            else:
+                segments.append(segment)
 
         experiment = Experiment(
             uid, name, description, segments, experiment_lock, testbench_manager

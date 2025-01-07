@@ -26,8 +26,8 @@ segments:
       - filament_current:
           record_id: filament_curret
           record_name: Filament Current
-      - emitted_currnet:
-          record_ud: emitted_current
+      - emitted_current:
+          record_id: emitted_current
           record_name: Emitted Current
 
   step_filament_voltages:
@@ -35,7 +35,7 @@ segments:
     type: linear_step
     min_value: 0
     max_value: 6
-    step_size: 0.1
+    num_steps: 10
     segment: hold_iso_filament
     variable: filament_voltage
     constants:
@@ -56,11 +56,11 @@ segments:
       - filament_current:
           record_id: filament_curret
           record_name: Filament Current
-      - emitted_currnet:
-          record_ud: emitted_current
+      - emitted_current:
+          record_id: emitted_current
           record_name: Emitted Current
 
-    rezero:
+  rezero:
       name: Rezero Voltages
       type: hold_iso_filament
       filament_voltage: 0
@@ -68,7 +68,7 @@ segments:
       bias_voltage: 0
       bias_current_limit: 0
       hold_s: 5
-    recordings:
+      recordings:
       - vacuum_chamber_pressure:
           record_id: pressure
           record_name: Pressure
@@ -81,6 +81,6 @@ segments:
       - filament_current:
           record_id: filament_curret
           record_name: Filament Current
-      - emitted_currnet:
-          record_ud: emitted_current
+      - emitted_current:
+          record_id: emitted_current
           record_name: Emitted Current
