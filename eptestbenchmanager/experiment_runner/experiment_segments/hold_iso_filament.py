@@ -14,10 +14,10 @@ class HoldIsoFilament(ExperimentSegment):
         self.hold_s = config["hold_s"]
 
         self.filament_voltage = self._testbench_manager.connection_manager.filament_voltage
-        self.filament_current_limit = self._testbench_manager.connection_manager.filament_current_limit
+        self.filament_current_limit = self._testbench_manager.connection_manager.filament_current
 
         self.bias_voltage = self._testbench_manager.connection_manager.bias_voltage
-        self.bias_current_limit = self._testbench_manager.connection_manager.bias_current_limit
+        self.bias_current_limit = self._testbench_manager.connection_manager.bias_current
 
         self.data = {} #TODO: remove self.data at some point? or fix
 

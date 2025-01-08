@@ -1,40 +1,39 @@
 physical_instruments:
-  # vacuum_controller:
-  #   class: epcomms.equipment.vacuumcontroller.Terranova962A
-  #   arguments:
-  #     device_location: /dev/ttyUSB0
+  vacuum_controller:
+    class: epcomms.equipment.vacuumcontroller.Terranova962A
+    arguments:
+      device_location: /dev/ttyUSB0
 
-  # multimeter:
-  #   class: epcomms.equipment.multimeter.KeysightEDU34450A
-  #   arguments:
-  #     resource_name: TCPIP::192.168.0.121::INSTR
+  multimeter:
+    class: epcomms.equipment.multimeter.KeysightEDU34450A
+    arguments:
+      resource_name: "TCPIP::192.168.0.121::INSTR"
 
-  # lv_psu:
-  #   class: epcomms.equipment.powersupply.KeysightEDU36311A
-  #   arguments:
-  #     resourec_name: TCPIP::192.168.0.145::INSTR
+  lv_psu:
+    class: epcomms.equipment.powersupply.KeysightEDU36311A
+    arguments:
+      resource_name: "TCPIP::192.168.0.145::INSTR"
 
   # flow_controller: 
   #   class: epcomms.equipment.flowcontroller.AlicatEIP
   #   arguments:
-  #     routing_path: 192.168.0.172
+  #     routing_path: "192.168.0.172"
 
-  test_instrument:
-    class: epcomms.equipment.test.TestInstrument
-    arguments: {}
+  # test_instrument:
+  #   class: epcomms.equipment.test.TestInstrument
+  #   arguments: {}
 
 virtual_instruments:
   vacuum_chamber_pressure:
-  #   type: polling
-  #   name: Vacuum Chamber Pressure
-  #   physical_instrument: vacuum_controller
-  #   getter_function: get_pressure_gauge_1
-  #   getter_arguments: {}
-  #   setter_function: None
-  #   setter_arguments: {}
-  #   polling_interval: 200
-  #   unit: mBar
-    type: noise
+    type: polling
+    name: Vacuum Chamber Pressure
+    physical_instrument: vacuum_controller
+    getter_function: get_pressure_gauge_1
+    getter_arguments: {}
+    setter_function: None
+    setter_arguments: {}
+    polling_interval: 5000
+    unit: mBar
     name: Vacuum Chamber Pressure
     mean: 0
     standard_deviation: 1
@@ -47,70 +46,100 @@ virtual_instruments:
   filament_voltage:
     type: polling
     name: Filament Voltage
-    physical_instrument: test_instrument
-    getter_function: get_noise
-    getter_arguments: {}
-    setter_function: echo_count
+    physical_instrument: lv_psu
+    getter_function: measure_voltage
+    getter_arguments:
+      channel: 1
+    setter_function: set_voltage
     setter_arguments: 
-      count: 2
-    polling_interval: 200
+      channel: 1
+    polling_interval: 5000
 
   bias_voltage:
     type: polling
     name: Bias Voltage
-    physical_instrument: test_instrument
-    getter_function: get_noise
-    getter_arguments: {}
-    setter_function: echo
-    setter_arguments: {}
-    polling_interval: 200
+    physical_instrument: lv_psu
+    getter_function: measure_voltage
+    getter_arguments:
+      channel: 2
+    setter_function: set_voltage
+    setter_arguments:
+      channel: 2
+    polling_interval: 5000
 
   filament_current:
     type: polling
     name: Filament Current
-    physical_instrument: test_instrument
-    getter_function: get_noise
-    getter_arguments: {}
-    setter_function: None
-    setter_arguments: {}
-    polling_interval: 200
+    physical_instrument: lv_psu
+    getter_function: measure_current
+    getter_arguments:
+      channel: 1
+    setter_function: set_current
+    setter_arguments: 
+      channel: 1
+    polling_interval: 5000
 
-  filament_current_limit:
-    type: polling
-    name: Filament Current
-    physical_instrument: test_instrument
-    getter_function: get_noise
-    getter_arguments: {}
-    setter_function: echo
-    setter_arguments: {}
-    polling_interval: 200
-
-  bias_current:
+  bias_current: # Same as filament_current
     type: polling
     name: Bias Current Limit
-    physical_instrument: test_instrument
-    getter_function: get_noise
-    getter_arguments: {}
+    physical_instrument: lv_psu
+    getter_function: measure_current
+    getter_arguments:
+      channel: 2
     setter_function: None
-    setter_arguments: {}
-    polling_interval: 200
+    setter_arguments: set_current
+      channel: 2
+    polling_interval: 5000
 
-  bias_current_limit:
-    type: polling
-    name: Bias Current Limit
-    physical_instrument: test_instrument
-    getter_function: get_noise
-    getter_arguments: {}
-    setter_function: echo
-    setter_arguments: {}
-    polling_interval: 200
+  ###4
+
+  # filament_voltage:
+  #   type: noise
+  #   name: Bias Voltage
+  #   mean: 1
+  #   standard_deviation: 0.5
+
+  # bias_voltage:
+  #   type: noise
+  #   name: Bias Voltage
+  #   mean: 1
+  #   standard_deviation: 0.5
+
+  # filament_current:
+  #   type: noise
+  #   name: Filament Current
+  #   mean: 1
+  #   standard_deviation: 0.5
+
+  # filament_current_limit:
+  #   type: noise
+  #   name: Filament Current
+  #   mean: 1
+  #   standard_deviation: 0.5
+
+  # bias_current: # Same as filament_current
+  #   type: noise
+  #   name: Bias Current Limit
+  #   mean: 1
+  #   standard_deviation: 0.5
+
+  # bias_current_limit:
+  #   type: noise
+  #   name: Bias Current Limit
+  #   mean: 1
+  #   standard_deviation: 0.5
+
+###
 
   emitted_current:
     type: polling
     name: Emitted Current
-    physical_instrument: test_instrument
-    getter_function: get_noise
-    getter_arguments: {}
+    physical_instrument: multimeter
+    getter_function: measure_current_dc
+    getter_arguments:
+      measurement_range: 'AUTO'
+      resolution: 'DEF'
+      channel: 'PRIMARY'
     setter_function: None
     setter_arguments: {}
     polling_interval: 200

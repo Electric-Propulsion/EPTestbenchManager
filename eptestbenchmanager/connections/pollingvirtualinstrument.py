@@ -77,8 +77,11 @@ class PollingVirtualInstrument(VirtualInstrument):
             next_poll_time = monotonic() + self._polling_interval / 1000
             if self._stop_event.is_set():
                 return  # Exit the thread
-            value = self._getter_function()
-            self._set_value(value)
+            try:
+                value = self._getter_function()
+                self._set_value(value)
+            except Exception as e:
+                print(e)
             sleep_time = next_poll_time - monotonic()
             if sleep_time > 0:
                 sleep(sleep_time)
