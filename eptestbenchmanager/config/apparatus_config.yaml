@@ -74,62 +74,46 @@ virtual_instruments:
     getter_function: measure_current
     getter_arguments:
       channel: 1
-    setter_function: set_current
+    setter_function: None
     setter_arguments: 
       channel: 1
     polling_interval: 5000
 
-  bias_current: # Same as filament_current
+  filament_current_limit: 
     type: polling
-    name: Bias Current Limit
+    name: Filament Current Limit
+    physical_instrument: lv_psu
+    getter_function: measure_current_limit
+    getter_arguments:
+      channel: 1
+    setter_function: None
+    setter_arguments: set_current_limit
+      channel: 1
+    polling_interval: 5000
+
+  bias_current:
+    type: polling
+    name: Bias Current
     physical_instrument: lv_psu
     getter_function: measure_current
     getter_arguments:
       channel: 2
     setter_function: None
-    setter_arguments: set_current
+    setter_arguments: 
       channel: 2
     polling_interval: 5000
 
-  ###4
-
-  # filament_voltage:
-  #   type: noise
-  #   name: Bias Voltage
-  #   mean: 1
-  #   standard_deviation: 0.5
-
-  # bias_voltage:
-  #   type: noise
-  #   name: Bias Voltage
-  #   mean: 1
-  #   standard_deviation: 0.5
-
-  # filament_current:
-  #   type: noise
-  #   name: Filament Current
-  #   mean: 1
-  #   standard_deviation: 0.5
-
-  # filament_current_limit:
-  #   type: noise
-  #   name: Filament Current
-  #   mean: 1
-  #   standard_deviation: 0.5
-
-  # bias_current: # Same as filament_current
-  #   type: noise
-  #   name: Bias Current Limit
-  #   mean: 1
-  #   standard_deviation: 0.5
-
-  # bias_current_limit:
-  #   type: noise
-  #   name: Bias Current Limit
-  #   mean: 1
-  #   standard_deviation: 0.5
-
-###
+  bias_current_limit: 
+    type: polling
+    name: Bias Current Limit
+    physical_instrument: lv_psu
+    getter_function: measure_current_limit
+    getter_arguments:
+      channel: 2
+    setter_function: None
+    setter_arguments: set_current_limit
+      channel: 2
+    polling_interval: 5000
 
   emitted_current:
     type: polling

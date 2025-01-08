@@ -24,8 +24,11 @@ segments:
           record_id: bias_voltage
           record_name: Bias Voltage
       - filament_current:
-          record_id: filament_curret
+          record_id: filament_current
           record_name: Filament Current
+      - bias_current:
+          record_id: bias_current
+          record_name: Bias Current
       - emitted_current:
           record_id: emitted_current
           record_name: Emitted Current
@@ -56,6 +59,9 @@ segments:
       - filament_current:
           record_id: filament_curret
           record_name: Filament Current
+      - bias_current:
+          record_id: bias_current
+          record_name: Bias Current
       - emitted_current:
           record_id: emitted_current
           record_name: Emitted Current
@@ -81,6 +87,9 @@ segments:
       - filament_current:
           record_id: filament_curret
           record_name: Filament Current
+      - bias_current:
+          record_id: bias_current
+          record_name: Bias Current
       - emitted_current:
           record_id: emitted_current
           record_name: Emitted Current
