@@ -7,12 +7,12 @@ physical_instruments:
   multimeter:
     class: epcomms.equipment.multimeter.KeysightEDU34450A
     arguments:
-      resource_name: "TCPIP::192.168.0.121::INSTR"
+      resource_name: "USB0::10893::36353::CN62350039::0::INSTR"
 
   lv_psu:
     class: epcomms.equipment.powersupply.KeysightEDU36311A
     arguments:
-      resource_name: "TCPIP::192.168.0.145::INSTR"
+      resource_name: "USB0::10893::36609::CN63070208::0::INSTR"
 
   # flow_controller: 
   #   class: epcomms.equipment.flowcontroller.AlicatEIP
@@ -32,11 +32,9 @@ virtual_instruments:
     getter_arguments: {}
     setter_function: None
     setter_arguments: {}
-    polling_interval: 5000
+    polling_interval: 500
     unit: mBar
     name: Vacuum Chamber Pressure
-    mean: 0
-    standard_deviation: 1
 
   hv_psu:
     type: manual
@@ -53,7 +51,8 @@ virtual_instruments:
     setter_function: set_voltage
     setter_arguments: 
       channel: 1
-    polling_interval: 5000
+    polling_interval: 500
+    unit: V
 
   bias_voltage:
     type: polling
@@ -65,7 +64,8 @@ virtual_instruments:
     setter_function: set_voltage
     setter_arguments:
       channel: 2
-    polling_interval: 5000
+    polling_interval: 500
+    unit: V
 
   filament_current:
     type: polling
@@ -77,7 +77,8 @@ virtual_instruments:
     setter_function: None
     setter_arguments: 
       channel: 1
-    polling_interval: 5000
+    polling_interval: 500
+    unit: A
 
   filament_current_limit: 
     type: polling
@@ -86,10 +87,11 @@ virtual_instruments:
     getter_function: measure_current_limit
     getter_arguments:
       channel: 1
-    setter_function: None
-    setter_arguments: set_current_limit
+    setter_function: set_current_limit
+    setter_arguments:
       channel: 1
-    polling_interval: 5000
+    polling_interval: 1000
+    unit: A
 
   bias_current:
     type: polling
@@ -101,7 +103,8 @@ virtual_instruments:
     setter_function: None
     setter_arguments: 
       channel: 2
-    polling_interval: 5000
+    polling_interval: 500
+    unit: A
 
   bias_current_limit: 
     type: polling
@@ -110,10 +113,38 @@ virtual_instruments:
     getter_function: measure_current_limit
     getter_arguments:
       channel: 2
-    setter_function: None
-    setter_arguments: set_current_limit
+    setter_function: set_current_limit
+    setter_arguments: 
       channel: 2
-    polling_interval: 5000
+    polling_interval: 1000
+    unit: A
+
+  bias_current_output:
+    type: polling
+    name: Bias Current Output
+    physical_instrument: lv_psu
+    getter_function: get_output
+    getter_arguments:
+      channel: 2
+    setter_function: set_output
+    setter_arguments:
+      channel: 2
+    polling_interval: 1000
+    unit: Boolean
+
+  filament_current_output:
+    type: polling
+    name: Filament Current Output
+    physical_instrument: lv_psu
+    getter_function: get_output
+    getter_arguments:
+      channel: 1
+    setter_function: set_output
+    setter_arguments:
+      channel: 1
+    polling_interval: 1000
+    unit: Boolean
+    
 
   emitted_current:
     type: polling
@@ -126,7 +157,8 @@ virtual_instruments:
       channel: 'PRIMARY'
     setter_function: None
     setter_arguments: {}
-    polling_interval: 200
+    polling_interval: 500
+    unit: A
 
   
   

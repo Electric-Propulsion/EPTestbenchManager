@@ -45,7 +45,7 @@ segments:
       filament_current_limit: 3
       bias_voltage: 30
       bias_current_limit: 0.5
-      hold_s: 1
+      hold_s: 10
     recordings:
       - vacuum_chamber_pressure:
           record_id: pressure
@@ -57,7 +57,7 @@ segments:
           record_id: bias_voltage
           record_name: Bias Voltage
       - filament_current:
-          record_id: filament_curret
+          record_id: filament_current
           record_name: Filament Current
       - bias_current:
           record_id: bias_current
@@ -85,7 +85,7 @@ segments:
           record_id: bias_voltage
           record_name: Bias Voltage
       - filament_current:
-          record_id: filament_curret
+          record_id: filament_current
           record_name: Filament Current
       - bias_current:
           record_id: bias_current
