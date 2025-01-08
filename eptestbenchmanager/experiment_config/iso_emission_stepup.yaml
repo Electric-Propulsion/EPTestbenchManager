@@ -12,7 +12,7 @@ segments:
     filament_current_limit: 0
     bias_voltage: 0
     bias_current_limit: 0
-    hold_s: 5
+    hold_s: 20
     recordings:
       - vacuum_chamber_pressure:
           record_id: pressure
@@ -35,17 +35,14 @@ segments:
 
   step_filament_voltages:
     name: Filament Voltage Step
-    type: linear_step
-    min_value: 0
-    max_value: 6
-    num_steps: 10
-    segment: hold_iso_filament
-    variable: filament_voltage
-    constants:
-      filament_current_limit: 3
-      bias_voltage: 30
-      bias_current_limit: 0.5
-      hold_s: 10
+    type: iso_filament_voltage_step
+    min_filament_voltage: 0
+    max_filament_voltage: 6
+    num_steps: 20
+    filament_current_limit: 3
+    bias_voltage: 30
+    bias_current_limit: 0.5
+    step_delay: 10
     recordings:
       - vacuum_chamber_pressure:
           record_id: pressure
@@ -67,13 +64,13 @@ segments:
           record_name: Emitted Current
 
   rezero:
-      name: Rezero Voltages
+      name: Re-zero Voltages
       type: hold_iso_filament
       filament_voltage: 0
       filament_current_limit: 0
       bias_voltage: 0
       bias_current_limit: 0
-      hold_s: 5
+      hold_s: 20
       recordings:
       - vacuum_chamber_pressure:
           record_id: pressure

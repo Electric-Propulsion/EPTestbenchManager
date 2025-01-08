@@ -8,7 +8,7 @@ from .experiment_segments import (
     Pumpdown,
     MeasureLeaks,
     Wait,
-    HoldIsoFilament,
+    IsoFilamentHold,
     LinearStep,
 )
 
@@ -90,8 +90,8 @@ class ExperimentFactory:
                 return MeasureLeaks
             case "wait":
                 return Wait
-            case "hold_iso_filament":
-                return HoldIsoFilament
+            case "iso_filament_hold":
+                return IsoFilamentHold
             case "linear_step":
                 return LinearStep
             case _:
