@@ -32,7 +32,7 @@ virtual_instruments:
     getter_arguments: {}
     setter_function: None
     setter_arguments: {}
-    polling_interval: 500
+    polling_interval: 1000
     unit: mBar
     name: Vacuum Chamber Pressure
 
@@ -51,7 +51,7 @@ virtual_instruments:
     setter_function: set_voltage
     setter_arguments: 
       channel: 1
-    polling_interval: 500
+    polling_interval: 1000
     unit: V
 
   bias_voltage:
@@ -64,7 +64,7 @@ virtual_instruments:
     setter_function: set_voltage
     setter_arguments:
       channel: 2
-    polling_interval: 500
+    polling_interval: 1000
     unit: V
 
   filament_current:
@@ -77,7 +77,7 @@ virtual_instruments:
     setter_function: None
     setter_arguments: 
       channel: 1
-    polling_interval: 500
+    polling_interval: 1000
     unit: A
 
   filament_current_limit: 
@@ -103,7 +103,7 @@ virtual_instruments:
     setter_function: None
     setter_arguments: 
       channel: 2
-    polling_interval: 500
+    polling_interval: 1000
     unit: A
 
   bias_current_limit: 
@@ -119,9 +119,9 @@ virtual_instruments:
     polling_interval: 1000
     unit: A
 
-  bias_current_output:
+  bias_output:
     type: polling
-    name: Bias Current Output
+    name: Bias Output
     physical_instrument: lv_psu
     getter_function: get_output
     getter_arguments:
@@ -132,9 +132,9 @@ virtual_instruments:
     polling_interval: 1000
     unit: Boolean
 
-  filament_current_output:
+  filament_output:
     type: polling
-    name: Filament Current Output
+    name: Filament Output
     physical_instrument: lv_psu
     getter_function: get_output
     getter_arguments:
@@ -157,7 +157,7 @@ virtual_instruments:
       channel: 'PRIMARY'
     setter_function: None
     setter_arguments: {}
-    polling_interval: 500
+    polling_interval: 2000
     unit: A
 
   

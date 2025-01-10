@@ -7,6 +7,7 @@ class IsoFilamentHold(IsoFilamentBase):
     """
 
     def configure(self, config: dict):
+        super().configure(config)
         self.filament_voltage_setpoint = config["filament_voltage"]
         self.filament_current_limit_setpoint = config["filament_current_limit"]
         self.bias_voltage_setpoint = config["bias_voltage"]

@@ -81,11 +81,11 @@ class PollingVirtualInstrument(VirtualInstrument):
                 value = self._getter_function()
                 self._set_value(value)
             except Exception as e:
-                print(e)
+                print(f"Instrument {self.name} encountered exception: {e}")
             sleep_time = next_poll_time - monotonic()
             if sleep_time > 0:
                 sleep(sleep_time)
             else:
                 # We missed the polling interval
-                # TODO: Log a warning
+                print(f"EPTestbenchManager: Instrument {self.name} missed a polling interval")
                 pass

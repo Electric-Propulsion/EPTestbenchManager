@@ -2,11 +2,12 @@ from . import IsoFilamentBase
 from numpy import linspace
 import time
 
-class IsoFilamentVoltageStepup(IsoFilamentBase):
+class IsoFilamentVoltageStep(IsoFilamentBase):
 
     def configure(self, config: dict):
+        super().configure(config)
         self.min_filament_voltage = config["min_filament_voltage"]
-        self.max_filament_voltage = config["min_filament_voltage"]
+        self.max_filament_voltage = config["max_filament_voltage"]
         self.num_steps = config["num_steps"]
         self.filament_current_limit_setpoint = config["filament_current_limit"]
         self.bias_voltage_setpoint = config["bias_voltage"]
@@ -21,9 +22,11 @@ class IsoFilamentVoltageStepup(IsoFilamentBase):
         self.bias_output.command(True)
         self.filament_output.command(True)
 
+        voltages = [float(voltage) for voltage in list(linspace(self.min_filament_voltage, self.max_filament_voltage, self.num_steps))]
 
-        for voltage in linspace(self.min_filament_voltage, self.max_filament_voltage, self.num_steps):
-            self.filament_voltage.command(voltage)
+        for voltage in voltages:
+            print(f"{self.name}: Setting Voltage to {voltage}")
+            self.filament_voltage.command(float(voltage))
             time.sleep(self.step_delay)
 
         self.filament_output.command(False)

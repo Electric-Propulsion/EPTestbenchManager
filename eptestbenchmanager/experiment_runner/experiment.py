@@ -70,7 +70,7 @@ class Experiment:
         self.run_id = f"{self.uid}_{time.strftime('%Y%m%d_%H%M%S')}"
         self.operator = operator
         self._runner_thread = Thread(
-            target=self.run_segments, name=f"{self.uid} Runner Thread", daemon=False
+            target=self.run_segments, name=f"{self.uid} Runner Thread", daemon=True
         )
         self._runner_thread.start()
 

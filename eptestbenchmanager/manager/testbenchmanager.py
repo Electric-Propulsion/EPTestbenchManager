@@ -42,7 +42,7 @@ class TestbenchManager:
         self,
         delay_apparatus_load: bool = False,
         delay_experiment_load: bool = False,
-        discord_guild: str = "Festus's bot test server",
+        discord_guild: str = "Hall-Effect Thruster",
     ):
         """Starts the application with optional delays for loading apparatus and experiments.
 

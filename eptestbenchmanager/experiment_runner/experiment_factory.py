@@ -9,6 +9,7 @@ from .experiment_segments import (
     MeasureLeaks,
     Wait,
     IsoFilamentHold,
+    IsoFilamentVoltageStep,
     LinearStep,
 )
 
@@ -92,6 +93,8 @@ class ExperimentFactory:
                 return Wait
             case "iso_filament_hold":
                 return IsoFilamentHold
+            case "iso_filament_voltage_step":
+                return IsoFilamentVoltageStep
             case "linear_step":
                 return LinearStep
             case _:
