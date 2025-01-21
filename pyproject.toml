@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "eptestbenchmanager"
-version = "0.1.0"
+version = "0.1.1a0"
 description = ""
 authors = ["Eric <eric@souder.ca>"]
 readme = "README.md"
