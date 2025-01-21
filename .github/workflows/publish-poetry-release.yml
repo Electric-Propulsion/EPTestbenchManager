@@ -2,8 +2,8 @@ name: Build and Publish Poetry Package
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - release
 
 jobs:
   release:
@@ -15,7 +15,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: "3.12"
 
       - name: Install Poetry
         run: |
@@ -28,20 +28,56 @@ jobs:
       - name: Build package
         run: poetry build
 
+      - name: Verify built files
+        run: ls -al dist/
+
+      # -----------------------------------------------------------
+      # 1. Get the version from pyproject.toml using Poetry
+      # -----------------------------------------------------------
+      - name: Get Poetry version
+        id: get_version
+        run: echo "POETRY_VERSION=$(poetry version -s)" >> $GITHUB_ENV
+
+      # -----------------------------------------------------------
+      # 2. Create a GitHub Release using the Poetry version
+      # -----------------------------------------------------------
       - name: Create GitHub Release
-        uses: actions/create-release@v1
+        id: create_release
+        uses: actions/create-release@v1.1.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref_name }}
-          release_name: Release ${{ github.ref_name }}
-          body: |
-            This release was automatically created from tag ${{ github.ref_name }}.
+          tag_name: "v${{ env.POETRY_VERSION }}"
+          release_name: "v${{ env.POETRY_VERSION }}"
+          body: "Release for poetry version ${{ env.POETRY_VERSION }}"
           draft: false
           prerelease: false
 
-      - name: Upload package to release
-        uses: actions/upload-release-asset@v1
+      # -----------------------------------------------------------
+      # 3. Dynamically find and upload the .whl asset
+      # -----------------------------------------------------------
+      - name: Find dist files
+        id: find_files
+        run: |
+          echo "WHL_FILE=$(ls dist/*.whl)" >> $GITHUB_ENV
+          echo "TAR_FILE=$(ls dist/*.tar.gz)" >> $GITHUB_ENV
+
+      - name: Upload .whl file
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: dist/*.whl
-          asset_name: ${{ github.ref_name }}.whl
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ env.WHL_FILE }}
+          asset_name: ${{ env.POETRY_VERSION }}.whl
           asset_content_type: application/zip
+
+      - name: Upload .tar.gz file
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ env.TAR_FILE }}
+          asset_name: ${{ env.POETRY_VERSION }}.tar.gz
+          asset_content_type: application/gzip
