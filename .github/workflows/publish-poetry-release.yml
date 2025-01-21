@@ -26,7 +26,7 @@ jobs:
 
       - name: Override SSH with HTTPS + GitHub token
         run: |
-          git config --global url."https://${{ secrets.GITHUB_TOKEN }}:x-oauth-basic@github.com/Electric-Propulsion".insteadOf "git@github.com:Electric-Propulsion"
+          git config --global url."https://${{ secrets.GITHUB_TOKEN }}:x-oauth-basic@github.com/".insteadOf "git@github.com:"
 
       - name: Install dependencies
         run: poetry install --no-root
