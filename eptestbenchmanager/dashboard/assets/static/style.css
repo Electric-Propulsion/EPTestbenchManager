@@ -1,0 +1,136 @@
+body {
+    background-color: #111111;
+    color: #dadada;
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    justify-content: center;
+}
+
+.experiment_control_box, .archive_dl_box {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 800px;
+    border: 3px solid #dadada;
+    border-radius: 15px;
+    background-color: #111111;
+    text-align: center;
+    gap: 20px;
+}
+
+.archive_dl_box_name, .experiment_control_box_name {
+    position: absolute;
+    top: -7.5px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #111111;
+    padding: 0 15px;
+    font-size: 0.8rem;
+    line-height: 1;
+    z-index: 2;
+}
+
+.digital-gauge {
+    text-align: center;
+    border: 3px solid #dadada;
+    border-radius: 15px;
+    padding: 10px;
+    max-width: 300px;
+    position: relative;
+    background-color: #111111;
+    color: #dadada;
+    display: block;
+    text-decoration: none;
+}
+
+.dg_name {
+    position: absolute;
+    top: -5%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #111111;
+    padding: 0 15px;
+    font-size: 0.8rem;
+    line-height: 1;
+    z-index: 2;
+}
+
+.dg_unit {
+    position: absolute;
+    bottom: -5%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #111111;
+    padding: 0 15px;
+    font-size: 0.8rem;
+    line-height: 1;
+    z-index: 2;
+}
+
+.dg_value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 40px 0;
+    overflow: hidden;
+    text-overflow: "";
+}
+
+.home_link {
+    position: fixed;
+    top: 0px;
+    left: 15px;
+    font-size: 52px;
+    text-decoration: none;
+    color: #dadada;
+}
+
+.home_link:hover {
+    color: gray; /* Optional hover effect */
+}
+
+
+
+.dg_value_entry {
+    position: absolute; /* Takes full control within its container */
+    top: 5%; /* Aligns to the top of the container */
+    left: 5%; /* Aligns to the left of the container */
+    width: 90%; /* Fills the full width of the container */
+    height: 90%; /* Fills the full height of the container */
+    font-size: 2rem; /* Matches the font size for readability */
+    font-weight: bold; /* Keeps text bold */
+    text-align: center; /* Centers the text inside the input */
+    border: none; /* Removes the border for a seamless look */
+    border-radius: 10px; /* Matches the container's border radius */
+    background-color: #111111; /* Matches the container background */
+    color: #dadada; /* Matches the text color */
+    padding: 0; /* Removes internal padding for proper alignment */
+    box-sizing: border-box; /* Ensures the box respects padding/borders */
+    outline: none; /* Removes focus outline */
+}
+
+.dg_value_entry:focus {
+    background-color: #222222; /* Optional: Highlight the background on focus */
+    color: #ffffff; /* Optional: Change text color on focus */
+}
+
+/* Unsaved input style */
+.dg_value_entry.unsaved {
+    border-color: rgb(233, 91, 91); /* Red outline for unsaved state */
+    background-color: #683131; /* Optional: Light red background */
+}

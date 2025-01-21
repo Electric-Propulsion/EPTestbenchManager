@@ -4,7 +4,29 @@ experiment:
   description: |
     This is a test .
 
-segments:
-  wait:
-    seconds: 5
+segments: #TODO: swap uid and type
+  wait_1:
+    name: Wait 1
+    type: wait
+    seconds: 30
+    recordings:
+      - gaussian_noise_1:
+          record_id: all
+          record_name: All Segments
+      - gaussian_noise_1:
+          record_id: segment_1
+          record_name: Segment 1
+  wait_2:
+    name: Wait 2
+    type: wait
+    seconds: 30
+    recordings:
+      - gaussian_noise_2:
+          record_id: segment_2
+          record_name: Segment 2
+      - gaussian_noise_1:
+          record_id: all
+
+
+
 
