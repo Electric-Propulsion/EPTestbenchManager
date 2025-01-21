@@ -6,16 +6,26 @@ experiment:
 
 segments:
   pumpdown:
+    name: Pumpdown
+    type: pumpdown
     setpoint_mbar: 1e-3
     timeout:
       minutes: 1
       action: continue   
     time_resolution_s: 1
+    recordings:
+      - vacuum_chamber_pressure:
+          record_id: all_segments
+          record_name: All Segments
   
   measure_leaks:
+    name: Measure Leaks
+    type: measure_leaks
     timeout:
       minutes: 1
       action: continue
     end_pressure_mbar: 1e3
     time_resolution_s: 30
-
+    recordings:
+    - vacuum_chamber_pressure:
+        record_id: all_segments

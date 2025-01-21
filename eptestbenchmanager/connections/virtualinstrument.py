@@ -1,66 +1,92 @@
-from typing import Union
+from typing import Union, TYPE_CHECKING
 from threading import Lock
 from abc import ABC, abstractmethod
-from epcomms.equipment.base.instrument import Instrument
-from eptestbenchmanager.dashboard.elements import DashboardElement
 from eptestbenchmanager.recording import Recording
+
+from eptestbenchmanager.dashboard.elements import DigitalGauge
+from eptestbenchmanager.dashboard.pages import InstrumentDetail
+
+if TYPE_CHECKING:
+    from eptestbenchmanager.connections import CompositeVirtualInstrument
 
 
 class VirtualInstrument(ABC):
     """
     VirtualInstrument is an abstract base class representing a virtual instrument.
+
     Attributes:
         uid (str): Unique identifier for the virtual instrument.
         name (str): Name of the virtual instrument.
         rolling_storage_size (int): The number of values to store in the rolling storage.
-        _physical_instrument (Instrument): The physical instrument associated with this virtual instrument.
-        _setter_function (Union[callable, None]): A function to set the value of the instrument, assumed to be threadsafe.
+        _physical_instrument (Instrument): The physical instrument associated with this virtual
+        instrument.
+        _setter_function (Union[callable, None]): A function to set the value of the instrument,
+        assumed to be threadsafe.
         _value (Union[str, int, float, bool, None]): The current value of the instrument.
-        _lock (Lock): A threading lock to ensure thread safety when accessing or modifying the value.
-    Methods:
-        value: Property to get the current value of the instrument in a thread-safe manner.
-        _set_value(value: Union[str, int, float, bool]): Sets the value of the instrument in a thread-safe manner.
-        command(command: Union[str, int, float, bool]): Abstract method to send a command to the instrument. Must be implemented by subclasses.
+        _lock (Lock): A threading lock to ensure thread safety when accessing or modifying the
+        value.
     """
 
     def __init__(  # pylint: disable=too-many-arguments #(This is built by a factory)
         self,
+        testbench_manager,
         uid: str,
         name: str,
+        unit: str = None,
         rolling_storage_size: int = 250,
     ):
+        """
+        Initializes a VirtualInstrument instance.
+
+        Args:
+            testbench_manager: Global TestbenchManager object.
+            uid (str): Unique identifier for the virtual instrument.
+            name (str): Name of the virtual instrument.
+            unit (str, optional): Unit of measurement for the instrument. Defaults to None.
+            rolling_storage_size (int, optional): The number of values to store in the rolling
+            storage. Defaults to 250.
+        """
+        self._experiment_manager = testbench_manager.runner
+        self.testbench_manager = testbench_manager
         self.uid = uid
         self.name = name
-        self.dashboard_elements = []
+        self.unit = unit
 
-        # self.dashboard_element = dashboard_element
         self._value: Union[str, int, float, bool, None] = None
         self._lock = Lock()
 
+        self._dependant_composites: list["CompositeVirtualInstrument"] = []
+
         self._rolling_storage = Recording(
-            f"{self.name}_rolling_storage",
-            max_samples=rolling_storage_size, rolling=True
+            self.testbench_manager,
+            "rolling",
+            "Rolling",
+            self,
+            max_samples=rolling_storage_size,
+            rolling=True,
         )
         self._rolling_storage.start_recording()
         self._recordings: dict[str, Recording] = {}
 
-    def add_dashboard_elements(
-        self, dashboard_element: Union[DashboardElement, list[DashboardElement]]
-    ):
-        if isinstance(dashboard_element, list):
-            for element in dashboard_element:
-                self.dashboard_elements.append(element)
-        else:
-            self.dashboard_elements.append(dashboard_element)
+        # Attach the UI elements
+        if not hasattr(self, "gauge"):
+            self.gauge = self.testbench_manager.dashboard.create_element(
+                DigitalGauge, (self.uid, self.name, self.uid, self.unit)
+            )
+        self.detail_page = self.testbench_manager.dashboard.create_page(
+            InstrumentDetail, (self, self.testbench_manager)
+        )
 
     @property
     def value(self) -> Union[str, int, float, bool]:
         """
         Retrieve the current value of the virtual instrument.
-        This method acquires a lock to ensure thread safety, retrieves the
-        value stored in the `_value` attribute, and then releases the lock.
+
+        This method acquires a lock to ensure thread safety, retrieves the value stored in the
+        `_value` attribute, and then releases the lock.
+
         Returns:
-            The current value of the virtual instrument.
+            Union[str, int, float, bool]: The current value of the virtual instrument.
         """
         self._lock.acquire()
         value = self._value
@@ -68,70 +94,35 @@ class VirtualInstrument(ABC):
         return value
 
     @property
-    def rolling_storage(self) -> list[Union[str, int, float, bool]]:
+    def rolling_storage(self) -> Recording:
         """
         Retrieve the rolling storage of the virtual instrument.
-        This method acquires a lock to ensure thread safety, retrieves the
-        value stored in the `_rolling_storage` attribute, and then releases the lock.
-        Returns:
-            The rolling storage of the virtual instrument.
-        """
-        self._lock.acquire()
-        rolling_storage = self._rolling_storage.record.all
-        self._lock.release()
-        return rolling_storage
 
-    @property
-    def rolling_storage_display(self) -> list[Union[str, int, float, bool]]:
-        """
-        Retrieve the rolling storage of the virtual instrument.
-        This method acquires a lock to ensure thread safety, retrieves the
-        value stored in the `_rolling_storage` attribute, and then releases the lock.
         Returns:
-            The rolling storage of the virtual instrument.
+            Recording: The rolling storage of the virtual instrument.
         """
-        self._lock.acquire()
-        rolling_storage = self._rolling_storage.record.display
-        self._lock.release()
-        return rolling_storage
-
-    def get_recording(self, record_id: str) -> list[Union[str, int, float, bool]]:
-        """
-        Retrieve a specific recording by its ID.
-        This method acquires a lock to ensure thread safety, retrieves the
-        recording from the `_recordings` attribute, and then releases the lock.
-        Parameters:
-            record_id (str): The ID of the recording to retrieve.
-        Returns:
-            The recording associated with the given ID, or None if not found.
-        """
-        print("Attempting to get recording")
-        self._lock.acquire()
-        record = self._recordings[record_id].record.all
-        self._lock.release()
-        return record
-
-    def get_recording_display(
-        self, record_id: str
-    ) -> list[Union[str, int, float, bool]]:
-        """
-        Retrieve a specific recording by its ID.
-        This method acquires a lock to ensure thread safety, retrieves the
-        recording from the `_recordings` attribute, and then releases the lock.
-        Parameters:
-            record_id (str): The ID of the recording to retrieve.
-        Returns:
-            The recording associated with the given ID, or None if not found.
-        """
-        self._lock.acquire()
-        record = self._recordings[record_id].record.display
-        self._lock.release()
-        return record
+        return self._rolling_storage
 
     def _set_value(self, value: Union[str, int, float, bool]) -> None:
+        """
+        Set the value of the virtual instrument.
+
+        This method acquires a lock to ensure thread safety, sets the value stored in the `_value`
+        attribute, and then releases the lock. It also updates dependant composites,
+        rolling storage, active recordings, and the UI gauge component.
+
+        Args:
+            value (Union[str, int, float, bool]): The value to set.
+        """
         self._lock.acquire()
 
         self._value = value
+
+        self._lock.release()
+
+        # Update any dependant composite virtual instruments
+        for composite in self._dependant_composites:
+            composite.update_semaphore.release()
 
         # Update the rolling storage (which should always be active)
         self._rolling_storage.add_sample(value)
@@ -140,32 +131,115 @@ class VirtualInstrument(ABC):
         for recording in self._recordings.values():
             if recording.active:
                 recording.add_sample(value)
+        try:
+            self.gauge.set_value(value)
+        except RuntimeError as e:
+            print(
+                f"Error updating gauge for {self.name}: {e}"
+            )  # expected until the dashboard is up and running
 
-        self._lock.release()
-
-    def begin_recording(self, record_id, max_samples=None, stored_samples = 250, max_time=None) -> None:
+    def begin_recording(
+        self,
+        record_id,
+        record_name,
+        file_id,
+        max_samples=None,
+        stored_samples=250,
+        max_time=None,
+    ) -> None:
         """
         Begin a new named recording.
+
+        Args:
+            record_id: The ID of the recording.
+            record_name: The name of the recording.
+            file_id: The file ID for the recording.
+            max_samples (optional): The maximum number of samples for the recording.
+            Defaults to None.
+            stored_samples (optional): The number of samples to store. Defaults to 250.
+            max_time (optional): The maximum time for the recording. Defaults to None.
         """
-        self._recordings[record_id] = Recording(record_id, max_samples, stored_samples, max_time)
+        print(f"Beginning recording {record_id}")
+        self._recordings[record_id] = Recording(
+            self.testbench_manager,
+            record_id,
+            record_name,
+            self,
+            max_samples,
+            stored_samples,
+            max_time,
+            file_id=file_id,
+        )
+        self._recordings[record_id].start_recording()
+        self.detail_page.update_graphs()
+
+    def recording_exists(self, record_id) -> bool:
+        """
+        Check if a recording exists.
+
+        Args:
+            record_id: The ID of the recording to check.
+
+        Returns:
+            bool: True if the recording exists, False otherwise.
+        """
+        print(f"Checking if {record_id} exists in {self._recordings}")
+        return record_id in self._recordings
+
+    def resume_recording(self, record_id) -> None:
+        """
+        Resume a recording.
+
+        Args:
+            record_id: The ID of the recording to resume.
+        """
+        print(f"Resuming recording {record_id}")
         self._recordings[record_id].start_recording()
 
     def stop_recording(self, record_id) -> None:
         """
         Stop a recording.
+
+        Args:
+            record_id: The ID of the recording to stop.
         """
+        print(f"Stopping recording {record_id}")
         self._recordings[record_id].stop_recording()
+
+    def register_dependant_composite(
+        self, composite: "CompositeVirtualInstrument"
+    ) -> None:
+        """
+        Register a composite virtual instrument as a dependant of this virtual instrument.
+
+        Args:
+            composite (CompositeVirtualInstrument): The composite virtual instrument to register.
+        """
+        self._dependant_composites.append(composite)
 
     @abstractmethod
     def command(self, command: Union[str, int, float, bool]) -> None:
         """
         Sends a command to the virtual instrument.
-        Parameters:
-        command (Union[str, int, float, bool]): The command to be sent to the instrument.
+
+        Args:
+            command (Union[str, int, float, bool]): The command to be sent to the instrument.
             This can be a string, integer, float, or boolean value.
+
         Raises:
-        NotImplementedError: Always raised to indicate that the instrument does not accept commands.
+            NotImplementedError: Always raised to indicate that the instrument does not accept
+            commands.
         """
         raise NotImplementedError(
-            f"{self.name} (type: {self.__class__.__name__}, uid: {self.uid}) does not accept commands"
+            f"{self.name} (type: {self.__class__.__name__}, uid: {self.uid}) does not accept commands"  # pylint: disable=line-too-long
         )
+
+    @property
+    def recordings(self) -> dict[str, Recording]:
+        """
+        Retrieve the recordings associated with the virtual instrument.
+
+        Returns:
+            dict[str, Recording]: A dictionary of recordings associated with the virtual instrument.
+        """
+        return self._recordings

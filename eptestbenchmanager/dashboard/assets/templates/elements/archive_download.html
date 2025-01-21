@@ -1,0 +1,10 @@
+<div id="{{ data.uid }}" class="archive_dl_box">
+    <div class="archive_dl_box_name">Archive Download</div>
+    <label for="{{ data.uid }}_archive_selector">Select Run:</label>
+    <select id="{{ data.uid }}_archive_selector" name="archives">
+        {% for archive in data.archives %}
+            <option value="{{ archive }}">{{ archive }}</option>
+        {% endfor %}
+    </select>
+    <button onclick="download_archive()" id="{{ data.uid }}_dl_archive">Download</button>
+</div>

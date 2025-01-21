@@ -14,4 +14,3 @@ with open(config_file_path, "r", encoding="utf-8") as f:
     runner.add_experiment(f)
 
 runner.run_experiment("pumpdown_measure_leaks")
-print("I'm the main thread!")

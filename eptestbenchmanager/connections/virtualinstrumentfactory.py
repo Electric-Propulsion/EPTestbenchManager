@@ -1,128 +1,180 @@
 import numpy as np
 from epcomms.equipment.base.instrument import Instrument
-from eptestbenchmanager.dashboard.elements import DashboardElement, Graph, Gauge
 from . import (
     VirtualInstrument,
     PollingVirtualInstrument,
     NoiseVirtualInstrument,
     CompositeVirtualInstrument,
+    ManualVirtualInstrument,
 )
 
 
 class VirtualInstrumentFactory:
+    """Factory class for creating virtual instruments."""
 
     @classmethod
     def create_instrument(
         cls,
+        testbench_manager,
         physical_instruments: list[Instrument],
         virtual_instruments: list[VirtualInstrument],
         uid: str,
         config: dict,
     ) -> VirtualInstrument:
-        """
-        Create a virtual instrument from a configuration dictionary.
+        """Creates a virtual instrument from a configuration dictionary.
+
         Args:
-            config (dict): A dictionary containing the configuration for the virtual instrument.
+            testbench_manager: Global TestbenchManager object.
+            physical_instruments (list[Instrument]): List of physical instruments.
+            virtual_instruments (list[VirtualInstrument]): List of virtual instruments.
+            uid (str): Unique identifier for the virtual instrument.
+            config (dict): Configuration dictionary for the virtual instrument.
+
         Returns:
             VirtualInstrument: A virtual instrument object.
+
+        Raises:
+            ValueError: If the virtual instrument type is invalid.
         """
         match config["type"]:
             case "polling":
-                return cls._create_polling_instrument(physical_instruments, uid, config)
+                return cls._create_polling_instrument(
+                    testbench_manager, physical_instruments, uid, config
+                )
             case "noise":
-                return cls._create_noise_instrument(uid, config)
+                return cls._create_noise_instrument(testbench_manager, uid, config)
+            case "manual":
+                return cls.create_manual_instrument(testbench_manager, uid, config)
             case "composite":
-                print(virtual_instruments)
                 return cls._create_composite_instrument(
-                    virtual_instruments, uid, config
+                    testbench_manager, virtual_instruments, uid, config
                 )
             case _:
                 raise ValueError(f"Invalid virtual instrument type: {config['type']}")
 
     @classmethod
     def _create_polling_instrument(
-        cls, physical_instruments: list[Instrument], uid: str, config: dict
+        cls,
+        testbench_manager,
+        physical_instruments: list[Instrument],
+        uid: str,
+        config: dict,
     ) -> PollingVirtualInstrument:
-        """
-        Create a polling virtual instrument from a configuration dictionary.
+        """Creates a polling virtual instrument from a configuration dictionary.
+
         Args:
-            config (dict): A dictionary containing the configuration for the virtual instrument.
+            testbench_manager: Global TestbenchManager object.
+            physical_instruments (list[Instrument]): List of physical instruments.
+            uid (str): Unique identifier for the virtual instrument.
+            config (dict): Configuration dictionary for the virtual instrument.
+
         Returns:
             PollingVirtualInstrument: A polling virtual instrument object.
         """
-
         physical_instrument = physical_instruments[config["physical_instrument"]]
 
+        setter_arguments = config.get("setter_arguments", {})
         setter_function = (
-            getattr(physical_instrument, config["setter_function"])
+            (
+                lambda value: getattr(physical_instrument, config["setter_function"])(
+                    value, **setter_arguments
+                )
+            )
             if config["setter_function"] != "None"
             else None
         )
 
+        getter_arguments = config.get("getter_arguments", {})
         getter_function = (
-            getattr(physical_instrument, config["getter_function"])
+            (
+                lambda: (
+                    getattr(physical_instrument, config["getter_function"])(
+                        **getter_arguments
+                    )
+                )
+            )
             if config["getter_function"] != "None"
             else None
         )
 
         return PollingVirtualInstrument(
+            testbench_manager,
             uid=uid,
             name=config["name"],
             physical_instrument=physical_instrument,
             setter_function=setter_function,
             getter_function=getter_function,
             polling_interval=config["polling_interval"],
+            unit=config.get("unit", None),
         )
 
     @classmethod
-    def _create_noise_instrument(cls, uid: str, config: dict) -> NoiseVirtualInstrument:
-        """
-        Create a noise virtual instrument from a configuration dictionary.
+    def _create_noise_instrument(
+        cls, testbench_manager, uid: str, config: dict
+    ) -> NoiseVirtualInstrument:
+        """Creates a noise virtual instrument from a configuration dictionary.
+
         Args:
-            config (dict): A dictionary containing the configuration for the virtual instrument.
+            testbench_manager: Global TestbenchManager object.
+            uid (str): Unique identifier for the virtual instrument.
+            config (dict): Configuration dictionary for the virtual instrument.
+
         Returns:
             NoiseVirtualInstrument: A noise virtual instrument object.
         """
-        print("creating noise")
         instrument = NoiseVirtualInstrument(
+            testbench_manager,
             uid=uid,
             name=config["name"],
             mean=config["mean"],
             standard_deviation=config["standard_deviation"],
+            unit=config.get("unit", None),
         )
-        instrument.begin_recording("total")
-        instrument.add_dashboard_elements(
-            [
-                Graph(
-                    f"{uid}-graph",
-                    instrument.name,
-                    lambda: instrument.rolling_storage_display,
-                ),
-                Graph(
-                    f"{uid}-total-graph",
-                    "Total",
-                    lambda: instrument.get_recording_display("total"),
-                ),
-                Gauge(
-                    f"{uid}-gauge",
-                    instrument.name,
-                    lambda: instrument.value,
-                ),
-            ]
-        )
+        return instrument
 
+    @classmethod
+    def create_manual_instrument(
+        cls, testbench_manager, uid: str, config: dict
+    ) -> ManualVirtualInstrument:
+        """Creates a manual virtual instrument from a configuration dictionary.
+
+        Args:
+            testbench_manager: Global TestbenchManager object.
+            uid (str): Unique identifier for the virtual instrument.
+            config (dict): Configuration dictionary for the virtual instrument.
+
+        Returns:
+            ManualVirtualInstrument: A manual virtual instrument object.
+        """
+        instrument = ManualVirtualInstrument(
+            testbench_manager,
+            uid=uid,
+            name=config["name"],
+            unit=config.get("unit", None),
+        )
         return instrument
 
     @classmethod
     def _create_composite_instrument(
-        cls, virtual_instruments: list[Instrument], uid: str, config: dict
+        cls,
+        testbench_manager,
+        virtual_instruments: list[Instrument],
+        uid: str,
+        config: dict,
     ) -> CompositeVirtualInstrument:
-        """
-        Create a composite virtual instrument from a configuration dictionary.
+        """Creates a composite virtual instrument from a configuration dictionary.
+
         Args:
-            config (dict): A dictionary containing the configuration for the virtual instrument.
+            testbench_manager: Global TestbenchManager object.
+            virtual_instruments (list[Instrument]): List of virtual instruments.
+            uid (str): Unique identifier for the virtual instrument.
+            config (dict): Configuration dictionary for the virtual instrument.
+
         Returns:
             CompositeVirtualInstrument: A composite virtual instrument object.
+
+        Raises:
+            ValueError: If a parent instrument UID is invalid.
         """
         try:
             instruments = [
@@ -130,7 +182,7 @@ class VirtualInstrumentFactory:
             ]
         except KeyError as e:
             raise ValueError(
-                f"Invalid instrument UID ({e}). Ensure all parent instruments are defined before composite instruments."
+                f"Invalid instrument UID ({e}). Ensure all parent instruments are defined before composite instruments."  # pylint: disable=line-too-long
             ) from e
 
         composition_function = cls._get_composition_function(
@@ -138,20 +190,28 @@ class VirtualInstrumentFactory:
         )
 
         return CompositeVirtualInstrument(
+            testbench_manager,
             uid=uid,
             name=config["name"],
             composition_function=composition_function,
             instruments=instruments,
+            unit=config.get("unit", None),
         )
 
     @classmethod
     def _get_composition_function(cls, function_name: str, num_instruments) -> callable:
-        """
-        Get the composition function from the function name.
+        """Gets the composition function from the function name.
+
         Args:
             function_name (str): The name of the composition function.
+            num_instruments (int): Number of instruments.
+
         Returns:
             callable: The composition function.
+
+        Raises:
+            ValueError: If the composition function is invalid or if 'divide' is used with incorrect
+            number of instruments.
         """
         match function_name:
             case "sum":
@@ -171,7 +231,6 @@ class VirtualInstrumentFactory:
                     raise ValueError(
                         "The 'divide' composition function requires exactly two instruments."
                     )
-
                 return lambda x: x[0] / x[1]
             case _:
                 raise ValueError(f"Invalid composition function: {function_name}")

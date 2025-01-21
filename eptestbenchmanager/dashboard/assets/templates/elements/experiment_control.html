@@ -1,0 +1,18 @@
+<div id="{{ data.uid }}" class="experiment_control_box">
+    <div class="experiment_control_box_name">Experiment Control</div>
+    <label for="{{ data.uid }}_experiment_selector">Select Experiment:</label>
+    <select id="{{ data.uid }}_experiment_selector" name="experiments">
+        {% for experiment in data.experiments %}
+            <option value="{{ experiment }}">{{ experiment }}</option>
+        {% endfor %}
+    </select>
+    <label for="{{ data.uid }}_operaor_selector">Select Operator:</label>
+    <select id="{{ data.uid }}_operator_selector" name="operators">
+        {% for operator in data.operators %}
+            <option value="{{ operator }}">{{ operator }}</option>
+        {% endfor %}
+    </select>
+    <button onclick="start_experiment()" id="{{ data.uid }}_start_button">Start</button>
+    <button disabled id="{{ data.uid }}_cancel">Request End</button>
+    <button disabled id="{{ data.uid }}_estop">E-Stop</button>
+</div>

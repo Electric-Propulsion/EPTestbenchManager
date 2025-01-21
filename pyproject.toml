@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "eptestbenchmanager"
-version = "0.1.1a0"
+version = "2.0.0"
 description = ""
 authors = ["Eric <eric@souder.ca>"]
 readme = "README.md"
@@ -10,9 +10,10 @@ python = "^3.12"
 pyyaml = "^6.0.2"
 epcomms = { git = "git@github.com:Electric-Propulsion/EPComms.git", tag = "v1.0.0" }
 discord-py = "^2.4.0"
-dash = "^2.18.1"
 dash-daq = "^0.5.0"
 numpy = "^2.1.1"
+flask = "^3.1.0"
+flask-socketio = "^5.5.0"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -23,4 +24,4 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-my-project = "my-project.my_project:run"    
+my-project = "my-project.my_project:run"
