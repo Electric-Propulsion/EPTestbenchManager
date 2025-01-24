@@ -6,6 +6,7 @@ from . import (
     NoiseVirtualInstrument,
     CompositeVirtualInstrument,
     ManualVirtualInstrument,
+    CommandDrivenVirtualInstrument,
 )
 
 
@@ -39,6 +40,10 @@ class VirtualInstrumentFactory:
         match config["type"]:
             case "polling":
                 return cls._create_polling_instrument(
+                    testbench_manager, physical_instruments, uid, config
+                )
+            case "command_driven":
+                return cls.create_command_driven_instrument(
                     testbench_manager, physical_instruments, uid, config
                 )
             case "noise":
@@ -152,6 +157,50 @@ class VirtualInstrumentFactory:
             name=config["name"],
             unit=config.get("unit", None),
         )
+        return instrument
+    
+    @classmethod
+    def create_command_driven_instrument(
+        cls, testbench_manager, physical_instruments: list[Instrument], uid: str, config: dict
+    ) -> CommandDrivenVirtualInstrument:
+        
+        #TODO: This is too similar to the polling instrument creation. Refactor to reduce redundancy.
+        physical_instrument = physical_instruments[config["physical_instrument"]]
+
+        setter_arguments = config.get("setter_arguments", {})
+        setter_function = (
+            (
+                lambda value: getattr(physical_instrument, config["setter_function"])(
+                    value, **setter_arguments
+                )
+            )
+            if config["setter_function"] != "None"
+            else None
+        )
+
+        getter_arguments = config.get("getter_arguments", {})
+        getter_function = (
+            (
+                lambda: (
+                    getattr(physical_instrument, config["getter_function"])(
+                        **getter_arguments
+                    )
+                )
+            )
+            if config["getter_function"] != "None"
+            else None
+        )
+
+        instrument = CommandDrivenVirtualInstrument(
+            testbench_manager,
+            uid=uid,
+            name=config["name"],
+            physical_instrument=physical_instrument,
+            setter_function=setter_function,
+            getter_function=getter_function,
+            unit=config.get("unit", None),
+        )
+
         return instrument
 
     @classmethod
