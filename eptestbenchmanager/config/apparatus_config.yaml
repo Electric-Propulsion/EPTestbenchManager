@@ -81,7 +81,7 @@ virtual_instruments:
     unit: A
 
   filament_current_limit: 
-    type: polling
+    type: command_driven
     name: Filament Current Limit
     physical_instrument: lv_psu
     getter_function: measure_current_limit
@@ -107,7 +107,7 @@ virtual_instruments:
     unit: A
 
   bias_current_limit: 
-    type: polling
+    type: command_driven
     name: Bias Current Limit
     physical_instrument: lv_psu
     getter_function: measure_current_limit
@@ -206,7 +206,7 @@ virtual_instruments:
     unit: sccm
 
   argon_mass_flow_setpoint:
-    type: polling
+    type: command_driven
     name: Argon Mass Flow Setpoint
     physical_instrument: flow_controller
     getter_function: get_mass_flow_setpoint
@@ -217,7 +217,7 @@ virtual_instruments:
     unit: sccm
 
   argon_setpoint:
-    type: polling
+    type: command_driven
     name: Argon Setpoint
     physical_instrument: flow_controller
     getter_function: get_setpoint
