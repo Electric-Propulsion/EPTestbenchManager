@@ -87,5 +87,7 @@ class PollingVirtualInstrument(VirtualInstrument):
                 sleep(sleep_time)
             else:
                 # We missed the polling interval
-                print(f"EPTestbenchManager: Instrument {self.name} missed a polling interval")
+                print(
+                    f"EPTestbenchManager: Instrument {self.name} missed a polling interval by {-sleep_time} seconds."
+                )
                 pass
