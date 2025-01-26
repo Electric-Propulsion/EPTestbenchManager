@@ -2,6 +2,7 @@ from typing import Union
 from epcomms.equipment.base.instrument import Instrument
 from . import VirtualInstrument
 
+
 class CommandDrivenVirtualInstrument(VirtualInstrument):
     """Assumed not to change value spontaneously, but only when commanded."""
 
@@ -31,6 +32,9 @@ class CommandDrivenVirtualInstrument(VirtualInstrument):
         self._setter_function = setter_function
         self._getter_function = getter_function
 
+        # Initialize the value
+        value = self._getter_function()
+        self._set_value(value)
 
     def command(self, command: Union[str, int, float, bool]) -> None:
         self._setter_function(command)
