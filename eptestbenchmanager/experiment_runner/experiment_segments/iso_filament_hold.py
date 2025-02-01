@@ -9,9 +9,9 @@ class IsoFilamentHold(IsoFilamentBase):
 
     def configure(self, config: dict):
         super().configure(config)
-        self.filament_voltage_setpoint_value = config["filament_voltage"]
+        self.filament_voltage_setpoint_value = config["filament_voltage_setpoint"]
         self.filament_current_limit_value = config["filament_current_limit"]
-        self.bias_voltage_setpoint_value = config["bias_voltage"]
+        self.bias_voltage_setpoint_value = config["bias_voltage_setpoint"]
         self.bias_current_limit_value = config["bias_current_limit"]
         self.hold_s = config["hold_s"]
 

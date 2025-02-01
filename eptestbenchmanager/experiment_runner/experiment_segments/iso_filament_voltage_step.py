@@ -14,7 +14,7 @@ class IsoFilamentVoltageStep(IsoFilamentBase):
         self.max_filament_voltage = config["max_filament_voltage"]
         self.num_steps = config["num_steps"]
         self.filament_current_limit_value = config["filament_current_limit"]
-        self.bias_voltage_setpoint_value = config["bias_voltage"]
+        self.bias_voltage_setpoint_value = config["bias_voltage_setpoint"]
         self.bias_current_limit_value = config["bias_current_limit"]
         self.step_delay = config["step_delay"]
 

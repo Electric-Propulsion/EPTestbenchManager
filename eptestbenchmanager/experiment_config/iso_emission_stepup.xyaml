@@ -8,9 +8,9 @@ segments:
   zero:
     name: Zero Voltages
     type: iso_filament_hold
-    filament_voltage: 0
+    filament_voltage_setpoint: 0
     filament_current_limit: 0.002 
-    bias_voltage: 0
+    bias_voltage_setpoint: 0
     bias_current_limit: 0.001
     hold_s: 60
     recordings:
@@ -40,7 +40,7 @@ segments:
     max_filament_voltage: 5
     num_steps: 6
     filament_current_limit: 1.5
-    bias_voltage: 30
+    bias_voltage_setpoint: 30
     bias_current_limit: 0.100
     step_delay: 300
     recordings:
@@ -70,7 +70,7 @@ segments:
     max_filament_voltage: 2.5
     num_steps: 6
     filament_current_limit: 1.5
-    bias_voltage: 30
+    bias_voltage_setpoint: 30
     bias_current_limit: 0.100
     step_delay: 300
     recordings:
@@ -96,9 +96,9 @@ segments:
   rezero:
       name: Re-zero Voltages
       type: iso_filament_hold
-      filament_voltage: 0
+      filament_voltage_setpoint: 0
       filament_current_limit: 0.002
-      bias_voltage: 0
+      bias_voltage_setpoint: 0
       bias_current_limit: 0.001
       hold_s: 60
       recordings:
