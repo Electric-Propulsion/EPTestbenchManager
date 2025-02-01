@@ -14,10 +14,10 @@ physical_instruments:
     arguments:
       resource_name: "USB0::10893::36609::CN63070208::0::INSTR"
 
-  flow_controller: 
-    class: epcomms.equipment.flowcontroller.AlicatEIP
-    arguments:
-      routing_path: "192.168.0.172"
+  # flow_controller: 
+  #   class: epcomms.equipment.flowcontroller.AlicatEIP
+  #   arguments:
+  #     routing_path: "192.168.0.172"
 
   # test_instrument:
   #   class: epcomms.equipment.test.TestInstrument
@@ -48,6 +48,18 @@ virtual_instruments:
     getter_function: measure_voltage
     getter_arguments:
       channel: 1
+    setter_function: None
+    setter_arguments: {}
+    polling_interval: 1000
+    unit: V
+
+  filament_voltage_setpoint:
+    type: command_driven
+    name: Filament Voltage Setpoint
+    physical_instrument: lv_psu
+    getter_function: measure_voltage
+    getter_arguments:
+      channel: 1
     setter_function: set_voltage
     setter_arguments: 
       channel: 1
@@ -61,10 +73,21 @@ virtual_instruments:
     getter_function: measure_voltage
     getter_arguments:
       channel: 2
+    setter_function: None
+    setter_arguments: {}
+    polling_interval: 1000
+    unit: V
+
+    bias_voltage_setpoint:
+    type: command_driven
+    name: Bias Voltage Setpoint
+    physical_instrument: lv_psu
+    getter_function: measure_voltage
+    getter_arguments:
+      channel: 2
     setter_function: set_voltage
     setter_arguments:
       channel: 2
-    polling_interval: 1000
     unit: V
 
   filament_current:
@@ -160,72 +183,72 @@ virtual_instruments:
     polling_interval: 2000
     unit: A
 
-  argon_pressure:
-    type: polling
-    name: Argon Pressure
-    physical_instrument: flow_controller
-    getter_function: get_pressure
-    getter_arguments: {}
-    setter_function: None
-    setter_arguments: {}
-    polling_interval: 4000
-    unit: psia
+  # argon_pressure:
+  #   type: polling
+  #   name: Argon Pressure
+  #   physical_instrument: flow_controller
+  #   getter_function: get_pressure
+  #   getter_arguments: {}
+  #   setter_function: None
+  #   setter_arguments: {}
+  #   polling_interval: 4000
+  #   unit: psia
 
-  argon_flow_temp:
-    type: polling
-    name: Argon Flow Temperature
-    physical_instrument: flow_controller
-    getter_function: get_flow_temp
-    getter_arguments: {}
-    setter_function: None
-    setter_arguments: {}
-    polling_interval: 4000
-    unit: C
+  # argon_flow_temp:
+  #   type: polling
+  #   name: Argon Flow Temperature
+  #   physical_instrument: flow_controller
+  #   getter_function: get_flow_temp
+  #   getter_arguments: {}
+  #   setter_function: None
+  #   setter_arguments: {}
+  #   polling_interval: 4000
+  #   unit: C
 
   
-  argon_volumetric_flow:
-    type: polling
-    name: Argon Volumetric Flow
-    physical_instrument: flow_controller
-    getter_function: get_volumetric_flow
-    getter_arguments: {}
-    setter_function: None
-    setter_arguments: {}
-    polling_interval: 4000
-    unit: ccm
+  # argon_volumetric_flow:
+  #   type: polling
+  #   name: Argon Volumetric Flow
+  #   physical_instrument: flow_controller
+  #   getter_function: get_volumetric_flow
+  #   getter_arguments: {}
+  #   setter_function: None
+  #   setter_arguments: {}
+  #   polling_interval: 4000
+  #   unit: ccm
 
-  argon_mass_flow:
-    type: polling
-    name: Argon Mass Flow
-    physical_instrument: flow_controller
-    getter_function: get_mass_flow
-    getter_arguments: {}
-    setter_function: None
-    setter_arguments: {}
-    polling_interval: 4000
-    unit: sccm
+  # argon_mass_flow:
+  #   type: polling
+  #   name: Argon Mass Flow
+  #   physical_instrument: flow_controller
+  #   getter_function: get_mass_flow
+  #   getter_arguments: {}
+  #   setter_function: None
+  #   setter_arguments: {}
+  #   polling_interval: 4000
+  #   unit: sccm
 
-  argon_mass_flow_setpoint:
-    type: command_driven
-    name: Argon Mass Flow Setpoint
-    physical_instrument: flow_controller
-    getter_function: get_mass_flow_setpoint
-    getter_arguments: {}
-    setter_function: None
-    setter_arguments: {}
-    polling_interval: 4000
-    unit: sccm
+  # argon_mass_flow_setpoint:
+  #   type: command_driven
+  #   name: Argon Mass Flow Setpoint
+  #   physical_instrument: flow_controller
+  #   getter_function: get_mass_flow_setpoint
+  #   getter_arguments: {}
+  #   setter_function: None
+  #   setter_arguments: {}
+  #   polling_interval: 4000
+  #   unit: sccm
 
-  argon_setpoint:
-    type: command_driven
-    name: Argon Setpoint
-    physical_instrument: flow_controller
-    getter_function: get_setpoint
-    getter_arguments: {}
-    setter_function: set_setpoint
-    setter_arguments: {}
-    polling_interval: 4000
-    unit: scc
+  # argon_setpoint:
+  #   type: command_driven
+  #   name: Argon Setpoint
+  #   physical_instrument: flow_controller
+  #   getter_function: get_setpoint
+  #   getter_arguments: {}
+  #   setter_function: set_setpoint
+  #   setter_arguments: {}
+  #   polling_interval: 4000
+  #   unit: scc
 
   
 

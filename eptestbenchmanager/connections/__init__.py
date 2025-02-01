@@ -5,5 +5,6 @@ from .composite_virtual_instrument import CompositeVirtualInstrument
 from .experimentstatusvirtualinstrument import ExperimentStatusVirtualInstrument
 from .manualvirtualinstrument import ManualVirtualInstrument
 from .commanddrivenvirtualinstrument import CommandDrivenVirtualInstrument
+from .nullvirtualinstrument import NullVirtualInstrument
 from .virtualinstrumentfactory import VirtualInstrumentFactory
 from .connectionmanager import ConnectionManager

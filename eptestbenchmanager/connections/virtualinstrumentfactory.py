@@ -7,6 +7,7 @@ from . import (
     CompositeVirtualInstrument,
     ManualVirtualInstrument,
     CommandDrivenVirtualInstrument,
+    NullVirtualInstrument,
 )
 
 
@@ -48,6 +49,8 @@ class VirtualInstrumentFactory:
                 )
             case "noise":
                 return cls._create_noise_instrument(testbench_manager, uid, config)
+            case "null":
+                return cls.create_null_instrument(testbench_manager, uid, config)
             case "manual":
                 return cls.create_manual_instrument(testbench_manager, uid, config)
             case "composite":
@@ -114,6 +117,28 @@ class VirtualInstrumentFactory:
         )
 
     @classmethod
+    def create_null_instrument(
+        cls, testbench_manager, uid: str, config: dict
+    ) -> NullVirtualInstrument:
+        """Creates a null virtual instrument from a configuration dictionary.
+
+        Args:
+            testbench_manager: Global TestbenchManager object.
+            uid (str): Unique identifier for the virtual instrument.
+            config (dict): Configuration dictionary for the virtual instrument.
+
+        Returns:
+            NullVirtualInstrument: A null virtual instrument object.
+        """
+        instrument = NullVirtualInstrument(
+            testbench_manager,
+            uid=uid,
+            name=config["name"],
+            unit=config.get("unit", None),
+        )
+        return instrument
+
+    @classmethod
     def _create_noise_instrument(
         cls, testbench_manager, uid: str, config: dict
     ) -> NoiseVirtualInstrument:
@@ -158,13 +183,17 @@ class VirtualInstrumentFactory:
             unit=config.get("unit", None),
         )
         return instrument
-    
+
     @classmethod
     def create_command_driven_instrument(
-        cls, testbench_manager, physical_instruments: list[Instrument], uid: str, config: dict
+        cls,
+        testbench_manager,
+        physical_instruments: list[Instrument],
+        uid: str,
+        config: dict,
     ) -> CommandDrivenVirtualInstrument:
-        
-        #TODO: This is too similar to the polling instrument creation. Refactor to reduce redundancy.
+
+        # TODO: This is too similar to the polling instrument creation. Refactor to reduce redundancy.
         physical_instrument = physical_instruments[config["physical_instrument"]]
 
         setter_arguments = config.get("setter_arguments", {})

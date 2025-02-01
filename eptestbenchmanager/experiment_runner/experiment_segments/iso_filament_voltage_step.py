@@ -5,6 +5,7 @@ import time
 
 logger = logging.getLogger(__name__)
 
+
 class IsoFilamentVoltageStep(IsoFilamentBase):
 
     def configure(self, config: dict):
@@ -12,24 +13,31 @@ class IsoFilamentVoltageStep(IsoFilamentBase):
         self.min_filament_voltage = config["min_filament_voltage"]
         self.max_filament_voltage = config["max_filament_voltage"]
         self.num_steps = config["num_steps"]
-        self.filament_current_limit_setpoint = config["filament_current_limit"]
-        self.bias_voltage_setpoint = config["bias_voltage"]
-        self.bias_current_limit_setpoint = config["bias_current_limit"]
+        self.filament_current_limit_value = config["filament_current_limit"]
+        self.bias_voltage_setpoint_value = config["bias_voltage"]
+        self.bias_current_limit_value = config["bias_current_limit"]
         self.step_delay = config["step_delay"]
 
     def run(self) -> None:
-        self.filament_voltage.command(self.min_filament_voltage)
-        self.filament_current_limit.command(self.filament_current_limit_setpoint)
-        self.bias_voltage.command(self.bias_voltage_setpoint)
-        self.bias_current_limit.command(self.bias_current_limit_setpoint)
+        self.filament_voltage_setpoint.command(self.min_filament_voltage)
+        self.filament_current_limit.command(self.filament_current_limit_value)
+        self.bias_voltage_setpoint.command(self.bias_voltage_setpoint_value)
+        self.bias_current_limit.command(self.bias_current_limit_value)
         self.bias_output.command(True)
         self.filament_output.command(True)
 
-        voltages = [float(voltage) for voltage in list(linspace(self.min_filament_voltage, self.max_filament_voltage, self.num_steps))]
+        voltages = [
+            float(voltage)
+            for voltage in list(
+                linspace(
+                    self.min_filament_voltage, self.max_filament_voltage, self.num_steps
+                )
+            )
+        ]
 
         for voltage in voltages:
             logger.debug("%s: Setting Voltage to %s", self.name, voltage)
-            self.filament_voltage.command(float(voltage))
+            self.filament_voltage_setpoint.command(float(voltage))
             time.sleep(self.step_delay)
 
         self.filament_output.command(False)
@@ -37,5 +45,3 @@ class IsoFilamentVoltageStep(IsoFilamentBase):
 
     def generate_report(self):
         pass
-
-    
