@@ -91,7 +91,12 @@ class DiscordEngine(CommunicationEngine):
     def _run_client(self) -> None:
         """Runs the Discord client using the event loop."""
         asyncio.set_event_loop(self._loop)
-        self._loop.run_until_complete(self._client.start(self._token))
+        try:
+            self._loop.run_until_complete(self._client.start(self._token))
+        except (
+            Exception
+        ) as e:  # yes I know it's too broad, but I'm not sure what exceptions can be raised here
+            logger.error("Error running Discord client: %s", e)
 
     def _get_guild_ids(self) -> list[str, int]:
         """Retrieves a dictionary of guild names and their IDs.
