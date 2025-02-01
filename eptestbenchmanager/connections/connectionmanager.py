@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from typing import Union
 import sys
@@ -8,6 +9,8 @@ from . import (
     ExperimentStatusVirtualInstrument,
     CompositeVirtualInstrument,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class ConnectionManager:
@@ -33,9 +36,8 @@ class ConnectionManager:
         self._experiment_manager = testbench_manager.runner
         self._testbench_manager = testbench_manager
 
-        print(
-            f"Connection manager config file path: {config_file_path}"
-        )  # TODO: make this a logging call
+        logger.info("Initializing ConnectionManager")
+        logger.info("Connection manager config file path: %s", config_file_path)
 
         if config_file_path is not None:
             self.new_apparatus_config(config_file_path)
@@ -62,9 +64,8 @@ class ConnectionManager:
                     **instrument_config["arguments"]
                 )
         except AttributeError as e:
-            print(
-                f"Error loading physical instruments: {e} (Perhaps none are defined?)"
-            )
+            logger.error("Error loading physical instruments: %s (Perhaps none are defined?)", e)
+
 
         for uid, instrument_config in config["virtual_instruments"].items():
             self._virtual_instruments[uid] = VirtualInstrumentFactory.create_instrument(

@@ -1,4 +1,5 @@
 import os
+import logging
 from pathlib import Path
 from typing import TYPE_CHECKING
 from flask import Flask, send_from_directory
@@ -11,6 +12,7 @@ if TYPE_CHECKING:
     from eptestbenchmanager.manager import TestbenchManager
     from eptestbenchmanager.dashboard import DashboardElement, DashboardPage
 
+logger = logging.getLogger(__name__)
 
 class DashboardManager:
     """Manages the dashboard for the EP Testbench Manager.
@@ -69,11 +71,11 @@ class DashboardManager:
                 "logs",
                 "archives",
             )
-            print(f"Downloading archive {archive}")
+            logger.info("Downloading archive %s", archive)
             try:
                 return send_from_directory(archive_dir, f"{archive}")
             except Exception as e:
-                print(f"Error starting experiment: {e}")
+                logger.error("Error downloading archive: %s", e)
 
         # set up the experiment control elements
         # This must be done in the configure method so that the experiment runner is able to load
@@ -113,5 +115,5 @@ class DashboardManager:
 
     def run(self):
         """Runs the dashboard, blocking the main thread."""
-        print("Starting dashboard - this will block the main thread")
+        logger.info("Starting dashboard - this will block the main thread")
         self.socketio.run(self.app, host="0.0.0.0")

@@ -1,3 +1,4 @@
+import logging
 from threading import Thread, Lock
 import time
 import datetime
@@ -11,6 +12,8 @@ from .experiment_segments.experiment_segment import (
 
 if TYPE_CHECKING:
     from eptestbenchmanager.manager import TestbenchManager
+
+logger = logging.getLogger(__name__)
 
 
 class Experiment:
@@ -116,13 +119,10 @@ class Experiment:
                     segment.run()
                     segment.postrun()
 
-                    print(segment.data)  # TODO: remove this
 
                 except AbortingSegmentFailure as e:
                     # TODO: indicate somehow that we're aborting
-                    print("Aborting segment")
-                    print(e)
-                    print(segment.data)
+                    logger.error("Aborting segment %s: %s", segment.uid, e)
 
                     self._testbench_manager.alert_manager.send_alert(
                         (

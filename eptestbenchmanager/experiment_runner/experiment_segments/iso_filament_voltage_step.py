@@ -1,6 +1,9 @@
+import logging
 from . import IsoFilamentBase
 from numpy import linspace
 import time
+
+logger = logging.getLogger(__name__)
 
 class IsoFilamentVoltageStep(IsoFilamentBase):
 
@@ -25,7 +28,7 @@ class IsoFilamentVoltageStep(IsoFilamentBase):
         voltages = [float(voltage) for voltage in list(linspace(self.min_filament_voltage, self.max_filament_voltage, self.num_steps))]
 
         for voltage in voltages:
-            print(f"{self.name}: Setting Voltage to {voltage}")
+            logger.debug("%s: Setting Voltage to %s", self.name, voltage)
             self.filament_voltage.command(float(voltage))
             time.sleep(self.step_delay)
 

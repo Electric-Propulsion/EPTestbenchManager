@@ -1,3 +1,4 @@
+import logging
 from typing import TYPE_CHECKING
 from flask_socketio import Namespace, SocketIO
 from flask import render_template
@@ -6,6 +7,7 @@ from ..dashboardelement import DashboardElement
 if TYPE_CHECKING:
     from eptestbenchmanager.manager import Recording
 
+logger = logging.getLogger(__name__)
 
 class RecordingGraph(DashboardElement):
     """A class to represent a recording graph element in the dashboard.
@@ -32,7 +34,7 @@ class RecordingGraph(DashboardElement):
             Emits an update event when a new client connects, so the client gets the full graph
             history.
             """
-            print(f"New client connected to GraphNamespace {self.element.namespace}")
+            logger.debug("New client connected to GraphNamespace %s", self.element.namespace)
             self.element.update()
 
         def __init__(self, namespace, element):

@@ -1,3 +1,4 @@
+import logging
 from typing import Union, TYPE_CHECKING
 from threading import Lock
 from abc import ABC, abstractmethod
@@ -9,6 +10,7 @@ from eptestbenchmanager.dashboard.pages import InstrumentDetail
 if TYPE_CHECKING:
     from eptestbenchmanager.connections import CompositeVirtualInstrument
 
+logger = logging.getLogger(__name__)
 
 class VirtualInstrument(ABC):
     """
@@ -134,9 +136,8 @@ class VirtualInstrument(ABC):
         try:
             self.gauge.set_value(value)
         except RuntimeError as e:
-            print(
-                f"Error updating gauge for {self.name}: {e}"
-            )  # expected until the dashboard is up and running
+            # expected until the dashboard is up and running
+            logger.error("Error updating gauge for %s: %s", self.name, e)  # expected until the dashboard is up and running
 
     def begin_recording(
         self,
@@ -159,7 +160,7 @@ class VirtualInstrument(ABC):
             stored_samples (optional): The number of samples to store. Defaults to 250.
             max_time (optional): The maximum time for the recording. Defaults to None.
         """
-        print(f"Beginning recording {record_id}")
+        logger.info("Beginning recording %s", record_id)
         self._recordings[record_id] = Recording(
             self.testbench_manager,
             record_id,
@@ -183,7 +184,7 @@ class VirtualInstrument(ABC):
         Returns:
             bool: True if the recording exists, False otherwise.
         """
-        print(f"Checking if {record_id} exists in {self._recordings}")
+        logger.debug("Checking if %s exists in %s", record_id, self._recordings)
         return record_id in self._recordings
 
     def resume_recording(self, record_id) -> None:
@@ -193,7 +194,7 @@ class VirtualInstrument(ABC):
         Args:
             record_id: The ID of the recording to resume.
         """
-        print(f"Resuming recording {record_id}")
+        logger.info("Resuming recording %s", record_id)
         self._recordings[record_id].start_recording()
 
     def stop_recording(self, record_id) -> None:
@@ -203,7 +204,7 @@ class VirtualInstrument(ABC):
         Args:
             record_id: The ID of the recording to stop.
         """
-        print(f"Stopping recording {record_id}")
+        logger.info("Stopping recording %s", record_id)
         self._recordings[record_id].stop_recording()
 
     def register_dependant_composite(

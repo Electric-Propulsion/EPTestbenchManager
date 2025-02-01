@@ -1,3 +1,4 @@
+import logging
 from io import StringIO
 from threading import Lock
 from typing import TYPE_CHECKING
@@ -6,6 +7,8 @@ from .experiment_factory import ExperimentFactory
 
 if TYPE_CHECKING:
     from eptestbenchmanager.manager import TestbenchManager
+
+logger = logging.getLogger(__name__)
 
 
 class ExperimentRunner:
@@ -48,11 +51,11 @@ class ExperimentRunner:
             operator (str): Name of the operator running the experiment.
         """
         if self._experiment_lock.acquire(blocking=False):
-            print("Running experiment")
+            logger.info("Running experiment %s", uid)
             self._current_experiment_uid = uid
             self._experiments[uid].run(operator)
         else:
-            print("Cannot start experiment. Experiment is already running")
+            logger.warning("Cannot start experiment %s. Experiment %s is already running", uid, self.get_current_experiment_id())
 
     def remove_experiment(self, uid: str) -> None:
         """Removes the experiment with the given UID.
