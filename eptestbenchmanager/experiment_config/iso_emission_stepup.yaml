@@ -17,18 +17,9 @@ segments:
       - vacuum_chamber_pressure:
           record_id: pressure
           record_name: Pressure
-      - filament_voltage:
-          record_id: filament_voltage
+      - filament_voltage_setpoint:
+          record_id: filament_voltage_setpoint
           record_name: Filament Voltage
-      - bias_voltage:
-          record_id: bias_voltage
-          record_name: Bias Voltage
-      - filament_current:
-          record_id: filament_current
-          record_name: Filament Current
-      - bias_current:
-          record_id: bias_current
-          record_name: Bias Current
       - emitted_current:
           record_id: emitted_current
           record_name: Emitted Current
@@ -36,29 +27,20 @@ segments:
   step_filament_voltages_up:
     name: Filament Voltage Step Up
     type: iso_filament_voltage_step
-    min_filament_voltage: 2.5
-    max_filament_voltage: 5
-    num_steps: 6
+    min_filament_voltage: 10
+    max_filament_voltage: 24
+    num_steps: 15
     filament_current_limit: 1.5
     bias_voltage_setpoint: 30
     bias_current_limit: 0.100
-    step_delay: 300
+    step_delay: 60
     recordings:
       - vacuum_chamber_pressure:
           record_id: pressure
           record_name: Pressure
-      - filament_voltage:
-          record_id: filament_voltage
+      - filament_voltage_setpoint:
+          record_id: filament_voltage_setpoint
           record_name: Filament Voltage
-      - bias_voltage:
-          record_id: bias_voltage
-          record_name: Bias Voltage
-      - filament_current:
-          record_id: filament_current
-          record_name: Filament Current
-      - bias_current:
-          record_id: bias_current
-          record_name: Bias Current
       - emitted_current:
           record_id: emitted_current
           record_name: Emitted Current
@@ -66,29 +48,20 @@ segments:
   step_filament_voltages_down:
     name: Filament Voltage Step Down
     type: iso_filament_voltage_step
-    min_filament_voltage: 5
-    max_filament_voltage: 2.5
-    num_steps: 6
+    min_filament_voltage: 24
+    max_filament_voltage: 10
+    num_steps: 15
     filament_current_limit: 1.5
     bias_voltage_setpoint: 30
     bias_current_limit: 0.100
-    step_delay: 300
+    step_delay: 60
     recordings:
       - vacuum_chamber_pressure:
           record_id: pressure
           record_name: Pressure
-      - filament_voltage:
-          record_id: filament_voltage
+      - filament_voltage_setpoint:
+          record_id: filament_voltage_setpoint
           record_name: Filament Voltage
-      - bias_voltage:
-          record_id: bias_voltage
-          record_name: Bias Voltage
-      - filament_current:
-          record_id: filament_current
-          record_name: Filament Current
-      - bias_current:
-          record_id: bias_current
-          record_name: Bias Current
       - emitted_current:
           record_id: emitted_current
           record_name: Emitted Current
@@ -105,18 +78,9 @@ segments:
       - vacuum_chamber_pressure:
           record_id: pressure
           record_name: Pressure
-      - filament_voltage:
-          record_id: filament_voltage
+      - filament_voltage_setpoint:
+          record_id: filament_voltage_setpoint
           record_name: Filament Voltage
-      - bias_voltage:
-          record_id: bias_voltage
-          record_name: Bias Voltage
-      - filament_current:
-          record_id: filament_current
-          record_name: Filament Current
-      - bias_current:
-          record_id: bias_current
-          record_name: Bias Current
       - emitted_current:
           record_id: emitted_current
           record_name: Emitted Current
