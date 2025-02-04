@@ -1,45 +1,30 @@
 physical_instruments:
-  vacuum_controller:
-    class: epcomms.equipment.vacuumcontroller.Terranova962A
-    arguments:
-      device_location: /dev/ttyUSB0
 
   multimeter:
     class: epcomms.equipment.multimeter.KeysightEDU34450A
     arguments:
       resource_name: "USB0::10893::36353::CN62350039::0::INSTR"
 
-  # lv_psu:
-  #   class: epcomms.equipment.powersupply.KeysightEDU36311A
-  #   arguments:
-  #     resource_name: "USB0::10893::36609::CN63070208::0::INSTR"
-
   high_power_psu:
     class: epcomms.equipment.powersupply.BK1694
     arguments:
       ip: "192.168.0.156"
 
-  # flow_controller: 
-  #   class: epcomms.equipment.flowcontroller.AlicatEIP
-  #   arguments:
-  #     routing_path: "192.168.0.172"
-
-  # test_instrument:
-  #   class: epcomms.equipment.test.TestInstrument
-  #   arguments: {}
-
 virtual_instruments:
-  vacuum_chamber_pressure:
+
+  filament_voltage:
     type: polling
-    name: Vacuum Chamber Pressure
-    physical_instrument: vacuum_controller
-    getter_function: get_pressure_gauge_1
-    getter_arguments: {}
+    name: Filament Voltage
+    physical_instrument: multimeter
+    getter_function: measure_voltage_dc
+    getter_arguments:
+       measurement_range: 'AUTO'
+       resolution: 'DEF'
+       channel: 'PRIMARY'
     setter_function: None
     setter_arguments: {}
-    polling_interval: 1000
-    unit: mBar
-    name: Vacuum Chamber Pressure
+    polling_interval: 1500
+    unit: V
 
   filament_voltage_setpoint:
     type: command_driven
@@ -52,31 +37,94 @@ virtual_instruments:
     polling_interval: 1000
     unit: V
 
-  filament_voltage:
-    type: "null"
-    name: Filament Voltage (NULL)
-    units: units
-
   bias_voltage:
-    name: "Bias Voltage (NULL)"
     type: "null"
-    unit: units
+    name: Bias Voltage
+    physical_instrument: lv_psu
+    getter_function: measure_voltage
+    getter_arguments:
+      channel: 2
+    setter_function: None
+    setter_arguments: {}
+    polling_interval: 1000
+    unit: V
+
+    bias_voltage_setpoint:
+    type: "null"
+    name: Bias Voltage Setpoint
+    physical_instrument: lv_psu
+    getter_function: measure_voltage
+    getter_arguments:
+      channel: 2
+    setter_function: set_voltage
+    setter_arguments:
+      channel: 2
+    unit: V
+
+  filament_current:
+    type: "null"
+    name: Filament Current
+    physical_instrument: lv_psu
+    getter_function: measure_current
+    getter_arguments:
+      channel: 1
+    setter_function: None
+    setter_arguments: 
+      channel: 1
+    polling_interval: 1000
+    unit: A
+
+  filament_current_limit: 
+    type: "null"
+    name: Filament Current Limit
+    physical_instrument: lv_psu
+    getter_function: measure_current_limit
+    getter_arguments:
+      channel: 1
+    setter_function: set_current_limit
+    setter_arguments:
+      channel: 1
+    polling_interval: 1000
+    unit: A
+
+  bias_current:
+    type: "null"
+    name: Bias Current
+    physical_instrument: lv_psu
+    getter_function: measure_current
+    getter_arguments:
+      channel: 2
+    setter_function: None
+    setter_arguments: 
+      channel: 2
+    polling_interval: 1000
+    unit: A
 
   bias_current_limit: 
     type: "null"
-    name: Bias Current Limit (NULL)
-    unit: units
-
-  filament_current_limit:
-    type: "null"
-    name: Filament Current Limit (NULL)
-    unit: units
+    name: Bias Current Limit
+    physical_instrument: lv_psu
+    getter_function: measure_current_limit
+    getter_arguments:
+      channel: 2
+    setter_function: set_current_limit
+    setter_arguments: 
+      channel: 2
+    polling_interval: 1000
+    unit: A
 
   bias_output:
     type: "null"
-    name: Bias Output (NULL)
-    unit: units
-
+    name: Bias Output
+    physical_instrument: lv_psu
+    getter_function: get_output
+    getter_arguments:
+      channel: 2
+    setter_function: set_output
+    setter_arguments:
+      channel: 2
+    polling_interval: 1000
+    unit: Boolean
 
   filament_output:
     type: command_driven
@@ -89,19 +137,20 @@ virtual_instruments:
     polling_interval: 1000
     unit: Boolean
     
-  emitted_current:
-    type: polling
-    name: Emitted Current
-    physical_instrument: multimeter
-    getter_function: measure_current_dc
-    getter_arguments:
-      measurement_range: 'AUTO'
-      resolution: 'DEF'
-      channel: 'PRIMARY'
-    setter_function: None
-    setter_arguments: {}
-    polling_interval: 2000
-    unit: A
+
+  # emitted_current:
+  #   type: polling
+  #   name: Emitted Current
+  #   physical_instrument: multimeter
+  #   getter_function: measure_current_dc
+  #   getter_arguments:
+  #     measurement_range: 'AUTO'
+  #     resolution: 'DEF'
+  #     channel: 'PRIMARY'
+  #   setter_function: None
+  #   setter_arguments: {}
+  #   polling_interval: 2000
+  #   unit: A
 
   # argon_pressure:
   #   type: polling
