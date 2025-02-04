@@ -81,8 +81,6 @@ class DiscordEngine(CommunicationEngine):
         guild_ids = self._get_guild_ids()
         logger.info("Aware of guilds %s", guild_ids)
         logger.info("Connecting to guild %s", config["guild"])
-        if config["guild"] not in guild_ids:
-            raise ValueError("Guild not found")
         self._guild_id = guild_ids[config["guild"]]
 
         self._user_ids = self._get_user_ids()

@@ -9,6 +9,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 class ExperimentControl(DashboardElement):
     """Class to control and manage experiments via a web dashboard.
 
@@ -50,7 +51,7 @@ class ExperimentControl(DashboardElement):
         """
         data = {
             "experiments": self.experiments,
-            "operators": self.operators,
+            "operators": self.operators if self.operators is not None else [],
             "uid": self.uid,
         }
         value = render_template("elements/experiment_control.html", data=data)
