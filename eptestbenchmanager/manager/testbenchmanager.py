@@ -43,8 +43,6 @@ class TestbenchManager:
 
     def start_app(
         self,
-        delay_apparatus_load: bool = False,
-        delay_experiment_load: bool = False,
         discord_guild: str = "Hall-Effect Thruster",
     ):
         """Starts the application with optional delays for loading apparatus and experiments.
@@ -56,17 +54,18 @@ class TestbenchManager:
         """
 
         # Initialize the connection manager
-        if not delay_apparatus_load:
-            apparatus_config_file_path = path.join(
-                Path(__file__).parent.parent, Path("config/apparatus_config.yaml")
-            )
-        else:
-            apparatus_config_file_path = None
+        apparatus_config_dir_path = Path(
+            path.join(Path(__file__).parent.parent, Path("apparatus_config"))
+        )
+
+        experiment_config_dir_path = Path(
+            path.join(Path(__file__).parent.parent, Path("experiment_config"))
+        )
 
         # Initialize the experiment runner
-        self.runner = ExperimentRunner(self)
+        self.runner = ExperimentRunner(self, experiment_config_dir_path)
 
-        self.connection_manager = ConnectionManager(self, apparatus_config_file_path)
+        self.connection_manager = ConnectionManager(self, apparatus_config_dir_path)
 
         # Configure the chat stuff
         try:
@@ -81,19 +80,6 @@ class TestbenchManager:
 
         # Start everything
         self.connection_manager.run()
-
-        if not delay_experiment_load:
-            # Load all the experiments in /experiment_config
-            experiment_config_dir_path = path.join(
-                Path(__file__).parent.parent, Path("experiment_config")
-            )
-            for dirpath, _, filenames in walk(experiment_config_dir_path):
-                for filename in filenames:
-                    if filename.endswith(".yaml"):
-                        with open(
-                            path.join(dirpath, filename), "r", encoding="utf-8"
-                        ) as experiment_config_file:
-                            self.runner.add_experiment(experiment_config_file)
 
         # Start the dashboard
         self.dashboard.configure()

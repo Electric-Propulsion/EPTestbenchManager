@@ -19,7 +19,7 @@ h1 {
     justify-content: center;
 }
 
-.experiment_control_box, .archive_dl_box {
+.experiment_control_box, .archive_dl_box, .apparatus_control_box {
     position: relative;
     display: flex;
     justify-content: center;
@@ -34,7 +34,7 @@ h1 {
     gap: 20px;
 }
 
-.archive_dl_box_name, .experiment_control_box_name {
+.archive_dl_box_name, .experiment_control_box_name, .apparatus_control_box_name {
     position: absolute;
     top: -7.5px;
     left: 50%;

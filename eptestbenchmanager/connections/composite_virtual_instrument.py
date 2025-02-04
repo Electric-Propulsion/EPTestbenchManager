@@ -73,7 +73,10 @@ class CompositeVirtualInstrument(VirtualInstrument):
 
     def start_updating(self) -> None:
         """Starts the update loop in a separate thread."""
-        self._update_thread.start()
+        try:
+            self._update_thread.start()
+        except RuntimeError:
+            print(f"Instrument {self.name} updating thread already started.")
 
     def command(self, command: float) -> None:
         """Raises NotImplementedError as this instrument does not support commands.
