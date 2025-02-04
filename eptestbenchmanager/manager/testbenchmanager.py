@@ -1,6 +1,7 @@
 from os import path, walk
 from pathlib import Path
 from time import sleep
+import logging
 
 from eptestbenchmanager.connections import ConnectionManager
 from eptestbenchmanager.monitor import TestbenchMonitor
@@ -10,6 +11,8 @@ from eptestbenchmanager.chat.engine import DiscordEngine
 from eptestbenchmanager.chat.chat_manager import DiscordChatManager
 from eptestbenchmanager.dashboard import DashboardManager
 from eptestbenchmanager.report import ReportManager
+
+logger = logging.getLogger(__name__)
 
 
 class TestbenchManager:
@@ -66,13 +69,18 @@ class TestbenchManager:
         self.connection_manager = ConnectionManager(self, apparatus_config_file_path)
 
         # Configure the chat stuff
-        self.chat_manager.configure()
+        try:
+            self.chat_manager.configure()
+            self.communication_engine.run()
+            sleep(2.5)  # just give it a little time to start up
+            self.communication_engine.configure({"guild": discord_guild})
+        except Exception as e:  # I know it's way too broad
+            logger.critical(
+                "Discord failed to start. No messages will be sent or recieved."
+            )
 
         # Start everything
         self.connection_manager.run()
-        self.communication_engine.run()
-        sleep(2.5)  # just give it a little time to start up
-        self.communication_engine.configure({"guild": discord_guild})
 
         if not delay_experiment_load:
             # Load all the experiments in /experiment_config
