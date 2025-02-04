@@ -49,17 +49,17 @@ class MainPage(DashboardPage):
             </head>
             <body>
                 <h1>Dashboard</h1>
-                <div id="experiment_control_segment">
-                    {self.experiment_control.render_html()}
-                </div>
-                <script>
-                    {self.experiment_control.render_js()}
-                </script>
                 <div id="apparatus_control_segment">
                     {self.apparatus_control.render_html()}
                 </div>
                 <script>
                     {self.apparatus_control.render_js()}
+                </script>
+                <div id="experiment_control_segment">
+                    {self.experiment_control.render_html()}
+                </div>
+                <script>
+                    {self.experiment_control.render_js()}
                 </script>
                 <div id="archive_download_segment">
                     {self.archive_download.render_html()}
