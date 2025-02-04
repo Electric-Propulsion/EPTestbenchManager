@@ -1,9 +1,11 @@
+import logging
 from typing import Union
 from threading import Thread, Event
 from time import monotonic, sleep
 from epcomms.equipment.base.instrument import Instrument
 from . import VirtualInstrument
 
+logger = logging.getLogger(__name__)
 
 class PollingVirtualInstrument(VirtualInstrument):
     """A virtual instrument that polls a physical instrument at regular intervals.
@@ -81,13 +83,10 @@ class PollingVirtualInstrument(VirtualInstrument):
                 value = self._getter_function()
                 self._set_value(value)
             except Exception as e:
-                print(f"Instrument {self.name} encountered exception: {e}")
+                logger.error("Instrument %s encountered exception: %s", self.name, e)
             sleep_time = next_poll_time - monotonic()
             if sleep_time > 0:
                 sleep(sleep_time)
             else:
                 # We missed the polling interval
-                print(
-                    f"EPTestbenchManager: Instrument {self.name} missed a polling interval by {-sleep_time} seconds."
-                )
-                pass
+                logger.error("Instrument %s missed a polling interval by %f seconds.", self.name, -sleep_time)

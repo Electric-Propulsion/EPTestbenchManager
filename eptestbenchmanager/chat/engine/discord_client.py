@@ -1,5 +1,7 @@
+import logging
 import discord
 
+logger = logging.getLogger(__name__)
 
 class DiscordClient(discord.Client):
     """A Discord client for handling messages and sending responses.
@@ -20,8 +22,7 @@ class DiscordClient(discord.Client):
 
     async def on_ready(self):
         """Called when the client is ready and connected to Discord."""
-        print(f"Logged in as {self.user} (ID: {self.user.id})")
-        print("------")
+        logger.info("Logged in as %s (ID: %s)", self.user, self.user.id)
 
     def configure_message_processor(self, process_message: callable):
         """Configures the message processing function.
@@ -41,7 +42,7 @@ class DiscordClient(discord.Client):
             # don't reply to yourself
             if message.author.id == self.user.id:
                 return
-            print(f"received message {message.content}")
+            logger.info("received message %s", message.content)
             self.process_message(
                 message.content, message.channel.name, message.author.id
             )
@@ -57,7 +58,7 @@ class DiscordClient(discord.Client):
             channel = self.get_channel(channel)
             await channel.send(message)
         except Exception as e:
-            print(f"Error sending message: {e}")
+            logger.warning("Error sending message: %s", e)
 
     async def send_file(self, file_path: str, channel: int) -> None:
         """Sends a file to a specified channel.
@@ -70,4 +71,4 @@ class DiscordClient(discord.Client):
             channel = self.get_channel(channel)
             await channel.send(file=discord.File(file_path))
         except Exception as e:
-            print(f"Error sending file: {e}")
+            logger.warning("Error sending file: %s", e)

@@ -52,7 +52,6 @@ class Pumpdown(ExperimentSegment):
                     # We've timed out
                     self.data["termination"]["reason"] = "timeout"
                     self.data["metadata"]["end_time"] = time.time()
-                    print(self.data)
 
                     if self.timeout_action != "continue":
                         raise AbortingSegmentFailure(
@@ -79,7 +78,6 @@ class Pumpdown(ExperimentSegment):
         # We're at the specified pressure
         self.data["termination"]["reason"] = "success"
         self.data["metadata"]["end_time"] = time.time()
-        print(self.data)
         return
 
     def generate_report(self):

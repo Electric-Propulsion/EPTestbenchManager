@@ -1,3 +1,4 @@
+import logging
 import time
 import csv
 import os
@@ -7,6 +8,8 @@ from eptestbenchmanager.dashboard.elements import RecordingGraph
 
 if TYPE_CHECKING:
     from eptestbenchmanager.connections import VirtualInstrument
+
+logger = logging.getLogger(__name__)
 
 
 class Recording:
@@ -196,13 +199,13 @@ class Recording:
         self._sample_count += 1
 
         if not self._recording:
-            print("add sample being called when recording is not active")
+            logger.error("Add sample being called when recording is not active")
         if not self._rolling:
             try:
                 self._csv_writer.writerow([timestamp, sample, current_experiment])
                 self._file.flush()
             except ValueError:
-                print("File closed - should fix this")
+                logger.error("Error writing to file (File closed?)")
 
         if self._sample_count <= self._stored_samples:
             self._append_sample(sample, timestamp)

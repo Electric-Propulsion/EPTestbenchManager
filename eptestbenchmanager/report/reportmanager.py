@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 import os
 import zipfile
@@ -6,6 +7,8 @@ from eptestbenchmanager.dashboard.elements import ArchiveDownload
 
 if TYPE_CHECKING:
     from eptestbenchmanager.manager import TestbenchManager
+
+logger = logging.getLogger(__name__)
 
 
 class ReportManager:
@@ -106,7 +109,7 @@ class ReportManager:
         run_log_dir = os.path.join(self.log_dir, run_id)
         output_archive_path = os.path.join(self.archive_dir, f"{output_name_root}.zip")
         os.makedirs(os.path.dirname(output_archive_path), exist_ok=True)
-        print(f" Compressing log file directory: {run_log_dir}")
+        logger.debug("Compressing log file directory: %s", run_log_dir)
 
         with zipfile.ZipFile(output_archive_path, "w", zipfile.ZIP_DEFLATED) as zipf:
             for root, _, files in os.walk(run_log_dir):
@@ -114,7 +117,7 @@ class ReportManager:
                     file_path = os.path.join(root, file)
                     arcname = os.path.relpath(file_path, run_log_dir)
                     zipf.write(file_path, arcname)
-        print(f"Directory {run_log_dir} compressed into {output_archive_path}")
+        logger.info("Directory %s compressed into %s", run_log_dir, output_archive_path)
         self.archives.append(output_name_root)
 
         self.ui_element.update_archives()

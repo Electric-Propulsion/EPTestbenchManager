@@ -1,5 +1,8 @@
+import logging
 from flask_socketio import emit, Namespace, SocketIO
 from ..dashboardelement import DashboardElement
+
+logger = logging.getLogger(__name__)
 
 
 class CurrentValueElement(DashboardElement):
@@ -26,7 +29,7 @@ class CurrentValueElement(DashboardElement):
 
             Emits the current value and unit to the connected client.
             """
-            print(f"Client connected to CurrentValueNamespace {self.element.namespace}")
+            logger.debug(f"Client connected to CurrentValueNamespace {self.element.namespace}")
             emit(
                 "update",
                 {"value": self.element.value, "unit": self.element.unit},

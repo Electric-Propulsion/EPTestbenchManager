@@ -1,6 +1,8 @@
+import logging
 from typing import Union
 from . import AlertManager, AlertSeverity
 
+logger = logging.getLogger(__name__)
 
 class DiscordAlertManager(AlertManager):
     """Manages alerts sent to Discord.
@@ -33,7 +35,7 @@ class DiscordAlertManager(AlertManager):
                         [f"<@{self._engine.users[user]}>" for user in target]
                     )
             except KeyError:
-                print(f"Failed to send alert to {target} (not in known users).")
+                logger.warning(f"Failed to send alert to {target} (not in known users).")
                 target_str = ""
         else:
             target_str = ""
