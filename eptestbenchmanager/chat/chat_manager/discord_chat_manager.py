@@ -1,5 +1,7 @@
+import logging
 from . import ChatManager
 
+logger = logging.getLogger(__name__)
 
 class DiscordChatManager(ChatManager):
     """Manages Discord chat interactions for the testbench manager.
@@ -41,7 +43,7 @@ class DiscordChatManager(ChatManager):
         Returns:
             None
         """
-        print(f"responding to {message}")
+        logger.info("responding to %s",message)
         try:
             command = next(
                 word for word in message.split() if word[0] == self.command_character
@@ -61,7 +63,7 @@ class DiscordChatManager(ChatManager):
         try:
             self._engine.send_message(f"{mention_string}{response}", channel)
         except Exception as e:
-            print(f"Error processing message: {e}")
+            logger.error("Error processing message: %s", e)
 
     def query_instrument(self, virtual_instrument: str) -> str:
         """Queries a virtual instrument for its current reading.
@@ -79,7 +81,7 @@ class DiscordChatManager(ChatManager):
             ]
         except KeyError as e:
             response = f"No such instrument ({virtual_instrument}) exists."
-            print(e)
+            logger.error("Error querying instrument: %s", e)
         else:
             response = f"{instrument.name} reports a reading of {instrument.value}"
 

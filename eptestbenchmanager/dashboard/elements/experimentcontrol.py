@@ -1,3 +1,4 @@
+import logging
 from typing import TYPE_CHECKING
 from flask import render_template
 from flask_socketio import Namespace
@@ -5,6 +6,8 @@ from ..dashboardelement import DashboardElement
 
 if TYPE_CHECKING:
     from eptestbenchmanager.manager import TestbenchManager
+
+logger = logging.getLogger(__name__)
 
 
 class ExperimentControl(DashboardElement):
@@ -48,7 +51,7 @@ class ExperimentControl(DashboardElement):
         """
         data = {
             "experiments": self.experiments,
-            "operators": self.operators,
+            "operators": self.operators if self.operators is not None else [],
             "uid": self.uid,
         }
         value = render_template("elements/experiment_control.html", data=data)
@@ -73,13 +76,13 @@ class ExperimentControl(DashboardElement):
             Args:
                 data (dict): Data containing experiment_uid and operator.
             """
-            print(f"experiment starting with {data}")
+            logger.info("experiment starting with %s", data)
             try:
                 self.experiment_runner.run_experiment(
                     data["experiment_uid"], data["operator"]
                 )
             except Exception as e:
-                print(f"Error starting experiment: {e}")
+                logger.warning("Error starting experiment: %s", e)
 
         @self.socketio.on("stop_experiment", namespace=self.namespace)
         def stop_experiment():
@@ -88,4 +91,4 @@ class ExperimentControl(DashboardElement):
             Args:
                 data (dict): Data containing experiment_uid and operator.
             """
-            print("experiment stopping")
+            logger.info("experiment stopping")

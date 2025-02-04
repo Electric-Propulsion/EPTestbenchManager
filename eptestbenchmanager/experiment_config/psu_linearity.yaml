@@ -1,0 +1,75 @@
+experiment:
+  uid: psu_linearity_stepup
+  name: Test PSU Linearity stepup
+  description: |
+    This experiment progressively steps through PSU voltages, recording the PSU output voltage
+
+segments:
+  high:
+    name: Steady Voltages
+    type: iso_filament_hold
+    filament_voltage_setpoint: 30
+    filament_current_limit: None
+    bias_voltage_setpoint: None
+    bias_current_limit: None
+    hold_s: 30
+    recordings:
+      - filament_voltage_setpoint:
+          record_id: filament_voltage_setpoint
+          record_name: Filament Voltage Setpoint
+      - filament_voltage:
+          record_id: filament_voltage
+          record_name: Filament Voltage
+
+  # step_voltage_up:
+  #   name: Voltage Step Up
+  #   type: iso_filament_voltage_step
+  #   min_filament_voltage: 0
+  #   max_filament_voltage: 30
+  #   num_steps: 255
+  #   filament_current_limit: None
+  #   bias_voltage_setpoint: None
+  #   bias_current_limit: None
+  #   step_delay: 5
+  #   recordings:
+  #     - filament_voltage_setpoint:
+  #         record_id: filament_voltage_setpoint
+  #         record_name: Filament Voltage Setpoint
+  #     - filament_voltage:
+  #         record_id: filament_voltage
+  #         record_name: Filament Voltage
+
+
+  step_voltage_down:
+    name: Voltage Step Down
+    type: iso_filament_voltage_step
+    min_filament_voltage: 30
+    max_filament_voltage: 0
+    num_steps: 255
+    filament_current_limit: None
+    bias_voltage_setpoint: None
+    bias_current_limit: None
+    step_delay: 5
+    recordings:
+      - filament_voltage_setpoint:
+          record_id: filament_voltage_setpoint
+          record_name: Filament Voltage Setpoint
+      - filament_voltage:
+          record_id: filament_voltage
+          record_name: Filament Voltage
+
+  rezero:
+      name: Re-zero Voltages
+      type: iso_filament_hold
+      filament_voltage_setpoint: 0
+      filament_current_limit: None
+      bias_voltage_setpoint: None
+      bias_current_limit: None
+      hold_s: 30
+      recordings:
+      - filament_voltage_setpoint:
+          record_id: filament_voltage_setpoint
+          record_name: Filament Voltage Setpoint
+      - filament_voltage:
+          record_id: filament_voltage
+          record_name: Filament Voltage

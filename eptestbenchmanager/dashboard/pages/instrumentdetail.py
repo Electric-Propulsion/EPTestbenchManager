@@ -47,8 +47,8 @@ class InstrumentDetail(DashboardPage):
                 <title>Instrument Detail</title>
                 <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
                 <link rel="stylesheet" href="/static/style.css">
-                <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.min.js"></script>
+                <script src="/static/plotly.min.js"></script>
+                <script src="/static/socket.io.min.js"></script>
             </head>
             <body>
                 <a href="/" class="home_link">‹</a>

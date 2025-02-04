@@ -1,8 +1,11 @@
 import asyncio
+import logging
 from threading import Thread
 import discord
 from . import DiscordClient
 from . import CommunicationEngine
+
+logger = logging.getLogger(__name__)
 
 
 class DiscordEngine(CommunicationEngine):
@@ -46,7 +49,7 @@ class DiscordEngine(CommunicationEngine):
             message (str): The message to send.
             channel (str): The name of the channel to send the message to.
         """
-        print(f"Sending message: {message}")
+        logger.info("Sending message: %s", message)
         asyncio.run_coroutine_threadsafe(
             self._client.send_message(message, self._channel_ids[channel]), self._loop
         )
@@ -76,11 +79,8 @@ class DiscordEngine(CommunicationEngine):
             config (dict): A dictionary containing configuration parameters.
         """
         guild_ids = self._get_guild_ids()
-        print("=======")
-        print(f"Aware of guilds {guild_ids}")
-        print(f"Connecting to guild {config['guild']}")
-        if config["guild"] not in guild_ids:
-            raise ValueError("Guild not found")
+        logger.info("Aware of guilds %s", guild_ids)
+        logger.info("Connecting to guild %s", config["guild"])
         self._guild_id = guild_ids[config["guild"]]
 
         self._user_ids = self._get_user_ids()
@@ -89,7 +89,12 @@ class DiscordEngine(CommunicationEngine):
     def _run_client(self) -> None:
         """Runs the Discord client using the event loop."""
         asyncio.set_event_loop(self._loop)
-        self._loop.run_until_complete(self._client.start(self._token))
+        try:
+            self._loop.run_until_complete(self._client.start(self._token))
+        except (
+            Exception
+        ) as e:  # yes I know it's too broad, but I'm not sure what exceptions can be raised here
+            logger.error("Error running Discord client: %s", e)
 
     def _get_guild_ids(self) -> list[str, int]:
         """Retrieves a dictionary of guild names and their IDs.
@@ -100,7 +105,7 @@ class DiscordEngine(CommunicationEngine):
         guilds = {}
         for guild in self._client.guilds:
             guilds[guild.name] = guild.id
-            print(f"Found guild: {guild.name} ({guild.id})")
+            logger.info("Found guild: %s (%s)", guild.name, guild.id)
         return guilds
 
     def _get_user_ids(self) -> dict[str, int]:

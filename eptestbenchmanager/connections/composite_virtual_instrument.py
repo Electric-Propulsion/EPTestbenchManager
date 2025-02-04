@@ -1,5 +1,8 @@
+import logging
 from threading import Semaphore, Thread
 from . import VirtualInstrument
+
+logger = logging.getLogger(__name__)
 
 
 class CompositeVirtualInstrument(VirtualInstrument):
@@ -64,13 +67,16 @@ class CompositeVirtualInstrument(VirtualInstrument):
                     [instrument.value for instrument in self._instruments]
                 )
             except TypeError as e:
-                print(f"Error in composition function for {self.name}: {e}")
+                logger.error("Error in composition function for %s: %s", self.name, e)
                 new_value = None
             self._set_value(new_value)
 
     def start_updating(self) -> None:
         """Starts the update loop in a separate thread."""
-        self._update_thread.start()
+        try:
+            self._update_thread.start()
+        except RuntimeError:
+            print(f"Instrument {self.name} updating thread already started.")
 
     def command(self, command: float) -> None:
         """Raises NotImplementedError as this instrument does not support commands.

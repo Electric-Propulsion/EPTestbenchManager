@@ -1,4 +1,6 @@
+import logging
 from io import StringIO
+from os import path, walk
 from threading import Lock
 from typing import TYPE_CHECKING
 from .experiment import Experiment
@@ -6,6 +8,8 @@ from .experiment_factory import ExperimentFactory
 
 if TYPE_CHECKING:
     from eptestbenchmanager.manager import TestbenchManager
+
+logger = logging.getLogger(__name__)
 
 
 class ExperimentRunner:
@@ -18,7 +22,9 @@ class ExperimentRunner:
         _current_experiment_uid (str): UID of the currently running experiment.
     """
 
-    def __init__(self, testbench_manager: "TestbenchManager"):
+    def __init__(
+        self, testbench_manager: "TestbenchManager", experiment_config_dir: str
+    ):
         """Initializes the ExperimentRunner with a testbench manager.
 
         Args:
@@ -28,6 +34,21 @@ class ExperimentRunner:
         self._testbench_manager = testbench_manager
         self._experiment_lock = Lock()
         self._current_experiment_uid = None
+        self.experiment_config_dir = experiment_config_dir
+
+    def load_experiments(self) -> None:
+        for dirpath, _, filenames in walk(self.experiment_config_dir):
+            for filename in filenames:
+                if filename.endswith(".yaml"):
+                    with open(
+                        path.join(dirpath, filename), "r", encoding="utf-8"
+                    ) as experiment_config_file:
+                        try:
+                            self.add_experiment(experiment_config_file)
+                        except Exception as e:
+                            print(
+                                f"Error loading experiment {filename}: {e} (Possibly incompatible with current apparatus)"
+                            )
 
     def add_experiment(self, experiment_file: StringIO) -> None:
         """Adds an experiment to the runner.
@@ -48,11 +69,11 @@ class ExperimentRunner:
             operator (str): Name of the operator running the experiment.
         """
         if self._experiment_lock.acquire(blocking=False):
-            print("Running experiment")
+            logger.info("Running experiment %s", uid)
             self._current_experiment_uid = uid
             self._experiments[uid].run(operator)
         else:
-            print("Cannot start experiment. Experiment is already running")
+            logger.warning("Cannot start experiment %s. Experiment %s is already running", uid, self.get_current_experiment_id())
 
     def remove_experiment(self, uid: str) -> None:
         """Removes the experiment with the given UID.
