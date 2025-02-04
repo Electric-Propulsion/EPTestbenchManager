@@ -45,7 +45,7 @@ class MainPage(DashboardPage):
                 <title>Dashboard</title>
                 <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
                 <link rel="stylesheet" href="/static/style.css">
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.min.js"></script>
+                <script src="/static/socket.io.min.js"></script>
             </head>
             <body>
                 <h1>Dashboard</h1>

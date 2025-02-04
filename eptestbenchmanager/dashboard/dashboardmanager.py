@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 class DashboardManager:
     """Manages the dashboard for the EP Testbench Manager.
 
@@ -48,18 +49,11 @@ class DashboardManager:
             page = self.create_page(MainPage, [self.testbench_manager])
             return page.render()
 
-        vints = self.testbench_manager.connection_manager.virtual_instruments.values()
-        for vint in vints:
-
-            def make_instrument_detail(vint):
-                @self.app.route(
-                    f"/instrument/{vint.uid}", endpoint=f"instrument_detail_{vint.uid}"
-                )
-                def instrument_detail():
-                    """Renders the instrument detail page."""
-                    return vint.detail_page.render()
-
-            make_instrument_detail(vint)
+        @self.app.route("/instrument/<path:instrument>")
+        def instrument_detail(instrument):
+            return self.testbench_manager.connection_manager.virtual_instruments[
+                instrument
+            ].detail_page.render()
 
         # Special routes for downloading files
         @self.app.route("/archive/<archive>")
