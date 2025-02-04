@@ -1,8 +1,10 @@
 import logging
 from pathlib import Path
-from typing import Union
+import os
 import sys
 from yaml import load, FullLoader
+from eptestbenchmanager.dashboard.elements import ApparatusControl
+
 from . import (
     VirtualInstrumentFactory,
     PollingVirtualInstrument,
@@ -23,7 +25,7 @@ class ConnectionManager:
         _testbench_manager: Global TestbenchManager object.
     """
 
-    def __init__(self, testbench_manager, config_file_path: Union[Path, None] = None):
+    def __init__(self, testbench_manager, config_dir: Path):
         """Initializes the ConnectionManager with the given testbench manager and config file path.
 
         Args:
@@ -37,18 +39,70 @@ class ConnectionManager:
         self._testbench_manager = testbench_manager
 
         logger.info("Initializing ConnectionManager")
-        logger.info("Connection manager config file path: %s", config_file_path)
+        logger.info("Connection manager config file dir: %s", config_dir)
+        self._config_dir = config_dir
+        self._configs = self.update_apparatus_configs()
+        self.ui_element = self._testbench_manager.dashboard.create_element(
+            ApparatusControl, ("apparatus_control", self._testbench_manager, self)
+        )
 
-        if config_file_path is not None:
-            self.new_apparatus_config(config_file_path)
+        self.reload = None
 
-    def new_apparatus_config(self, config_file_path: Path) -> None:
+    def register_reload(self, reload_element):
+        """Registers a reload element to the connection manager.
+
+        Args:
+            reload_element (Reload): The reload element.
+        """
+        self.reload = reload_element
+
+    def update_apparatus_configs(self) -> list:
+        """Returns a list of all apparatus configs on the system.
+
+        Args:
+            config_dir (Path): The path to the directory containing configuration files.
+
+        Returns:
+            list: List of apparatus configs.
+        """
+        return [
+            f.stem
+            for f in self._config_dir.iterdir()
+            if f.is_file() and f.suffix == ".yaml"
+        ]
+
+    @property
+    def apparatus_configs(self) -> list:
+        """Returns a list of all apparatus configs on the system.
+
+        Returns:
+            list: List of apparatus configs.
+        """
+        return self._configs
+
+    def set_apparatus_config(self, apparatus_config: str) -> None:
+
+        # Load the configuration file for the selected apparatus
+        config_file_path = os.path.join(self._config_dir, f"{apparatus_config}.yaml")
+        self.load_instruments(config_file_path)
+
+        # Start polling and updating for virtual instruments
+        self.run()
+
+        # (Re)Load the experiments
+        self._testbench_manager.runner.load_experiments()
+
+        # Update the UI with the new apparatus configuration
+        if self.reload is not None:
+            self.reload.reload()
+
+    def load_instruments(self, config_file_path: str) -> None:
         """Loads and configures physical and virtual instruments from a given configuration file.
 
         Args:
             config_file_path (Path): The path to the configuration file.
         """
-        config_file_path = Path(config_file_path)
+
         with open(config_file_path, "r", encoding="utf-8") as config_file:
             config = load(config_file, Loader=FullLoader)
 
@@ -64,8 +118,9 @@ class ConnectionManager:
                     **instrument_config["arguments"]
                 )
         except AttributeError as e:
-            logger.error("Error loading physical instruments: %s (Perhaps none are defined?)", e)
-
+            logger.error(
+                "Error loading physical instruments: %s (Perhaps none are defined?)", e
+            )
 
         for uid, instrument_config in config["virtual_instruments"].items():
             self._virtual_instruments[uid] = VirtualInstrumentFactory.create_instrument(

@@ -1,4 +1,5 @@
 from ..dashboardpage import DashboardPage
+from ..elements import Reload
 
 
 class MainPage(DashboardPage):
@@ -27,6 +28,9 @@ class MainPage(DashboardPage):
         self.components = [vint.gauge for vint in vints]
         self.experiment_control = testbench_manager.dashboard.experiment_control
         self.archive_download = testbench_manager.report_manager.ui_element
+        self.apparatus_control = testbench_manager.connection_manager.ui_element
+        self.reload = Reload("reload", self.socketio)
+        testbench_manager.connection_manager.register_reload(self.reload)
 
     def render(self):
         """Renders the HTML and JavaScript for the main page.
@@ -51,7 +55,12 @@ class MainPage(DashboardPage):
                 <script>
                     {self.experiment_control.render_js()}
                 </script>
-
+                <div id="apparatus_control_segment">
+                    {self.apparatus_control.render_html()}
+                </div>
+                <script>
+                    {self.apparatus_control.render_js()}
+                </script>
                 <div id="archive_download_segment">
                     {self.archive_download.render_html()}
                 </div>
@@ -64,6 +73,9 @@ class MainPage(DashboardPage):
                 </div>
                 <script>
                     {self.render_components_js(self.components)}
+                </script>
+                 <script>
+                    {self.reload.render_js()}
                 </script>
             </body>
         </html>

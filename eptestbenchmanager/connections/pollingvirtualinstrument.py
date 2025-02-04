@@ -67,7 +67,10 @@ class PollingVirtualInstrument(VirtualInstrument):
     def start_poll(self) -> None:
         """Starts the polling thread."""
         self._stop_event.clear()
-        self._polling_thread.start()
+        try:
+            self._polling_thread.start()
+        except RuntimeError:
+            print(f"Instrument {self.name} polling thread already started.")
 
     def halt_poll(self) -> None:
         """Stops the polling thread."""

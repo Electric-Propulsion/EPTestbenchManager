@@ -1,0 +1,35 @@
+physical_instruments:
+  test_instrument:
+    class: epcomms.equipment.test.TestInstrument
+    arguments: {}
+
+virtual_instruments:
+  test_instrument:
+    type: polling
+    name: Test Instrument
+    physical_instrument: test_instrument
+    getter_function: get_noise
+    getter_arguments: {}
+    setter_function: echo
+    setter_arguments: {}
+    polling_interval: 1000
+    unit: Units
+
+  hv_psu:
+    type: manual
+    name: High Voltage PSU
+    unit: V
+
+  
+
+  
+
+
+
+
+
+  
+  
+
+
+
