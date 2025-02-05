@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from flask import Flask, send_from_directory
 from flask_socketio import SocketIO
 
-from .pages import MainPage
+from .pages import MainPage, ConfigEditor
 from .elements import ExperimentControl
 
 if TYPE_CHECKING:
@@ -54,6 +54,30 @@ class DashboardManager:
             return self.testbench_manager.connection_manager.virtual_instruments[
                 instrument
             ].detail_page.render()
+
+        @self.app.route("/apparatus_config/<path:config_file>")
+        def apparatus_config(config_file):
+            """Renders the apparatus configuration editor."""
+            apparatus_config_dir = self.testbench_manager.connection_manager.config_dir
+            return ConfigEditor(
+                self.testbench_manager,
+                apparatus_config_dir,
+                config_file,
+                self.app,
+                self.socketio,
+            ).render()
+
+        @self.app.route("/experiment_config/<path:config_file>")
+        def experiment_config(config_file):
+            """Renders the experiment configuration editor."""
+            experiment_config_dir = self.testbench_manager.runner.experiment_config_dir
+            return ConfigEditor(
+                self.testbench_manager,
+                experiment_config_dir,
+                config_file,
+                self.app,
+                self.socketio,
+            ).render()
 
         # Special routes for downloading files
         @self.app.route("/archive/<archive>")

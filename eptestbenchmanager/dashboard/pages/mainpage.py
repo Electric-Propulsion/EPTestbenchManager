@@ -1,4 +1,4 @@
-from ..dashboardpage import DashboardPage
+from .. import DashboardPage
 from ..elements import Reload
 
 

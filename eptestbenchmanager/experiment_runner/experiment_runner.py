@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 from io import StringIO
 from os import path, walk
 from threading import Lock
@@ -23,7 +24,7 @@ class ExperimentRunner:
     """
 
     def __init__(
-        self, testbench_manager: "TestbenchManager", experiment_config_dir: str
+        self, testbench_manager: "TestbenchManager", experiment_config_dir: Path
     ):
         """Initializes the ExperimentRunner with a testbench manager.
 
@@ -46,7 +47,7 @@ class ExperimentRunner:
                         try:
                             self.add_experiment(experiment_config_file)
                         except Exception as e:
-                            print(
+                            logger.error(
                                 f"Error loading experiment {filename}: {e} (Possibly incompatible with current apparatus)"
                             )
 
@@ -73,7 +74,11 @@ class ExperimentRunner:
             self._current_experiment_uid = uid
             self._experiments[uid].run(operator)
         else:
-            logger.warning("Cannot start experiment %s. Experiment %s is already running", uid, self.get_current_experiment_id())
+            logger.warning(
+                "Cannot start experiment %s. Experiment %s is already running",
+                uid,
+                self.get_current_experiment_id(),
+            )
 
     def remove_experiment(self, uid: str) -> None:
         """Removes the experiment with the given UID.

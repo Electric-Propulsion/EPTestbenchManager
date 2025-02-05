@@ -17,7 +17,6 @@ class ApparatusControl(DashboardElement):
     def __init__(
         self,
         uid: str,
-        testbench_manager: "TestbenchManager",
         connection_manager: "ConnectionManager",
         socketio=None,
     ):
@@ -55,17 +54,19 @@ class ApparatusControl(DashboardElement):
 
         value = render_template(
             "elements/apparatus_control.js",
-            data={"namespace": self.namespace, "uid": self.uid},
+            data={
+                "namespace": self.namespace,
+                "uid": self.uid,
+                "apparatus_config_path": "apparatus_config",
+            },
         )
         return value
 
     def configure(self):
         """Configures the socketio events for the apparatus control dashboard element."""
-        print("Configuring apparatus control")
 
         @self.socketio.on("set_apparatus", namespace=self.namespace)
         def set_apparatus(data):
-            print("Setting apparatus with", data)
             logger.debug(f"Setting apparatus with {data}")
             try:
                 self.connection_manager.set_apparatus_config(data["apparatus"])

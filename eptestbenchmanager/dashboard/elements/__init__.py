@@ -6,3 +6,4 @@ from .recordinggraph import RecordingGraph
 from .settabledigitalgauge import SettableDigitalGauge
 from .apparatuscontrol import ApparatusControl
 from .reload import Reload
+from .editor import Editor
