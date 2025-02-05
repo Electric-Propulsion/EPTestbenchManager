@@ -31,7 +31,7 @@ class ConfigEditor(DashboardPage):
                 <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
                 <link rel="stylesheet" href="/static/style.css">
                 <script src="/static/socket.io.min.js"></script>
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+                <script src="/static/ace/ace.js"></script>
             </head>
             <body>
                 <a href="/" class="home_link">‹</a>

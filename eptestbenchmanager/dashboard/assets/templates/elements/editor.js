@@ -1,5 +1,5 @@
 var {{ data.uid }}_socket = io('{{ data.namespace }}');
-
+ace.config.set("basePath", "/static/ace");
 const editor = ace.edit("{{ data.uid }}_editor");
             editor.setTheme("ace/theme/monokai");
             editor.session.setMode("ace/mode/yaml");
