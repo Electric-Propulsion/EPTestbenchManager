@@ -1,0 +1,12 @@
+
+<div id="{{ data.uid }}_editor_box">
+    <div class = "editor_title">
+        Editing file:&nbsp;
+        <input id = "{{ data.uid }}_file_root" class="editor_name" type="text"
+        value="{{ data.file_root }}">
+        .yaml
+        <span id="{{ data.uid }}_editor_name_mirror" class = "editor_name_mirror"></span>
+    </div>
+    <button onclick="save()" id="{{ data.uid }}_save_btn" class="save_btn">Save</button>
+    <div id="{{ data.uid }}_editor" class="editor">{{ data.content|e }}</div>
+</div>

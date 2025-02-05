@@ -4,7 +4,7 @@ experiment:
   description: |
     This is a test .
 
-segments: #TODO: swap uid and type
+segments:
   wait_1:
     name: Wait 1
     type: wait

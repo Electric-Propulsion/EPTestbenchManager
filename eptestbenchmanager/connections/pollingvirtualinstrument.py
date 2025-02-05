@@ -7,6 +7,7 @@ from . import VirtualInstrument
 
 logger = logging.getLogger(__name__)
 
+
 class PollingVirtualInstrument(VirtualInstrument):
     """A virtual instrument that polls a physical instrument at regular intervals.
 
@@ -70,7 +71,7 @@ class PollingVirtualInstrument(VirtualInstrument):
         try:
             self._polling_thread.start()
         except RuntimeError:
-            print(f"Instrument {self.name} polling thread already started.")
+            logger.error(f"Instrument {self.name} polling thread already started.")
 
     def halt_poll(self) -> None:
         """Stops the polling thread."""
@@ -92,4 +93,8 @@ class PollingVirtualInstrument(VirtualInstrument):
                 sleep(sleep_time)
             else:
                 # We missed the polling interval
-                logger.error("Instrument %s missed a polling interval by %f seconds.", self.name, -sleep_time)
+                logger.error(
+                    "Instrument %s missed a polling interval by %f seconds.",
+                    self.name,
+                    -sleep_time,
+                )

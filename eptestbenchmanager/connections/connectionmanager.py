@@ -40,10 +40,11 @@ class ConnectionManager:
 
         logger.info("Initializing ConnectionManager")
         logger.info("Connection manager config file dir: %s", config_dir)
-        self._config_dir = config_dir
-        self._configs = self.update_apparatus_configs()
+        self.config_dir = config_dir
+        self._configs = None
+        self.update_apparatus_configs()
         self.ui_element = self._testbench_manager.dashboard.create_element(
-            ApparatusControl, ("apparatus_control", self._testbench_manager, self)
+            ApparatusControl, ("apparatus_control", self)
         )
 
         self.reload = None
@@ -65,9 +66,9 @@ class ConnectionManager:
         Returns:
             list: List of apparatus configs.
         """
-        return [
+        self._configs = [
             f.stem
-            for f in self._config_dir.iterdir()
+            for f in self.config_dir.iterdir()
             if f.is_file() and f.suffix == ".yaml"
         ]
 
@@ -83,7 +84,7 @@ class ConnectionManager:
     def set_apparatus_config(self, apparatus_config: str) -> None:
 
         # Load the configuration file for the selected apparatus
-        config_file_path = os.path.join(self._config_dir, f"{apparatus_config}.yaml")
+        config_file_path = os.path.join(self.config_dir, f"{apparatus_config}.yaml")
         self.load_instruments(config_file_path)
 
         # Start polling and updating for virtual instruments

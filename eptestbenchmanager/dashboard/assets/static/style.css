@@ -11,6 +11,83 @@ h1 {
     margin-top: 20px;
 }
 
+.editor {
+    display: block;
+    margin: 0 auto;
+    width: 95%;
+    height: 80vh;  /* 80% of the viewport height */
+    border-radius: 10px;
+    
+}
+
+.editor_title{
+    font-size: 2rem; 
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 0px; 
+}
+
+.editor_name {
+    flex: 0 0 auto;
+    width: max-content;    /* For Firefox */
+    font-size: inherit; /* Inherits the font size from the parent */
+    font-family: inherit;
+    font-weight: inherit;
+    text-align: center; /* Centers the text inside the input */
+    border: none; /* Removes the border for a seamless look */
+    border-radius: 10px; /* Matches the container's border radius */
+    background-color: #111111; /* Matches the container background */
+    color: #dadada; /* Matches the text color */
+    padding: 0; /* Removes internal padding for proper alignment */
+    outline: none; /* Removes focus outline */
+    display: inline-block; /* Allows for inline display */
+    max-width: 100%;
+    min-width: 0; /* Overrides any browser default min-width */
+}
+
+.editor_name_mirror{
+    position: absolute;
+    visibility: hidden;
+    white-space: pre;
+    font-family: inherit;
+    font-size: inherit;
+    padding: 0;
+    border: 0;
+}
+
+.save_btn {
+    font-family: inherit;
+    background-color: #dadada; /* Light background to contrast dark theme */
+    color: #111111;            /* Dark text for readability */
+    border: none;              /* Remove default border */
+    border-radius: 5px;        /* Rounded corners */
+    padding: 10px 20px;        /* Adequate padding for a clickable area */
+    font-size: 1rem;           /* Readable text size */
+    font-family: 'Roboto', sans-serif;
+    cursor: pointer;           /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transitions */
+    outline: none;             /* Remove focus outline */
+    margin: 10px auto;            /* Spacing around the button */
+    display: block;            /* Allows for centering with margin: auto */
+}
+
+/* Hover effect */
+.save_btn:hover {
+    background-color: #ffffff; /* Brighter background on hover */
+}
+
+/* Active (pressed) effect */
+.save_btn:active {
+    transform: scale(0.95);    /* Slight shrink effect when clicked */
+}
+
+.editor_name:focus {
+    background-color: #222222; /* Optional: Highlight the background on focus */
+    color: #ffffff; /* Optional: Change text color on focus */
+}
+
 #dashboard {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
