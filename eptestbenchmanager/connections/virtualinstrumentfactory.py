@@ -192,7 +192,6 @@ class VirtualInstrumentFactory:
         uid: str,
         config: dict,
     ) -> CommandDrivenVirtualInstrument:
-        print(physical_instruments)
         # TODO: This is too similar to the polling instrument creation. Refactor to reduce redundancy.
         physical_instrument = physical_instruments[config["physical_instrument"]]
 

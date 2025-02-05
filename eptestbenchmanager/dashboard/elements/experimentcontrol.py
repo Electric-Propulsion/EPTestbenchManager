@@ -63,7 +63,11 @@ class ExperimentControl(DashboardElement):
         Returns:
             str: Rendered JavaScript content.
         """
-        data = {"namespace": self.namespace, "uid": self.uid}
+        data = {
+            "namespace": self.namespace,
+            "uid": self.uid,
+            "experiment_config_path": "experiment_config",
+        }
         return render_template("elements/experiment_control.js", data=data)
 
     def configure(self):

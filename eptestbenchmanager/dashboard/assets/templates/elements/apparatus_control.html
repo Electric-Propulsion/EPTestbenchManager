@@ -7,5 +7,5 @@
         {% endfor %}
     </select>
     <button onclick="set_apparatus()" id="{{ data.uid }}_set">Load</button>
-    <button disabled id="{{ data.uid }}_duplicate">New Apparatus</button>
-    <button disabled id="{{ data.uid }}_estop">E-Stop</button>
+    <button onclick="edit_apparatus()" id="{{ data.uid }}_duplicate">Edit</button>
+    <button onclick="new_apparatus()" id="{{ data.uid }}_estop">New</button>
