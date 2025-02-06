@@ -2,6 +2,7 @@ from os import path, walk
 from pathlib import Path
 from time import sleep
 import logging
+from flask import Flask
 
 from eptestbenchmanager.connections import ConnectionManager
 from eptestbenchmanager.monitor import TestbenchMonitor
@@ -30,7 +31,7 @@ class TestbenchManager:
         report_manager (ReportManager): Manages reports/archives. #TODO: not implemented yet
     """
 
-    def __init__(self):
+    def __init__(self, app: Flask):
         """Initializes the TestbenchManager with default attributes."""
         self.monitor: TestbenchMonitor = None
         self.connection_manager: ConnectionManager = None
@@ -38,7 +39,7 @@ class TestbenchManager:
         self.alert_manager = DiscordAlertManager(self.communication_engine)
         self.chat_manager = DiscordChatManager(self.communication_engine, self)
         self.runner: ExperimentRunner = None
-        self.dashboard: DashboardManager = DashboardManager(self)
+        self.dashboard: DashboardManager = DashboardManager(self, app)
         self.report_manager = ReportManager(self)
 
     def start_app(

@@ -25,18 +25,14 @@ class DashboardManager:
         experiment_control (ExperimentControl): The experiment control element.
     """
 
-    def __init__(self, testbench_manager: "TestbenchManager"):
+    def __init__(self, testbench_manager: "TestbenchManager", app: Flask):
         """Initializes the DashboardManager with the given testbench manager.
 
         Args:
             testbench_manager (TestbenchManager): The testbench manager instance.
         """
         self.testbench_manager = testbench_manager
-        self.app = Flask(
-            "eptestbenchmanager",
-            static_folder="dashboard/assets/static",
-            template_folder="dashboard/assets/templates",
-        )
+        self.app = app
         self.socketio = SocketIO(self.app, cors_allowed_origins="*")
         self.app.config["SECRET_KEY"] = "testkey!"  # TODO: change me!
 
