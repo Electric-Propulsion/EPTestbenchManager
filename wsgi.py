@@ -19,4 +19,5 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 logger.info("Logging to %s", logfile)
 
-app = app_root.app
+app_root.start_app()
+app = app_root.dashboard.app
