@@ -34,6 +34,7 @@ class ConnectionManager:
             Defaults to None.
         """
         self._physical_instruments = {}
+        self._batchers = {}
         self._virtual_instruments = {}
         self._experiment_manager = testbench_manager.runner
         self._testbench_manager = testbench_manager
@@ -127,6 +128,7 @@ class ConnectionManager:
             self._virtual_instruments[uid] = VirtualInstrumentFactory.create_instrument(
                 self._testbench_manager,
                 self._physical_instruments,
+                self._batchers,
                 self.virtual_instruments,
                 uid,
                 instrument_config,
@@ -165,6 +167,9 @@ class ConnectionManager:
                 instrument.start_poll()
             if isinstance(instrument, CompositeVirtualInstrument):
                 instrument.start_updating()
+
+        for batcher in self._batchers.values():
+            batcher.start_poll()
 
     @property
     def virtual_instruments(self):
