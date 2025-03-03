@@ -73,3 +73,4 @@ class ApparatusControl(DashboardElement):
 
             except Exception as e:
                 logger.error(f"Error setting apparatus: {e}")
+                logger.exception(e)
