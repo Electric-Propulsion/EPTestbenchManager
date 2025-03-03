@@ -1,0 +1,143 @@
+physical_instruments:
+
+  keysight_multimeter:
+    class: epcomms.equipment.multimeter.KeysightEDU34450A
+    arguments:
+      resource_name: "USB0::10893::36353::CN62350039::0::INSTR"
+
+  tektronix_multimeter:
+    class: epcomms.equipment.multimeter.TektronixDMM4050
+    arguments:
+      host: "192.168.0.136"
+      port: 3490
+
+  vacuum_gauge:
+    class: epcomms.equipment.vacuumcontroller.Terranova962A
+    arguments:
+      device_location: /dev/ttyUSB0
+
+  keysight_psu:
+    class: epcomms.equipment.powersupply.KeysightEDU36311A
+    arguments:
+      resource_name: "USB0::10893::36609::CN63070208::0::INSTR"
+
+  # bk_psu:
+  #   class: epcomms.equipment.powersupply.BK1694
+  #   arguments:
+  #     ip: "192.168.0.156"
+
+virtual_instruments:
+
+  keysight_DMM_voltage:
+    type: polling
+    name: Keysight DMM Voltage
+    physical_instrument: keysight_multimeter
+    getter_function: measure_voltage_dc
+    getter_arguments:
+       measurement_range: 'AUTO'
+       resolution: 'DEF'
+    setter_function: None
+    setter_arguments: {}
+    polling_interval: 1500
+    unit: V
+
+  tektronix_DMM_voltage:
+    type: polling
+    name: Tektronix DMM Voltage
+    physical_instrument: tektronix_multimeter
+    getter_function: measure_voltage_dc
+    getter_arguments: {}
+    setter_function: None
+    setter_arguments: {}
+    polling_interval: 1500
+    unit: V
+
+  vacuum_chamber_pressure:
+    type: polling
+    name: Vacuum Chamber Pressure
+    physical_instrument: vacuum_gauge
+    getter_function: get_pressure_gauge_1
+    getter_arguments: {}
+    setter_function: None
+    setter_arguments: {}
+    polling_interval: 1000
+    unit: mBar
+    name: Vacuum Chamber Pressure
+
+  channel_1_voltage:
+    type: batchable_polling
+    batching_scheme: SCPI_chanlist
+    name: Channel 1 Voltage
+    physical_instrument: keysight_psu
+    getter_function: measure_voltage
+    getter_arguments: {}
+    batching_argument_value: 1
+    setter_function: None
+    setter_arguments: {}
+    polling_interval: 750
+    unit: V
+
+  channel_2_voltage:
+    type: batchable_polling
+    batching_scheme: SCPI_chanlist
+    name: Channel 2 Voltage
+    physical_instrument: keysight_psu
+    getter_function: measure_voltage
+    getter_arguments: {}
+    batching_argument_value: 2
+    setter_function: None
+    setter_arguments: {}
+    polling_interval: 750
+    unit: V
+
+  channel_3_voltage:
+    type: batchable_polling
+    batching_scheme: SCPI_chanlist
+    name: Channel 3 Voltage
+    physical_instrument: keysight_psu
+    getter_function: measure_voltage
+    getter_arguments: {}
+    batching_argument_value: 3
+    setter_function: None
+    setter_arguments: {}
+    polling_interval: 750
+    unit: V
+
+  channel_1_current:
+    type: batchable_polling
+    batching_scheme: SCPI_chanlist
+    name: Channel 1 Current
+    physical_instrument: keysight_psu
+    getter_function: measure_current
+    getter_arguments: {}
+    batching_argument_value: 1
+    setter_function: None
+    setter_arguments: {}
+    polling_interval: 750
+    unit: V
+
+  channel_2_current:
+    type: batchable_polling
+    batching_scheme: SCPI_chanlist
+    name: Channel 2 Current
+    physical_instrument: keysight_psu
+    getter_function: measure_current
+    getter_arguments: {}
+    batching_argument_value: 2
+    setter_function: None
+    setter_arguments: {}
+    polling_interval: 750
+    unit: V
+
+  channel_3_current:
+    type: batchable_polling
+    batching_scheme: SCPI_chanlist
+    name: Channel 3 Current
+    physical_instrument: keysight_psu
+    getter_function: measure_current
+    getter_arguments: {}
+    batching_argument_value: 3
+    setter_function: None
+    setter_arguments: {}
+    polling_interval: 750
+    unit: V

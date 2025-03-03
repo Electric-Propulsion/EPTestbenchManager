@@ -8,6 +8,8 @@ from . import (
     ManualVirtualInstrument,
     CommandDrivenVirtualInstrument,
     NullVirtualInstrument,
+    BatchedPollingVirtualInstrument,
+    Batcher,
 )
 
 
@@ -19,6 +21,7 @@ class VirtualInstrumentFactory:
         cls,
         testbench_manager,
         physical_instruments: list[Instrument],
+        batchers: list[Batcher],
         virtual_instruments: list[VirtualInstrument],
         uid: str,
         config: dict,
@@ -43,6 +46,8 @@ class VirtualInstrumentFactory:
                 return cls._create_polling_instrument(
                     testbench_manager, physical_instruments, uid, config
                 )
+            case "batchable_polling":
+                return cls.create_batched_polling_instrument(testbench_manager, physical_instruments, batchers, uid, config)
             case "command_driven":
                 return cls.create_command_driven_instrument(
                     testbench_manager, physical_instruments, uid, config
@@ -115,6 +120,43 @@ class VirtualInstrumentFactory:
             polling_interval=config["polling_interval"],
             unit=config.get("unit", None),
         )
+    
+    @classmethod
+    def create_batched_polling_instrument(cls, testbench_manager, physical_instruments, batchers, uid: str, config: dict) -> BatchedPollingVirtualInstrument:
+        batcher_uid = f"{config['physical_instrument']}_{config['batching_scheme']}_{config['getter_function']}_{'_'.join(f"{key}-{value}" for key, value in config['getter_arguments'].items())}_{config["polling_interval"]}"
+        if batcher_uid not in batchers:
+            # We need to create the batcher
+            physical_instrument = physical_instruments[config["physical_instrument"]]
+            getter_arguments = config.get("setter_arguments", {})
+            getter_function = config["getter_function"]
+            batcher = Batcher(physical_instrument, getter_function, getter_arguments, config["batching_scheme"], config["polling_interval"])
+            batchers[batcher_uid] = batcher
+
+        # Create the virtual instrument
+        setter_arguments = config.get("setter_arguments", {})
+        setter_function = (
+            (
+                lambda value: getattr(physical_instrument, config["setter_function"])(
+                    value, **setter_arguments
+                )
+            )
+            if config["setter_function"] != "None"
+            else None
+        )
+
+
+        instrument = BatchedPollingVirtualInstrument(
+            testbench_manager,
+            uid,
+            config["name"],
+            setter_function,
+            config.get("unit", None),
+            )
+        
+        batchers[batcher_uid].add_polling_instrument(instrument, config["batching_argument_value"])
+
+        
+        return instrument
 
     @classmethod
     def create_null_instrument(
