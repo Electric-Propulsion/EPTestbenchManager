@@ -2,7 +2,7 @@ import logging
 from pathlib import Path
 from io import StringIO
 from os import path, walk
-from threading import Lock
+from threading import Lock, Thread
 from typing import TYPE_CHECKING
 from .experiment import Experiment
 from .experiment_factory import ExperimentFactory
@@ -75,19 +75,24 @@ class ExperimentRunner:
             uid (str): Unique identifier of the experiment.
             operator (str): Name of the operator running the experiment.
         """
-        try:
-            if self._experiment_lock.acquire(blocking=False):
-                logger.info("Running experiment %s", uid)
-                self._current_experiment_uid = uid
-                self._experiments[uid].run(operator)
-            else:
-                logger.warning(
-                    "Cannot start experiment %s. Experiment %s is already running",
-                    uid,
-                    self.get_current_experiment_uid(),
-                )
-        finally:
-            self._current_experiment_uid = None
+        if self._experiment_lock.acquire(blocking=False):
+            logger.info("Running experiment %s", uid)
+            self._current_experiment_uid = uid
+            self._experiments[uid].run(operator)
+            Thread(target=self.wait_for_experiment_end).start()
+
+        else:
+            logger.warning(
+                "Cannot start experiment %s. Experiment %s is already running",
+                uid,
+                self.get_current_experiment_uid(),
+            )
+
+    def wait_for_experiment_end(self) -> None:
+        self._experiment_lock.acquire()
+        self._current_experiment_uid = None
+        self._experiment_lock.release()
+
 
     def remove_experiment(self, uid: str) -> None:
         """Removes the experiment with the given UID.
