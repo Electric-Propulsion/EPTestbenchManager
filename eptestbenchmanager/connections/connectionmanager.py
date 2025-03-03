@@ -4,6 +4,7 @@ from pathlib import Path
 import os
 import sys
 from yaml import load, FullLoader
+import importlib
 from eptestbenchmanager.dashboard.elements import ApparatusControl
 
 from . import (
@@ -160,6 +161,7 @@ class ConnectionManager:
             for uid, instrument_config in config["physical_instruments"].items():
                 module_name = ".".join(instrument_config["class"].split(".")[0:-1])
                 class_name = instrument_config["class"].split(".")[-1]
+                importlib.import_module(module_name)
                 physical_instrument_class = getattr(
                     sys.modules[module_name], class_name
                 )
