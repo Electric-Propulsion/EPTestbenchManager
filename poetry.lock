@@ -285,7 +285,7 @@ voice = ["PyNaCl (>=1.3.0,<1.6)"]
 
 [[package]]
 name = "epcomms"
-version = "1.1.1"
+version = "1.1.2"
 description = ""
 optional = false
 python-versions = "^3.12"
@@ -304,8 +304,8 @@ zeroconf = "^0.145.1"
 [package.source]
 type = "git"
 url = "git@github.com:Electric-Propulsion/EPComms.git"
-reference = "v1.1.1"
-resolved_reference = "c1fcd6abd58f54c116aef00b073339a14e6dd7e9"
+reference = "v1.1.2"
+resolved_reference = "064a5f0b5edc4e90eac7bc3ef6f54e8307a1ae78"
 
 [[package]]
 name = "flask"
@@ -1443,4 +1443,4 @@ ifaddr = ">=0.1.7"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "329b1358517361873dab1475b35d76a9315a0e9ff9a89a5fd4234f86029fc1d9"
+content-hash = "bca56728337d8142435e645fd975d089ed93b1072f95db88b0b3572f73550c8b"

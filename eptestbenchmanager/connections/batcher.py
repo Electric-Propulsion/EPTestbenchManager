@@ -1,5 +1,8 @@
-from threading import Thread
+import logging
+from threading import Thread, Event
 from time import monotonic, sleep
+
+logger = logging.getLogger(__name__)
 
 
 class Batcher:
@@ -25,6 +28,8 @@ class Batcher:
             name="A Batching Thread",
             daemon=True,
         )
+        self._stop_event = Event()
+
 
     def add_polling_instrument(self, instrument, batching_argument_value):
         self._vints[batching_argument_value] = instrument
@@ -40,8 +45,9 @@ class Batcher:
         )
 
         while True:
-            print("batcher running!")
             next_poll_time = monotonic() + self._polling_interval / 1000
+            if self._stop_event.is_set():
+                return  # Exit the thread
             try:
                 values = getter_function()
                 values_by_argument = self._get_demux_function(self._batching_scheme)(values)
@@ -62,7 +68,15 @@ class Batcher:
 
     def start_poll(self) -> None:
         """Starts the polling thread."""
-        self._polling_thread.start()
+        self._stop_event.clear()
+        try:
+            self._polling_thread.start()
+        except RuntimeError:
+            logger.error(f"Instrument {self.name} polling thread already started.")
+
+    def halt_poll(self) -> None:
+        """Stops the polling thread."""
+        self._stop_event.set()
 
 
     # we have to assume that no new instruments were added between calls to get_mux_args and get_demux_function
@@ -78,9 +92,14 @@ class Batcher:
         match batching_scheme:
             case "SCPI_chanlist":
                 def demux_function(values):
-                    if(len(values) != len(self._vints.keys())):
-                        raise ValueError("Cannot demux; wrong number of values returned")
-                    ret = {list(self._vints.keys())[i]: values[i] for i in range(len(values))}   
-                    print(ret)
-                    return ret
+                    if isinstance(values, list):
+                        # we've presumably got more than one value back
+                        if(len(values) != len(self._vints.keys())):
+                            raise ValueError("Cannot demux; wrong number of values returned")
+                        return {list(self._vints.keys())[i]: values[i] for i in range(len(values))}   
+                    else:
+                        # we've only got a single reading back, not as a list
+                        if(len(self._vints.keys()) != 1):
+                            raise ValueError("Cannot demux; expected multiple values but only got one")
+                        return {list(self._vints.keys())[0]: values} # 'values' is actually just a single number
                 return demux_function

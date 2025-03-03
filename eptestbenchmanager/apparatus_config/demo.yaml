@@ -74,7 +74,7 @@ virtual_instruments:
     batching_argument_value: 1
     setter_function: None
     setter_arguments: {}
-    polling_interval: 1500
+    polling_interval: 750
     unit: V
 
   channel_2_voltage:
@@ -87,5 +87,57 @@ virtual_instruments:
     batching_argument_value: 2
     setter_function: None
     setter_arguments: {}
-    polling_interval: 1500
+    polling_interval: 750
+    unit: V
+
+  channel_3_voltage:
+    type: batchable_polling
+    batching_scheme: SCPI_chanlist
+    name: Channel 3 Voltage
+    physical_instrument: keysight_psu
+    getter_function: measure_voltage
+    getter_arguments: {}
+    batching_argument_value: 3
+    setter_function: None
+    setter_arguments: {}
+    polling_interval: 750
+    unit: V
+
+  channel_1_current:
+    type: batchable_polling
+    batching_scheme: SCPI_chanlist
+    name: Channel 1 Current
+    physical_instrument: keysight_psu
+    getter_function: measure_current
+    getter_arguments: {}
+    batching_argument_value: 1
+    setter_function: None
+    setter_arguments: {}
+    polling_interval: 750
+    unit: V
+
+  channel_2_current:
+    type: batchable_polling
+    batching_scheme: SCPI_chanlist
+    name: Channel 2 Current
+    physical_instrument: keysight_psu
+    getter_function: measure_current
+    getter_arguments: {}
+    batching_argument_value: 2
+    setter_function: None
+    setter_arguments: {}
+    polling_interval: 750
+    unit: V
+
+  channel_3_current:
+    type: batchable_polling
+    batching_scheme: SCPI_chanlist
+    name: Channel 3 Current
+    physical_instrument: keysight_psu
+    getter_function: measure_current
+    getter_arguments: {}
+    batching_argument_value: 3
+    setter_function: None
+    setter_arguments: {}
+    polling_interval: 750
     unit: V

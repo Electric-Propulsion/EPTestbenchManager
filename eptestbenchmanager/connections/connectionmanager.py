@@ -105,6 +105,9 @@ class ConnectionManager:
             config_file_path (Path): The path to the configuration file.
         """
 
+        # I think what we need to do here is a) close all existing physical instruments, and
+        # b) stop all existing polling threads
+
         with open(config_file_path, "r", encoding="utf-8") as config_file:
             config = load(config_file, Loader=FullLoader)
 
