@@ -46,7 +46,7 @@ class MeasureLeaks(Pumpdown):
                 pressure = self.chamber_pressure.value
                 sleep_time = next_loop_time - time.perf_counter()
                 if sleep_time > 0:
-                    time.sleep(sleep_time)
+                    self.interruptable_sleep(sleep_time)
                 else:
                     # We missed the next read
                     # TODO: Log a warning

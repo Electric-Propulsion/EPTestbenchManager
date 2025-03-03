@@ -22,7 +22,7 @@ class IsoFilamentHold(IsoFilamentBase):
         self.filament_voltage_setpoint.command(self.filament_voltage_setpoint_value)
         self.filament_output.command(True)
         self.bias_output.command(True)
-        time.sleep(self.hold_s)
+        self.interruptable_sleep(self.hold_s)
         self.filament_output.command(False)
         self.bias_output.command(False)
 

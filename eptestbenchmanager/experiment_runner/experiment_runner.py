@@ -51,6 +51,12 @@ class ExperimentRunner:
                                 f"Error loading experiment {filename}: {e} (Possibly incompatible with current apparatus)"
                             )
 
+    def request_abort_current_experiment(self) -> None:
+        """Requests the current experiment
+        to be aborted."""
+        if self._current_experiment_uid is not None:
+            self._experiments[self._current_experiment_uid].request_abort()
+
     def add_experiment(self, experiment_file: StringIO) -> None:
         """Adds an experiment to the runner.
 

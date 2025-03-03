@@ -1,5 +1,5 @@
 import logging
-from threading import Thread, Lock
+from threading import Thread, Lock, Event
 import time
 import datetime
 from io import StringIO
@@ -63,6 +63,8 @@ class Experiment:
             segment.inject_experiment(self)
         self._runner_thread: Thread = None
         self.start_time: float = None
+        self.abort = Event()
+        self.abort.clear()
 
     def run(self, operator: str) -> None:
         """Starts the experiment by creating and starting a new thread.
@@ -75,7 +77,12 @@ class Experiment:
         self._runner_thread = Thread(
             target=self.run_segments, name=f"{self.uid} Runner Thread", daemon=True
         )
+        self.abort.clear()
         self._runner_thread.start()
+
+    def request_abort(self) -> None:
+        """Requests the experiment to abort."""
+        self.abort.set()
 
     def run_segments(self) -> None:
         """Runs all segments of the experiment sequentially."""
@@ -115,10 +122,11 @@ class Experiment:
                         severity=AlertSeverity.INFO,
                         target=self.operator,
                     )
+                    if self.abort.is_set():
+                        raise AbortingSegmentFailure("Manual abort requested.")
                     segment.prerun()
                     segment.run()
                     segment.postrun()
-
 
                 except AbortingSegmentFailure as e:
                     # TODO: indicate somehow that we're aborting
@@ -128,7 +136,7 @@ class Experiment:
                         (
                             f"Experiment **{self.name}** has aborted at segment "
                             f"**{self.segments[self.current_segment_id].uid}**. Elapsed time: "
-                            f"{datetime.timedelta(seconds=segment_start_time - self.start_time)} "
+                            f"{datetime.timedelta(seconds=time.perf_counter()- self.start_time)} "
                             f"(reason: {e})"
                         ),
                         severity=AlertSeverity.INFO,
