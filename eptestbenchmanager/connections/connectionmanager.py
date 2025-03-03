@@ -41,6 +41,7 @@ class ConnectionManager:
         self._virtual_instruments = {}
         self._experiment_manager = testbench_manager.runner
         self._testbench_manager = testbench_manager
+        self.current_apparatus_config = None
 
         logger.info("Initializing ConnectionManager")
         logger.info("Connection manager config file dir: %s", config_dir)
@@ -101,48 +102,60 @@ class ConnectionManager:
         set_apparatus_config_thread.start()
 
     def _set_apparatus_config(self, apparatus_config: str) -> None:
-        print("setting up apparatus config")
-        # Signal the shutdown of the current polling threads
-        for batcher in self._batchers.values():
-            batcher.stop_poll()
-        for instrument in self._virtual_instruments.values():
-            if isinstance(instrument, PollingVirtualInstrument):
-                instrument.halt_poll()
-            if isinstance(instrument, CompositeVirtualInstrument):
-                instrument.halt_updating_thread()
+        self.current_apparatus_config = None # it's reset as part of the process
 
-        # Join the polling threads
-        for batcher in self._batchers.values():
-            batcher.join_poll()
-        for instrument in self._virtual_instruments.values():
-            if isinstance(instrument, PollingVirtualInstrument):
-                instrument.join_poll()
-            if isinstance(instrument, CompositeVirtualInstrument):
-                instrument.join_updating_thread()
+        try:
+            if apparatus_config not in self._configs:
+                logger.error("Invalid apparatus config: %s", apparatus_config)
+                return
+            print("setting up apparatus config")
+            # Signal the shutdown of the current polling threads
+            for batcher in self._batchers.values():
+                batcher.stop_poll()
+            for instrument in self._virtual_instruments.values():
+                if isinstance(instrument, PollingVirtualInstrument):
+                    instrument.halt_poll()
+                if isinstance(instrument, CompositeVirtualInstrument):
+                    instrument.halt_updating_thread()
 
-        self._virtual_instruments = {}
-        self._batchers = {}
+            # Join the polling threads
+            for batcher in self._batchers.values():
+                batcher.join_poll()
+            for instrument in self._virtual_instruments.values():
+                if isinstance(instrument, PollingVirtualInstrument):
+                    instrument.join_poll()
+                if isinstance(instrument, CompositeVirtualInstrument):
+                    instrument.join_updating_thread()
 
-        # Close all physical instruments
-        for instrument in self._physical_instruments.values():
-            try:
-                instrument.close()
-            except Exception as e:
-                logger.error("Error closing physical instrument: %s", e)
+            self._virtual_instruments = {}
+            self._batchers = {}
 
-        # Load the configuration file for the selected apparatus
-        config_file_path = os.path.join(self.config_dir, f"{apparatus_config}.yaml")
-        self.load_instruments(config_file_path)
+            # Close all physical instruments
+            for instrument in self._physical_instruments.values():
+                try:
+                    instrument.close()
+                except Exception as e:
+                    logger.error("Error closing physical instrument: %s", e)
 
-        # Start polling and updating for virtual instruments
-        self.run()
 
-        # (Re)Load the experiments
-        self._testbench_manager.runner.load_experiments()
 
-        # Update the UI with the new apparatus configuration
-        if self.reload is not None:
-            self.reload.reload()
+            # Load the configuration file for the selected apparatus
+            config_file_path = os.path.join(self.config_dir, f"{apparatus_config}.yaml")
+            self.load_instruments(config_file_path)
+
+            # Start polling and updating for virtual instruments
+            self.run()
+
+            # (Re)Load the experiments
+            self._testbench_manager.runner.load_experiments()
+            self.current_apparatus_config = apparatus_config
+
+        finally:
+            # Update the UI with the new apparatus configuration
+            # do this if it succeeds or not
+            if self.reload is not None:
+                self.reload.reload()
+
 
     def load_instruments(self, config_file_path: str) -> None:
         """Loads and configures physical and virtual instruments from a given configuration file.
