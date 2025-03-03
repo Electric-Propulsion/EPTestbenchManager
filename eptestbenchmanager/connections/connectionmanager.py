@@ -1,4 +1,5 @@
 import logging
+from threading import Thread, Lock
 from pathlib import Path
 import os
 import sys
@@ -10,6 +11,7 @@ from . import (
     PollingVirtualInstrument,
     ExperimentStatusVirtualInstrument,
     CompositeVirtualInstrument,
+    Batcher,
 )
 
 logger = logging.getLogger(__name__)
@@ -49,6 +51,8 @@ class ConnectionManager:
         )
 
         self.reload = None
+        self._shutdown_complete = Lock()
+        self._shutdown_complete.acquire()
 
     def register_reload(self, reload_element):
         """Registers a reload element to the connection manager.
@@ -83,6 +87,47 @@ class ConnectionManager:
         return self._configs
 
     def set_apparatus_config(self, apparatus_config: str) -> None:
+        """Sets the apparatus configuration to the given configuration.
+
+        Args:
+            apparatus_config (str): The apparatus configuration to set.
+        """
+
+        set_apparatus_config_thread = Thread(
+            target=self._set_apparatus_config, args=(apparatus_config,)
+        )
+
+        set_apparatus_config_thread.start()
+
+    def _set_apparatus_config(self, apparatus_config: str) -> None:
+        print("setting up apparatus config")
+        # Signal the shutdown of the current polling threads
+        for batcher in self._batchers.values():
+            batcher.stop_poll()
+        for instrument in self._virtual_instruments.values():
+            if isinstance(instrument, PollingVirtualInstrument):
+                instrument.halt_poll()
+            if isinstance(instrument, CompositeVirtualInstrument):
+                instrument.halt_updating_thread()
+
+        # Join the polling threads
+        for batcher in self._batchers.values():
+            batcher.join_poll()
+        for instrument in self._virtual_instruments.values():
+            if isinstance(instrument, PollingVirtualInstrument):
+                instrument.join_poll()
+            if isinstance(instrument, CompositeVirtualInstrument):
+                instrument.join_updating_thread()
+
+        self._virtual_instruments = {}
+        self._batchers = {}
+
+        # Close all physical instruments
+        for instrument in self._physical_instruments.values():
+            try:
+                instrument.close()
+            except Exception as e:
+                logger.error("Error closing physical instrument: %s", e)
 
         # Load the configuration file for the selected apparatus
         config_file_path = os.path.join(self.config_dir, f"{apparatus_config}.yaml")
