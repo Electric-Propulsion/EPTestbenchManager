@@ -75,16 +75,19 @@ class ExperimentRunner:
             uid (str): Unique identifier of the experiment.
             operator (str): Name of the operator running the experiment.
         """
-        if self._experiment_lock.acquire(blocking=False):
-            logger.info("Running experiment %s", uid)
-            self._current_experiment_uid = uid
-            self._experiments[uid].run(operator)
-        else:
-            logger.warning(
-                "Cannot start experiment %s. Experiment %s is already running",
-                uid,
-                self.get_current_experiment_id(),
-            )
+        try:
+            if self._experiment_lock.acquire(blocking=False):
+                logger.info("Running experiment %s", uid)
+                self._current_experiment_uid = uid
+                self._experiments[uid].run(operator)
+            else:
+                logger.warning(
+                    "Cannot start experiment %s. Experiment %s is already running",
+                    uid,
+                    self.get_current_experiment_uid(),
+                )
+        finally:
+            self._current_experiment_uid = None
 
     def remove_experiment(self, uid: str) -> None:
         """Removes the experiment with the given UID.
@@ -129,7 +132,7 @@ class ExperimentRunner:
         """
         return self._experiments[experiment_uid].current_segment_id
 
-    def get_current_experiment_id(self) -> str:
+    def get_current_experiment_uid(self) -> str:
         """Gets the UID of the currently running experiment.
 
         Returns:

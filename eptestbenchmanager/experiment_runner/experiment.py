@@ -54,7 +54,9 @@ class Experiment:
         self.name: str = name
         self.description: str = description
         self.segments: list[ExperimentSegment] = segments
-        self.current_segment_id = -1
+        self.current_segment_id = None
+        self._current_segment_name: str = None
+        self._current_segment_uid: str = None
         self._experiment_lock: Lock = experiment_lock
         self.operator: str = None
         self._testbench_manager = testbench_manager
@@ -94,30 +96,23 @@ class Experiment:
             target=self.operator,
         )
         try:
-            self.current_segment_id = -1
+            self.current_segment_id = 0
 
             for segment in self.segments:
                 segment_start_time = time.perf_counter()
+                self._current_segment_uid = segment.uid
+                self._current_segment_name = segment.name
                 self.current_segment_id += 1
 
-                # Update the appropriate virtual instruments
-                self._testbench_manager.connection_manager.virtual_instruments[
-                    "experiment_current_segment_id"
-                ].set_value(self.current_segment_id)
-                self._testbench_manager.connection_manager.virtual_instruments[
-                    "experiment_current_segment_uid"
-                ].set_value(segment.uid)
-                self._testbench_manager.connection_manager.virtual_instruments[
-                    "experiment_current_segment_name"
-                ].set_value(segment.name)
+                self.update_vints()
 
                 try:
                     self._testbench_manager.alert_manager.send_alert(
                         (
                             f"Experiment **{self.name}** is running segment "
-                            f"**{self.segments[self.current_segment_id].uid}**. Elapsed time: "
+                            f"**{segment.uid}**. Elapsed time: "
                             f"{datetime.timedelta(seconds=segment_start_time - self.start_time)}. "
-                            f"({self.current_segment_id+1}/{len(self.segments)})"
+                            f"({self.current_segment_id}/{len(self.segments)})"
                         ),
                         severity=AlertSeverity.INFO,
                         target=self.operator,
@@ -135,7 +130,7 @@ class Experiment:
                     self._testbench_manager.alert_manager.send_alert(
                         (
                             f"Experiment **{self.name}** has aborted at segment "
-                            f"**{self.segments[self.current_segment_id].uid}**. Elapsed time: "
+                            f"**{segment.uid}**. Elapsed time: "
                             f"{datetime.timedelta(seconds=time.perf_counter()- self.start_time)} "
                             f"(reason: {e})"
                         ),
@@ -145,10 +140,12 @@ class Experiment:
 
                     return
 
-            # Add one more to indicate we're finished
-            self.current_segment_id += 1
-
         finally:
+            # Indicate we're finished
+            self.current_segment_id = None
+            self._current_segment_uid = None
+            self._current_segment_name = None
+
             # Allow other experiments to run
             self._experiment_lock.release()
 
@@ -172,6 +169,8 @@ class Experiment:
                 severity=AlertSeverity.INFO,
             )
 
+            self.update_vints()
+
             # Reset the operator
             self.operator = None
 
@@ -191,10 +190,27 @@ class Experiment:
         Returns:
             str: UID of the current segment, or "no segment" if index is out of range.
         """
-        try:
-            return self.segments[self.current_segment_id].uid
-        except IndexError:
-            return "no segment"
+        return self._current_segment_uid
+        
+    def get_current_segment_name(self) -> str:
+        """Gets the name of the current segment.
+
+        Returns:
+            str: Name of the current segment, or "no segment" if index is out of range.
+        """
+        return self._current_segment_name
+    
+    def update_vints(self):
+        """Updates the virtual instruments with the current segment information."""
+        self._testbench_manager.connection_manager.virtual_instruments[
+            "experiment_current_segment_id"
+        ].set_value(self.current_segment_id)
+        self._testbench_manager.connection_manager.virtual_instruments[
+            "experiment_current_segment_uid"
+        ].set_value(self._current_segment_uid)
+        self._testbench_manager.connection_manager.virtual_instruments[
+            "experiment_current_segment_name"
+        ].set_value(self._current_segment_name)
 
     @property
     def rules(self):
