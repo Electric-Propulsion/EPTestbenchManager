@@ -1,5 +1,5 @@
 import logging
-from threading import Semaphore, Thread
+from threading import Semaphore, Thread, Event
 from . import VirtualInstrument
 
 logger = logging.getLogger(__name__)
@@ -49,6 +49,7 @@ class CompositeVirtualInstrument(VirtualInstrument):
         self._update_thread = Thread(
             target=self._updating_loop, name=f"{self.name} Updating Thread", daemon=True
         )
+        self._stop_event = Event()
 
         for instrument in self._instruments:
             instrument.register_dependant_composite(self)
@@ -62,6 +63,8 @@ class CompositeVirtualInstrument(VirtualInstrument):
         """
         while True:
             self.update_semaphore.acquire()
+            if self._stop_event.is_set():
+                return  # Exit the thread
             try:
                 new_value = self._composition_function(
                     [instrument.value for instrument in self._instruments]
@@ -73,10 +76,21 @@ class CompositeVirtualInstrument(VirtualInstrument):
 
     def start_updating(self) -> None:
         """Starts the update loop in a separate thread."""
+        self._stop_event.clear()
         try:
             self._update_thread.start()
         except RuntimeError:
             logger.error(f"Instrument {self.name} updating thread already started.")
+
+    def halt_updating_thread(self) -> None:
+        """Stops the update loop."""
+        self._stop_event.set()
+        self.update_semaphore.release()
+
+    def join_updating_thread(self) -> None:
+        """Joins the update loop thread."""
+        if self._update_thread.is_alive():
+            self._update_thread.join()
 
     def command(self, command: float) -> None:
         """Raises NotImplementedError as this instrument does not support commands.

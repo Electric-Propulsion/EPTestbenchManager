@@ -88,11 +88,12 @@ class ExperimentControl(DashboardElement):
             except Exception as e:
                 logger.warning("Error starting experiment: %s", e)
 
-        @self.socketio.on("stop_experiment", namespace=self.namespace)
-        def stop_experiment():
+        @self.socketio.on("request_abort", namespace=self.namespace)
+        def request_abort():
             """Handles the stop_experiment event.
 
             Args:
                 data (dict): Data containing experiment_uid and operator.
             """
-            logger.info("experiment stopping")
+            self.experiment_runner.request_abort_current_experiment()
+            logger.info("Requesting abort of current experiment")

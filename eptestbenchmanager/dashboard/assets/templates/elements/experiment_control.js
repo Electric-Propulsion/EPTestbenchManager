@@ -13,3 +13,7 @@ function edit_experiment(  ) {
 function new_experiment(  ) {
     window.location.href = '/{{ data.experiment_config_path }}/untitled_experiment.yaml';
     }
+
+function request_abort(  ) {
+    {{ data.uid }}_socket.emit('request_abort');
+    }

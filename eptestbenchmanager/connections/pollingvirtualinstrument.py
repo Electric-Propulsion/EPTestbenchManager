@@ -77,6 +77,11 @@ class PollingVirtualInstrument(VirtualInstrument):
         """Stops the polling thread."""
         self._stop_event.set()
 
+    def join_poll(self) -> None:
+        """Joins the polling thread."""
+        if self._polling_thread.is_alive():
+            self._polling_thread.join()
+
     def _polling_loop(self) -> None:
         """The main polling loop that runs in a separate thread."""
         while True:

@@ -123,6 +123,10 @@ h1 {
     z-index: 2;
 }
 
+.apparatus_control_box{
+    flex-direction: column; /* stack children vertically */
+}
+
 .digital-gauge {
     text-align: center;
     border: 3px solid #dadada;
@@ -210,4 +214,9 @@ h1 {
 .dg_value_entry.unsaved {
     border-color: rgb(233, 91, 91); /* Red outline for unsaved state */
     background-color: #683131; /* Optional: Light red background */
+}
+
+.active_apparatus_container {
+    display: flex;
+    flex-direction: column;
 }

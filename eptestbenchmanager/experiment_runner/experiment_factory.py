@@ -10,7 +10,6 @@ from .experiment_segments import (
     Wait,
     IsoFilamentHold,
     IsoFilamentVoltageStep,
-    LinearStep,
 )
 
 if TYPE_CHECKING:
@@ -95,7 +94,5 @@ class ExperimentFactory:
                 return IsoFilamentHold
             case "iso_filament_voltage_step":
                 return IsoFilamentVoltageStep
-            case "linear_step":
-                return LinearStep
             case _:
                 raise ValueError(f"Unknown segment type: {segment_type}")

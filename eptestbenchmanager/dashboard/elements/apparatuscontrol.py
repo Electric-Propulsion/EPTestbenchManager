@@ -45,7 +45,7 @@ class ApparatusControl(DashboardElement):
         """
         value = render_template(
             "elements/apparatus_control.html",
-            data={"uid": self.uid, "apparatuses": self.apparatuses},
+            data={"uid": self.uid, "apparatuses": self.apparatuses, "current_apparatus_config":self.connection_manager.current_apparatus_config}
         )
         return value
 

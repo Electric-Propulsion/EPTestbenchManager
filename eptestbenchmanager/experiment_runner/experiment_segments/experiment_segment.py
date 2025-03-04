@@ -1,3 +1,4 @@
+import time
 from abc import ABC, abstractmethod
 from threading import Thread
 from os import path
@@ -183,3 +184,40 @@ class ExperimentSegment(ABC):
             str: Generated record ID.
         """
         return f"{self.experiment.run_id}_{record_id}"
+
+    def interruptable_sleep(self, seconds: float):
+        """Sleeps for the specified number of seconds, but can be interrupted by an abort.
+
+        Args:
+            seconds (float): Number of seconds to sleep.
+        """
+        end_time = time.perf_counter() + seconds
+        while time.perf_counter() < end_time:
+            if self.experiment.abort.is_set():
+                raise AbortingSegmentFailure("Manual abort requested.")
+            remaining_time = end_time - time.perf_counter()
+            time.sleep(min(remaining_time, 0.1))
+
+    def interruptable(self, iterable):
+        """Returns an interruptible iterator.
+
+        Args:
+            iterable: Iterable to make interruptible.
+
+        Returns:
+            _Interruptible: Interruptible iterator.
+        """
+        return self._Interruptible(self, iterable)
+
+    class _Interruptible:
+        def __init__(self, parent, iterable):
+            self._iterator = iter(iterable)
+            self._parent = parent
+
+        def __iter__(self):
+            return self
+
+        def __next__(self):
+            if self._parent.experiment.abort.is_set():
+                raise AbortingSegmentFailure("Manual abort requested.")
+            return next(self._iterator)

@@ -7,4 +7,3 @@ from .wait import Wait
 from .iso_filament_base import IsoFilamentBase
 from .iso_filament_voltage_step import IsoFilamentVoltageStep
 from .iso_filament_hold import IsoFilamentHold
-from .linear_step import LinearStep

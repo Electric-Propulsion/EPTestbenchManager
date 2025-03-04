@@ -35,10 +35,10 @@ class IsoFilamentVoltageStep(IsoFilamentBase):
             )
         ]
 
-        for voltage in voltages:
+        for voltage in self.interruptable(voltages):
             logger.debug("%s: Setting Voltage to %s", self.name, voltage)
             self.filament_voltage_setpoint.command(float(voltage))
-            time.sleep(self.step_delay)
+            self.interruptable_sleep(self.step_delay)
 
         self.filament_output.command(False)
         self.bias_output.command(False)

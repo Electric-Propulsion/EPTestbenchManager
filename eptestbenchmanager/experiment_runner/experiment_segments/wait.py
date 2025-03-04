@@ -22,7 +22,7 @@ class Wait(ExperimentSegment):
 
         This method pauses the execution for the configured number of seconds.
         """
-        time.sleep(self.seconds)
+        self.interruptable_sleep(self.seconds)
 
     def generate_report(self):
         """Generates a report for the wait segment.

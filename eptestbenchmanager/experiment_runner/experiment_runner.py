@@ -2,7 +2,7 @@ import logging
 from pathlib import Path
 from io import StringIO
 from os import path, walk
-from threading import Lock
+from threading import Lock, Thread
 from typing import TYPE_CHECKING
 from .experiment import Experiment
 from .experiment_factory import ExperimentFactory
@@ -51,6 +51,12 @@ class ExperimentRunner:
                                 f"Error loading experiment {filename}: {e} (Possibly incompatible with current apparatus)"
                             )
 
+    def request_abort_current_experiment(self) -> None:
+        """Requests the current experiment
+        to be aborted."""
+        if self._current_experiment_uid is not None:
+            self._experiments[self._current_experiment_uid].request_abort()
+
     def add_experiment(self, experiment_file: StringIO) -> None:
         """Adds an experiment to the runner.
 
@@ -73,12 +79,20 @@ class ExperimentRunner:
             logger.info("Running experiment %s", uid)
             self._current_experiment_uid = uid
             self._experiments[uid].run(operator)
+            Thread(target=self.wait_for_experiment_end).start()
+
         else:
             logger.warning(
                 "Cannot start experiment %s. Experiment %s is already running",
                 uid,
-                self.get_current_experiment_id(),
+                self.get_current_experiment_uid(),
             )
+
+    def wait_for_experiment_end(self) -> None:
+        self._experiment_lock.acquire()
+        self._current_experiment_uid = None
+        self._experiment_lock.release()
+
 
     def remove_experiment(self, uid: str) -> None:
         """Removes the experiment with the given UID.
@@ -123,7 +137,7 @@ class ExperimentRunner:
         """
         return self._experiments[experiment_uid].current_segment_id
 
-    def get_current_experiment_id(self) -> str:
+    def get_current_experiment_uid(self) -> str:
         """Gets the UID of the currently running experiment.
 
         Returns:

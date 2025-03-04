@@ -194,7 +194,7 @@ class Recording:
         """
         timestamp = sample_time if sample_time is not None else time.time()
         current_experiment = self.experiment_manager.get_experiment_current_segment_uid(
-            self.experiment_manager.get_current_experiment_id()
+            self.experiment_manager.get_current_experiment_uid()
         )
         self._sample_count += 1
 
