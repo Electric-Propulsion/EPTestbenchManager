@@ -10,6 +10,7 @@ from .experiment_segments import (
     Wait,
     IsoFilamentHold,
     IsoFilamentVoltageStep,
+    Step, Hold, Set
 )
 
 if TYPE_CHECKING:
@@ -49,12 +50,15 @@ class ExperimentFactory:
         uid = config["experiment"]["uid"]
         name = config["experiment"]["name"]
         description = config["experiment"]["description"]
+        experiment_recordings = config.get("recordings", None)
 
         segments = []
 
         for segment_uid, segment_config in config["segments"].items():
             segment_type = segment_config["type"]
             segment_name = segment_config["name"]
+            if experiment_recordings is not None:
+                segment_config["recordings"] = segment_config.get("recordings", []) + experiment_recordings
             # 'segment' could be a single segment or a list of segments
             segment = cls.get_class(segment_type)(
                 segment_uid, segment_name, segment_config, testbench_manager
@@ -94,5 +98,11 @@ class ExperimentFactory:
                 return IsoFilamentHold
             case "iso_filament_voltage_step":
                 return IsoFilamentVoltageStep
+            case "hold":
+                return Hold
+            case "step":
+                return Step
+            case "set":
+                return Set
             case _:
                 raise ValueError(f"Unknown segment type: {segment_type}")

@@ -9,12 +9,13 @@ logger = logging.getLogger(__name__)
 class Step(ExperimentSegment):
 
     def configure(self, config: dict):
-        self.min = config["min"]
-        self.max = config["max"]
+        self.min = config["start"]
+        self.max = config["stop"]
         self.num_steps = config["num_steps"]
         self.step_delay = config["step_delay"]
-        self.commanded_vinstrument_setpoint = self._testbench_manager.connection_manager.virtual_instruments[config["commanded_vinstrument"]]
-        output_name = config.get("commanded_vinstrument", None)
+        self.reset = config.get("reset", False)
+        self.commanded_vinstrument_setpoint = self._testbench_manager.connection_manager.virtual_instruments[config["commanded_vinstrument_setpoint"]]
+        output_name = config.get("commanded_vinstrument_output", None)
         if output_name is not None:
             self.commanded_vinstrument_output = self._testbench_manager.connection_manager.virtual_instruments[output_name]
         else:
@@ -39,7 +40,7 @@ class Step(ExperimentSegment):
             self.commanded_vinstrument_setpoint.command(float(value))
             self.interruptable_sleep(self.step_delay)
 
-        if self.commanded_vinstrument_output is not None:
+        if self.commanded_vinstrument_output is not None and self.reset:
             self.commanded_vinstrument_output.command(False)
 
     def generate_report(self):

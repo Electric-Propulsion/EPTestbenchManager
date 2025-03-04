@@ -2,7 +2,175 @@ experiment:
   uid: heater_test
   name: Heater Test
   description: |
-    TTest a heater
+    Test a heater
+
+recordings:
+  - vacuum_chamber_pressure:
+      record_id: pressure
+      record_name: Pressure
+  # - bias_voltage_A_setpoint:
+  #     record_id: bias_voltage_A_setpoint
+  #     record_name: Bias Voltage (Channel A)
+  # - bias_voltage_B_setpoint:
+  #     record_id: bias_voltage_B_setpoint
+  #     record_name: Bias Voltage (Channel B)
+  - heater_voltage_measurement:
+      record_id: heater_voltage_measurement
+      record_name: Heater Voltage Measurement
+  - heater_voltage_setpoint:
+      record_id: heater_voltage_setpoint
+      record_name: Heater Voltage Setpoint
+  - heater_current_measurement:
+      record_id: heater_current_measurement
+      record_name: Heater Current Measurement
+
+segments:
+  # Zero Everything
+  # zero_bias_voltage_A:
+  #   name: Zero Bias Voltage (channel A)
+  #   type: set
+  #   commanded_vinstrument_setpoint: bias_voltage_A_setpoint
+  #   commanded_vinstrument_output: bias_voltage_A_output
+  #   setpoint: 0
+  #   enable: True
+  # zero_bias_current_A:
+  #   name: Zero Bias Current Limit (channel A)
+  #   type: set
+  #   commanded_vinstrument_setpoint: bias_current_B_limit
+  #   setpoint: 0.001
+  # zero_bias_voltage_B:
+  #   name: Zero Bias Voltage (channel B)
+  #   type: set
+  #   commanded_vinstrument_setpoint: bias_voltage_B_setpoint
+  #   commanded_vinstrument_output: bias_voltage_B_output
+  #   setpoint: 0
+  #   enable: True
+  # zero_bias_current_B:
+  #   name: Zero Bias Current Limit (channel B)
+  #   type: set
+  #   commanded_vinstrument_setpoint: bias_current_B_limit
+  #   setpoint: 0.001
+  zero_heater_voltage:
+    name: Zero Heater Voltage
+    type: set
+    commanded_vinstrument_setpoint: heater_voltage_setpoint
+    commanded_vinstrument_output: heater_voltage_output
+    setpoint: 0
+    enable: True
+  zero_settle:
+    name: Settle at Zero
+    type: wait
+    seconds: 30
+  
+  # Begin the experiment
+
+  # Set the bias supply
+  # set_bias_current_A:
+  #   name: Set Bias Current Limit (channel A)
+  #   type: set
+  #   commanded_vinstrument_setpoint: bias_current_A_limit
+  #   setpoint: 1
+  # set_bias_current_B:
+  #   name: Set Bias Current Limit (channel B)
+  #   type: set
+  #   commanded_vinstrument_setpoint: bias_current_B_limit
+  #   setpoint: 1
+  # set_bias_voltage_A:
+  #   name: Set Bias Voltage (channel A)
+  #   type: set
+  #   commanded_vinstrument_setpoint: bias_voltage_A_setpoint
+  #   commanded_vinstrument_output: bias_voltage_A_output
+  #   setpoint: 30
+  #   enable: True
+  # set_bias_voltage_B:
+  #   name: Set Bias Voltage (channel B)
+  #   type: set
+  #   commanded_vinstrument_setpoint: bias_voltage_B_setpoint
+  #   commanded_vinstrument_output: bias_voltage_B_output
+  #   setpoint: 30
+  #   enable: True
+  # bias_settle:
+  #   name: Bias Current Settle
+  #   type: wait
+  #   seconds: 60
+
+  # Ramp Up to Max Heater Voltage
+
+  heater_voltage_ramp_up:
+    name: Ramp Up Heater Voltage
+    type: step
+    start: 0
+    stop: 28
+    num_steps: 6
+    step_delay: 30
+    commanded_vinstrument_setpoint: heater_voltage_setpoint
+    commanded_vinstrument_output: heater_voltage_output
+
+  heater_voltage_hold:
+    name: Hold Heater Voltage
+    type: hold
+    setpoint: 28
+    hold_s: 600
+    commanded_vinstrument_setpoint: heater_voltage_setpoint
+
+  heater_voltage_ramp_down:
+    name: Ramp Down Heater Voltage
+    type: step
+    start: 28
+    stop: 0
+    num_steps: 6
+    step_delay: 30
+    commanded_vinstrument_setpoint: heater_voltage_setpoint
+    commanded_vinstrument_output: heater_voltage_output
+
+  # Cooldown hold (bias active)
+  # biased_cooldown:
+  #   name: Biased Cooldown
+  #   type: wait
+  #   seconds: 120
+
+
+  # Zero Everything
+  # rezero_bias_voltage_A:
+  #   name: Zero Bias Voltage (channel A)
+  #   type: set
+  #   commanded_vinstrument_setpoint: bias_voltage_A_setpoint
+  #   commanded_vinstrument_output: bias_voltage_A_output
+  #   setpoint: 0
+  #   enable: True
+  # rezero_bias_current_A:
+  #   name: Zero Bias Current Limit (channel A)
+  #   type: set
+  #   commanded_vinstrument_setpoint: bias_current_B_limit
+  #   setpoint: 0.001
+  # rezero_bias_voltage_B:
+  #   name: Zero Bias Voltage (channel B)
+  #   type: set
+  #   commanded_vinstrument_setpoint: bias_voltage_B_setpoint
+  #   commanded_vinstrument_output: bias_voltage_B_output
+  #   setpoint: 0
+  #   enable: True
+  # rezero_bias_current_B:
+  #   name: Zero Bias Current Limit (channel B)
+  #   type: set
+  #   commanded_vinstrument_setpoint: bias_current_B_limit
+  #   setpoint: 0.001
+  rezero_heater_voltage:
+    name: Zero Heater Voltage
+    type: set
+    commanded_vinstrument_setpoint: heater_voltage_setpoint
+    commanded_vinstrument_output: heater_voltage_output
+    setpoint: 0
+    enable: True
+  rezero_settle:
+    name: Settle at Zero
+    type: wait
+    seconds: 30
+
+
+    
+  
+
   
 
 
