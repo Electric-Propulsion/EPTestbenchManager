@@ -21,12 +21,34 @@ physical_instruments:
     arguments:
       resource_name: "USB0::10893::36609::CN63070208::0::INSTR"
 
-  # bk_psu:
-  #   class: epcomms.equipment.powersupply.BK1694
-  #   arguments:
-  #     ip: "192.168.0.156"
+  bk_psu:
+    class: epcomms.equipment.powersupply.BK1694
+    arguments:
+      ip: "192.168.0.156"
 
 virtual_instruments:
+
+  bk_psu_voltage_setpoint:
+    type: polling
+    name: BK PSU Voltage Setpoint
+    physical_instrument: bk_psu
+    getter_function: measure_voltage_setpoint
+    getter_arguments: {}
+    setter_function: set_voltage
+    setter_arguments: {}
+    polling_interval: 1000
+    unit: V
+
+  bk_psu_output:
+    type: polling
+    name: BK PSU Output
+    physical_instrument: bk_psu
+    getter_function: get_output
+    getter_arguments: {}
+    setter_function: set_output
+    setter_arguments: {}
+    polling_interval: 1000
+    unit: Bool
 
   keysight_DMM_voltage:
     type: polling
