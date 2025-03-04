@@ -111,7 +111,7 @@ class ConnectionManager:
             print("setting up apparatus config")
             # Signal the shutdown of the current polling threads
             for batcher in self._batchers.values():
-                batcher.stop_poll()
+                batcher.halt_poll()
             for instrument in self._virtual_instruments.values():
                 if isinstance(instrument, PollingVirtualInstrument):
                     instrument.halt_poll()
