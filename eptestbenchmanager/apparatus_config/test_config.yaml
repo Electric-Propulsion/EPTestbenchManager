@@ -1,18 +1,44 @@
 physical_instruments:
-  test_instrument:
+  test_instrument_1:
+    class: epcomms.equipment.test.TestInstrument
+    arguments: {}
+  test_instrument_2:
+    class: epcomms.equipment.test.TestInstrument
+    arguments: {}
+  test_instrument_3:
     class: epcomms.equipment.test.TestInstrument
     arguments: {}
 
 virtual_instruments:
-  test_instrument:
+  test_instrument_1:
     type: polling
-    name: Test Instrument
-    physical_instrument: test_instrument
+    name: Test Instrument 1
+    physical_instrument: test_instrument_1
     getter_function: get_noise
     getter_arguments: {}
     setter_function: echo
     setter_arguments: {}
     polling_interval: 1000
+    unit: Units
+
+  test_instrument_2:
+    type: polling
+    name: Test Instrument 2
+    physical_instrument: test_instrument_2
+    getter_function: get_noise
+    getter_arguments: {}
+    setter_function: echo
+    setter_arguments: {}
+    polling_interval: 250
+    unit: Units
+
+  test_instrument_sum:
+    type: composite
+    name: Test Instrument Sum
+    composition_function: sum
+    instruments:
+      - test_instrument_1
+      - test_instrument_2
     unit: Units
 
   hv_psu:

@@ -1,11 +1,18 @@
 <div id="{{ data.uid }}" class="apparatus_control_box">
-    <div class="apparatus_control_box_name">Apparatus Control</div>
-    <label for="{{ data.uid }}_apparatus_selector">Select Apparatus Config:</label>
-    <select id="{{ data.uid }}_apparatus_selector" name="apparatuses">
-        {% for apparatus in data.apparatuses %}
-            <option value="{{ apparatus }}">{{ apparatus }}</option>
-        {% endfor %}
-    </select>
-    <button onclick="set_apparatus()" id="{{ data.uid }}_set">Load</button>
-    <button onclick="edit_apparatus()" id="{{ data.uid }}_duplicate">Edit</button>
-    <button onclick="new_apparatus()" id="{{ data.uid }}_estop">New</button>
+    <div class="apparatus_control_row">
+        <div class="apparatus_control_box_name">Apparatus Control</div>
+        <label for="{{ data.uid }}_apparatus_selector">Select Apparatus Config:</label>
+        <select id="{{ data.uid }}_apparatus_selector" name="apparatuses">
+            {% for apparatus in data.apparatuses %}
+                <option value="{{ apparatus }}">{{ apparatus }}</option>
+            {% endfor %}
+        </select>
+        <button onclick="set_apparatus()" id="{{ data.uid }}_set">Load</button>
+        <button onclick="edit_apparatus()" id="{{ data.uid }}_duplicate">Edit</button>
+        <button onclick="new_apparatus()" id="{{ data.uid }}_estop">New</button>
+    </div>  
+    <div class="active_apparatus_row">
+        <label for="{{ data.uid }}_active_apparatus">Active Apparatus Config:</label>
+        <span id="{{ data.uid }}_active_apparatus">{{ data.current_apparatus_config}} </span>
+    </div>
+</div>
