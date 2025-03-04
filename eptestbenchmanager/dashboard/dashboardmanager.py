@@ -134,4 +134,4 @@ class DashboardManager:
     def run(self):
         """Runs the dashboard, blocking the main thread."""
         logger.info("Starting dashboard - this will block the main thread")
-        self.socketio.run(self.app, host="0.0.0.0")
+        self.socketio.run(self.app, host="0.0.0.0", allow_unsafe_werkzeug=True)
