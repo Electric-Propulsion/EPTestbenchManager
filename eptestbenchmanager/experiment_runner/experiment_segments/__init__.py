@@ -7,3 +7,6 @@ from .wait import Wait
 from .iso_filament_base import IsoFilamentBase
 from .iso_filament_voltage_step import IsoFilamentVoltageStep
 from .iso_filament_hold import IsoFilamentHold
+from .hold import Hold
+from .set import Set
+from .step import Step

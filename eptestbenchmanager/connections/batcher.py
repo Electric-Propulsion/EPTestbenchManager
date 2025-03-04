@@ -88,6 +88,9 @@ class Batcher:
         match batching_scheme:
             case "SCPI_chanlist":
                 return {"channel": list(self._vints.keys())}  # expected to be a list
+            case "custom_USBTC08":
+                return {}
+
 
     def _get_demux_function(self, batching_scheme: str) -> callable:
         match batching_scheme:
@@ -114,4 +117,11 @@ class Batcher:
                             list(self._vints.keys())[0]: values
                         }  # 'values' is actually just a single number
 
+                return demux_function
+            case "custom_USBTC08":
+                def demux_function(values):
+                    # values is a list of eight temperatures corrisponding to channels 1-8
+                    return {
+                        list(self._vints.keys())[i]: values[list(self._vints.keys())[i]] for i in range(len(self._vints))
+                    }
                 return demux_function
