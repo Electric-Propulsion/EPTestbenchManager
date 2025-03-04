@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 from flask import Flask, send_from_directory
 from flask_socketio import SocketIO
+from engineio.payload import Payload
 
 from .pages import MainPage, ConfigEditor
 from .elements import ExperimentControl
@@ -37,6 +38,7 @@ class DashboardManager:
             static_folder="dashboard/assets/static",
             template_folder="dashboard/assets/templates",
         )
+        Payload.max_decode_packets = 2048 # this is a shitty workaround to an architectural issue I have no desire to fix
         self.socketio = SocketIO(self.app, cors_allowed_origins="*")
         self.app.config["SECRET_KEY"] = "testkey!"  # TODO: change me!
 
