@@ -29,25 +29,23 @@ physical_instruments:
 virtual_instruments:
 
   bk_psu_voltage_setpoint:
-    type: polling
+    type: command_driven
     name: BK PSU Voltage Setpoint
     physical_instrument: bk_psu
     getter_function: measure_voltage_setpoint
     getter_arguments: {}
     setter_function: set_voltage
     setter_arguments: {}
-    polling_interval: 1000
     unit: V
 
   bk_psu_output:
-    type: polling
+    type: command_driven
     name: BK PSU Output
     physical_instrument: bk_psu
     getter_function: get_output
     getter_arguments: {}
     setter_function: set_output
     setter_arguments: {}
-    polling_interval: 1000
     unit: Bool
 
   keysight_DMM_voltage:
