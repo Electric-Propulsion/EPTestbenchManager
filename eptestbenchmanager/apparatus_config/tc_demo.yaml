@@ -20,7 +20,7 @@ virtual_instruments:
     setter_function: None
     setter_arguments: {}
     polling_interval: 2000
-    unit: C
+    unit: K
 
   channel_2_temp:
     type: batchable_polling
@@ -33,7 +33,7 @@ virtual_instruments:
     setter_function: None
     setter_arguments: {}
     polling_interval: 2000
-    unit: C
+    unit: K
 
   channel_3_temp:
     type: batchable_polling
@@ -46,4 +46,4 @@ virtual_instruments:
     setter_function: None
     setter_arguments: {}
     polling_interval: 2000
-    unit: C
+    unit: K
