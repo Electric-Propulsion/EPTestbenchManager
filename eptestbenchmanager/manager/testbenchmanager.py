@@ -11,6 +11,7 @@ from eptestbenchmanager.chat.engine import DiscordEngine
 from eptestbenchmanager.chat.chat_manager import DiscordChatManager
 from eptestbenchmanager.dashboard import DashboardManager
 from eptestbenchmanager.report import ReportManager
+from eptestbenchmanager.estop.estop import EStop
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +41,7 @@ class TestbenchManager:
         self.runner: ExperimentRunner = None
         self.dashboard: DashboardManager = DashboardManager(self)
         self.report_manager = ReportManager(self)
+        self.estop = EStop()
 
     def start_app(
         self,
@@ -84,6 +86,9 @@ class TestbenchManager:
         # Start the dashboard
         self.dashboard.configure()
         self.dashboard.run()
+
+        # Reset the EStop
+        self.estop.estop_reset(force=True)
 
         while True:
             sleep(1)

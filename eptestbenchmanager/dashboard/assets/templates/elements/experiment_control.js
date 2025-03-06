@@ -17,3 +17,7 @@ function new_experiment(  ) {
 function request_abort(  ) {
     {{ data.uid }}_socket.emit('request_abort');
     }
+
+function estop(  ) {
+    {{ data.uid }}_socket.emit('estop');
+    }

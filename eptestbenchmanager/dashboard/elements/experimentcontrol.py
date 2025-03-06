@@ -33,6 +33,7 @@ class ExperimentControl(DashboardElement):
         """
         super().__init__(uid, socketio)
         self.name = "Experiment Control"
+        self.estop = testbench_manager.estop
         self.experiment_runner = testbench_manager.runner
         self.experiments = self.experiment_runner.experiments
         self.operators = (
@@ -97,3 +98,8 @@ class ExperimentControl(DashboardElement):
             """
             self.experiment_runner.request_abort_current_experiment()
             logger.info("Requesting abort of current experiment")
+
+        @self.socketio.on("estop", namespace=self.namespace)
+        def estop():
+            """Handles the estop event."""
+            self.estop.estop_fire()

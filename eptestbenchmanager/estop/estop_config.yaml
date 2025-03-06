@@ -1,0 +1,5 @@
+enabled: False
+relay: epcomms.equipment.relay.PhidgetRelay
+relay_args:
+  serial_number: 9137 
+  channel: 0
