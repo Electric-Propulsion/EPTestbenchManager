@@ -1,4 +1,4 @@
-enabled: False
+enabled: True
 relay: epcomms.equipment.relay.PhidgetRelay
 relay_args:
   serial_number: 9137 

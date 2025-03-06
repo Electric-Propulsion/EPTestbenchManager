@@ -1,0 +1,70 @@
+physical_instruments:
+
+
+  vacuum_gauge:
+    class: epcomms.equipment.vacuumcontroller.Terranova962A
+    arguments:
+      device_location: /dev/ttyUSB0
+
+  usbtc08:
+    class: epcomms.equipment.temperature_sensor.PicoUSBTC08
+    arguments:
+      ip: "192.168.0.192"
+      port: 8001
+
+
+virtual_instruments:
+
+  channel_2_temp:
+    type: batchable_polling
+    batching_scheme: custom_USBTC08
+    name: Channel 2 Temperature
+    physical_instrument: usbtc08
+    getter_function: measure_all_channels
+    getter_arguments: {}
+    batching_argument_value: 1
+    setter_function: None
+    setter_arguments: {}
+    polling_interval: 2000
+    unit: K
+
+  channel_3_temp:
+    type: batchable_polling
+    batching_scheme: custom_USBTC08
+    name: Channel 3 Temperature
+    physical_instrument: usbtc08
+    getter_function: measure_all_channels
+    getter_arguments: {}
+    batching_argument_value: 2
+    setter_function: None
+    setter_arguments: {}
+    polling_interval: 2000
+    unit: K
+
+  channel_4_temp:
+    type: batchable_polling
+    batching_scheme: custom_USBTC08
+    name: Channel 4 Temperature
+    physical_instrument: usbtc08
+    getter_function: measure_all_channels
+    getter_arguments: {}
+    batching_argument_value: 3
+    setter_function: None
+    setter_arguments: {}
+    polling_interval: 2000
+    unit: K
+
+
+  vacuum_chamber_pressure:
+    type: polling
+    name: Vacuum Chamber Pressure
+    physical_instrument: vacuum_gauge
+    getter_function: get_pressure_gauge_1
+    getter_arguments: {}
+    setter_function: None
+    setter_arguments: {}
+    polling_interval: 1000
+    unit: mBar
+    name: Vacuum Chamber Pressure
+
+  

@@ -43,6 +43,7 @@ class TestbenchManager:
         self.report_manager = ReportManager(self)
         self.estop = EStop()
 
+
     def start_app(
         self,
         discord_guild: str = "Hall-Effect Thruster",
@@ -87,7 +88,7 @@ class TestbenchManager:
         self.dashboard.configure()
         self.dashboard.run()
 
-        # Reset the EStop
+        # Setup and reset the EStop
         self.estop.estop_reset(force=True)
 
         while True:
