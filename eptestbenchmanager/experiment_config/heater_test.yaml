@@ -24,14 +24,14 @@ recordings:
       record_id: heater_current_measurement
       record_name: Heater Current Measurement
   - channel_2_temp:
-    record_id: channel_2_temp
-    record_name: Channel 2 Temperature
+      record_id: channel_2_temp
+      record_name: Channel 2 Temperature
   - channel_3_temp:
-    record_id: channel_3_temp
-    record_name: Channel 3 Temperature
+      record_id: channel_3_temp
+      record_name: Channel 3 Temperature
   - channel_4_temp:
-    record_id: channel_4_temp
-    record_name: Channel 4 Temperature 
+      record_id: channel_4_temp
+      record_name: Channel 4 Temperature 
 
 segments:
   # Zero Everything

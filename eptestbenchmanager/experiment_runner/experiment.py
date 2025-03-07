@@ -127,6 +127,11 @@ class Experiment:
                     # TODO: indicate somehow that we're aborting
                     logger.error("Aborting segment %s: %s", segment.uid, e)
 
+                    try:
+                        segment.postrun()
+                    except Exception as e:
+                        logger.error("Error in postrun of segment %s: %s", segment.uid, e)
+
                     self._testbench_manager.alert_manager.send_alert(
                         (
                             f"Experiment **{self.name}** has aborted at segment "

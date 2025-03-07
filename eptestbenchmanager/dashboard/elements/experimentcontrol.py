@@ -34,7 +34,6 @@ class ExperimentControl(DashboardElement):
         super().__init__(uid, socketio)
         self.name = "Experiment Control"
         self.experiment_runner = testbench_manager.runner
-        self.experiments = self.experiment_runner.experiments
         self.operators = (
             testbench_manager.communication_engine.users
         )  # TODO: This is not great
@@ -50,7 +49,7 @@ class ExperimentControl(DashboardElement):
             str: Rendered HTML content.
         """
         data = {
-            "experiments": self.experiments,
+            "experiments": self.experiment_runner.experiments,
             "operators": self.operators if self.operators is not None else [],
             "uid": self.uid,
         }
