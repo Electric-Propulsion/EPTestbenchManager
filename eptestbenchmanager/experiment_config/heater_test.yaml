@@ -105,32 +105,53 @@ segments:
 
   # Ramp Up to Max Heater Voltage
 
-  heater_voltage_ramp_up:
+  heater_voltage_ramp_up1:
     name: Ramp Up Heater Voltage
     type: step
-    start: 0
-    stop: 28
+    start: 5
+    stop: 10
     num_steps: 6
-    step_delay: 30
+    step_delay: 150
+    commanded_vinstrument_setpoint: heater_voltage_setpoint
+    commanded_vinstrument_output: heater_voltage_output
+    
+  heater_voltage_ramp_up2:
+    name: Ramp Up Heater Voltage
+    type: step
+    start: 10
+    stop: 20
+    num_steps: 11
+    step_delay: 300
+    commanded_vinstrument_setpoint: heater_voltage_setpoint
+    commanded_vinstrument_output: heater_voltage_output
+
+  heater_voltage_ramp_up3:
+    name: Ramp Up Heater Voltage
+    type: step
+    start: 20
+    stop: 30
+    num_steps: 11
+    step_delay: 600
     commanded_vinstrument_setpoint: heater_voltage_setpoint
     commanded_vinstrument_output: heater_voltage_output
 
   heater_voltage_hold:
     name: Hold Heater Voltage
     type: hold
-    setpoint: 28
+    setpoint: 30
     hold_s: 600
     commanded_vinstrument_setpoint: heater_voltage_setpoint
 
   heater_voltage_ramp_down:
     name: Ramp Down Heater Voltage
     type: step
-    start: 28
-    stop: 0
-    num_steps: 6
-    step_delay: 30
+    start: 30
+    stop: 5
+    num_steps: 26
+    step_delay: 60
     commanded_vinstrument_setpoint: heater_voltage_setpoint
     commanded_vinstrument_output: heater_voltage_output
+    
 
   # Cooldown hold (bias active)
   # biased_cooldown:
