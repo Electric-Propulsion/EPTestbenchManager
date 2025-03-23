@@ -103,7 +103,9 @@ virtual_instruments:
     name: Heater Current Measurement
     physical_instrument: tektronix_multimeter
     getter_function: measure_current_dc
-    getter_arguments: {}
+    getter_arguments: 
+        measurement_range: 'MAX'
+        resolution: 'DEF'
     setter_function: None
     setter_arguments: {}
     polling_interval: 2000

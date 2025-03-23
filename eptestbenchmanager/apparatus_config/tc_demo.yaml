@@ -3,7 +3,7 @@ physical_instruments:
   usbtc08:
     class: epcomms.equipment.temperature_sensor.PicoUSBTC08
     arguments:
-      ip: "192.168.0.192"
+      ip: "192.168.0.154"
       port: 8001
 
 
