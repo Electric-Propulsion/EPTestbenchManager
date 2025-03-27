@@ -352,6 +352,6 @@ class VirtualInstrumentFactory:
                     )
                 return lambda x: x[0] / x[1]
             case "W_temperature":
-                return lambda x: -1.6721*x**2 + 204.75*x + 115.86
+                return lambda x: -1.6721*x[0]**2 + 204.75*x[0] + 115.86
             case _:
                 raise ValueError(f"Invalid composition function: {function_name}")
