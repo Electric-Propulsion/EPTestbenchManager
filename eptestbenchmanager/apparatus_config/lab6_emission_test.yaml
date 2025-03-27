@@ -218,3 +218,34 @@ virtual_instruments:
     setter_arguments:
       channel: 3
     unit: A
+
+  heater_circuit_resistance:
+    type: composite
+    name: Heater Circuit Resistance
+    composition_function: divide
+    instruments:
+      - heater_voltage_measurement
+      - heater_current_measurement
+    unit: Ohms
+  
+  heater_circuit_room_temp_resistance:
+    type: manual
+    name: Room Temperature Heater Circuit Resistance
+    unit: Ohms
+  
+  heater_circuit_resistivity:
+    type: composite
+    name: Heater Circuit Resistivity
+    composition_function: divide
+    instruments:
+      - heater_circuit_resistance
+      - heater_circuit_room_temp_resistance
+    unit: unitless
+  
+  filament_temperature_estimation:
+    type: composite
+    name: Filament Temperature Estimate
+    composition_function: W_temperature
+    instruments:
+      - heater_circuit_resistivity
+    unit: K
