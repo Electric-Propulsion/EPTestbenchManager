@@ -18,7 +18,7 @@ class Set(ExperimentSegment):
 
     def run(self) -> None:
         
-        self.commanded_vinstrument_setpoint.command(True)
+        self.commanded_vinstrument_setpoint.command(self.setpoint)
         
         if self.commanded_vinstrument_output is not None:
             self.commanded_vinstrument_output.command(self.enable)

@@ -1,0 +1,19 @@
+ physical_instruments:
+
+  vacuum_gauge:
+    class: epcomms.equipment.vacuumcontroller.Terranova962A
+    arguments:
+      device_location: /dev/ttyUSB1
+      
+ virtual_instruments:     
+  vacuum_chamber_pressure:
+    type: polling
+    name: Vacuum Chamber Pressure
+    physical_instrument: vacuum_gauge
+    getter_function: get_pressure_gauge_1
+    getter_arguments: {}
+    setter_function: None
+    setter_arguments: {}
+    polling_interval: 1000
+    unit: mBar
+    name: Vacuum Chamber Pressure
