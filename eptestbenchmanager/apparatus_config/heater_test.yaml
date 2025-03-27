@@ -33,6 +33,12 @@ physical_instruments:
       ip: "192.168.0.153"
       port: 8001
 
+  usbtc08:
+    class: epcomms.equipment.temperature_sensor.PicoUSBTC08
+    arguments:
+      ip: "192.168.0.153"
+      port: 8001
+
   # keysight_psu:
   #   class: epcomms.equipment.powersupply.KeysightEDU36311A
   #   arguments:
