@@ -9,6 +9,7 @@ from eptestbenchmanager.chat.alert_manager import DiscordAlertManager
 from eptestbenchmanager.chat.engine import DiscordEngine
 from eptestbenchmanager.dashboard import DashboardManager
 from eptestbenchmanager.report import ReportManager
+from eptestbenchmanager.runtime import RuntimeManager
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +40,7 @@ class TestbenchManager:
 
     def start_app(
         self,
+        runtime_manager: RuntimeManager,
         discord_guild: str = "Hall-Effect Thruster",
     ):
         """Starts the application with optional delays for loading apparatus and experiments.
@@ -48,6 +50,8 @@ class TestbenchManager:
             delay_experiment_load (bool): If True, delays loading the experiment configurations.
             discord_guild (str): The Discord guild name for communication.
         """
+
+        self.runtime_manager = runtime_manager
 
         # Initialize the connection manager
         apparatus_config_dir_path = Path(

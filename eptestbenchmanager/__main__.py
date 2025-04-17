@@ -3,6 +3,7 @@ import logging
 import os
 from datetime import datetime
 from .app import app_root
+from .runtime.runtimemanager import RuntimeManager
 
 logger = logging.getLogger(__name__)
 
@@ -20,33 +21,15 @@ def main():
         choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
         help="Set the logging level",
     )
-    parser.add_argument(
-        "--log-dir", default="program_logs", help="Set the logging directory"
-    )
+    parser.add_argument("--app-data-dir", default=None)
 
     args = parser.parse_args()
 
-    logdir = os.path.join(os.path.dirname(__file__), args.log_dir)
-    logfile = os.path.join(
-        logdir, f'EPTestbenchManager {datetime.now().strftime("%Y-%m-%d %H-%M-%S")}.log'
-    )
-    os.makedirs(os.path.dirname(logfile), exist_ok=True)
+    runtimeManager = RuntimeManager(args.app_data_dir)
+    runtimeManager.configure_logging(args.log_level)
+    logger.info("Starting EPTestbenchManager...")
 
-    logging.basicConfig(
-        level=getattr(logging, args.log_level),
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-        handlers=[logging.FileHandler(logfile, "w", "utf-8"), logging.StreamHandler()],
-    )
-    logger.info("Logging to %s", logfile)
-    logger.info(
-        "Starting Testbench Manager with log level %s and log directory %s",
-        args.log_level,
-        args.log_dir,
-    )
-    logger.info("Logging level set to %s", args.log_level)
-
-    app_root.start_app()
+    app_root.start_app(runtimeManager)
 
 
 if __name__ == "__main__":
