@@ -1,0 +1,21 @@
+physical_instruments:
+
+  fluke45:
+    class: epcomms.equipment.multimeter.Fluke45
+    arguments:
+      device_location: /dev/ttyUSB0
+
+virtual_instruments:
+
+  heater_voltage_measurement:
+    type: polling
+    name: Heater Voltage
+    physical_instrument: fluke45
+    getter_function: measure_voltage_dc
+    getter_arguments: {}
+    setter_function: None
+    setter_arguments: {}
+    polling_interval: 1500
+    unit: V
+
+  
