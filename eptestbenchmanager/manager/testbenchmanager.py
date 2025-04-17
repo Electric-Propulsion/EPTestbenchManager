@@ -7,7 +7,6 @@ from eptestbenchmanager.connections import ConnectionManager
 from eptestbenchmanager.experiment_runner import ExperimentRunner
 from eptestbenchmanager.chat.alert_manager import DiscordAlertManager
 from eptestbenchmanager.chat.engine import DiscordEngine
-from eptestbenchmanager.chat.chat_manager import DiscordChatManager
 from eptestbenchmanager.dashboard import DashboardManager
 from eptestbenchmanager.report import ReportManager
 
@@ -34,7 +33,6 @@ class TestbenchManager:
         self.connection_manager: ConnectionManager = None
         self.communication_engine = DiscordEngine()
         self.alert_manager = DiscordAlertManager(self.communication_engine)
-        self.chat_manager = DiscordChatManager(self.communication_engine, self)
         self.runner: ExperimentRunner = None
         self.dashboard: DashboardManager = DashboardManager(self)
         self.report_manager = ReportManager(self)
@@ -67,7 +65,6 @@ class TestbenchManager:
 
         # Configure the chat stuff
         try:
-            self.chat_manager.configure()
             self.communication_engine.run()
             sleep(2.5)  # just give it a little time to start up
             self.communication_engine.configure({"guild": discord_guild})

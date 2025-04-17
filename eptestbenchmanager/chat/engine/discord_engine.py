@@ -34,14 +34,6 @@ class DiscordEngine(CommunicationEngine):
         self._loop = asyncio.new_event_loop()
         self._client_thread: Thread = None
 
-    def configure_message_processor(self, process_message: callable) -> None:
-        """Configures the message processor for the Discord client.
-
-        Args:
-            process_message (callable): A callable to process incoming messages.
-        """
-        self._client.configure_message_processor(process_message)
-
     def send_message(self, message: str, channel: str) -> None:
         """Sends a message to a specified channel.
 

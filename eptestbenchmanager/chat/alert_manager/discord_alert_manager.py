@@ -4,6 +4,7 @@ from . import AlertManager, AlertSeverity
 
 logger = logging.getLogger(__name__)
 
+
 class DiscordAlertManager(AlertManager):
     """Manages alerts sent to Discord.
 
@@ -26,6 +27,7 @@ class DiscordAlertManager(AlertManager):
             target (Union[str, list[str], None], optional): The target user(s) to mention.
             Defaults to None.
         """
+        target_str = ""
         if target is not None:
             try:
                 if isinstance(target, str):
@@ -35,10 +37,12 @@ class DiscordAlertManager(AlertManager):
                         [f"<@{self._engine.users[user]}>" for user in target]
                     )
             except KeyError:
-                logger.warning(f"Failed to send alert to {target} (not in known users).")
-                target_str = ""
-        else:
-            target_str = ""
+                # TODO: We should do something better than this. You shouldn't be FORCED to have alerts.
+                logger.warning(
+                    "Failed to send alert to %s (not in known users).", target
+                )
+            except TypeError:
+                logger.warning("Failed to send alert (No users are known).")
 
         prefix = self.get_prefix(severity)
         channel = self.get_channel(severity)
