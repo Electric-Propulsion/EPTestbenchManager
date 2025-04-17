@@ -3,7 +3,6 @@ from abc import ABC, abstractmethod
 from threading import Thread
 from os import path
 from typing import TYPE_CHECKING
-from eptestbenchmanager.monitor import Rule
 
 if TYPE_CHECKING:
     from eptestbenchmanager.manager import TestbenchManager
@@ -41,7 +40,6 @@ class ExperimentSegment(ABC):
         """
         self.uid = uid
         self.name = name
-        self._rules: list[Rule] = []
         self._runner_thread: Thread = None
         self._testbench_manager = testbench_manager
         self.data = None
@@ -87,15 +85,6 @@ class ExperimentSegment(ABC):
             NotImplementedError: If the method is not implemented.
         """
         raise NotImplementedError("Trying to generate a report from an abstract class.")
-
-    @property
-    def rules(self) -> list[Rule]:
-        """Gets the rules associated with the segment.
-
-        Returns:
-            list[Rule]: List of rules.
-        """
-        return self._rules
 
     def start_recordings(self):
         """Starts the recordings for the segment.

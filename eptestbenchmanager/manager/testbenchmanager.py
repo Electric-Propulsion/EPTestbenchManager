@@ -4,7 +4,6 @@ from time import sleep
 import logging
 
 from eptestbenchmanager.connections import ConnectionManager
-from eptestbenchmanager.monitor import TestbenchMonitor
 from eptestbenchmanager.experiment_runner import ExperimentRunner
 from eptestbenchmanager.chat.alert_manager import DiscordAlertManager
 from eptestbenchmanager.chat.engine import DiscordEngine
@@ -32,7 +31,6 @@ class TestbenchManager:
 
     def __init__(self):
         """Initializes the TestbenchManager with default attributes."""
-        self.monitor: TestbenchMonitor = None
         self.connection_manager: ConnectionManager = None
         self.communication_engine = DiscordEngine()
         self.alert_manager = DiscordAlertManager(self.communication_engine)
