@@ -22,9 +22,9 @@ class RuntimeManager:
         self.log_dir = app_data_dir / "logs"
         if not self.log_dir.exists():
             self.log_dir.mkdir(parents=True, exist_ok=True)
-        self.secrets_dir = app_data_dir / "secrets"
-        if not self.secrets_dir.exists():
-            self.secrets_dir.mkdir(parents=True, exist_ok=True)
+        self.data_dir = app_data_dir / "experiment_data"
+        if not self.data_dir.exists():
+            self.data_dir.mkdir(parents=True, exist_ok=True)
 
         # load or create the expected configdirs
         self.configs["experiment_config"] = ConfigDir(
