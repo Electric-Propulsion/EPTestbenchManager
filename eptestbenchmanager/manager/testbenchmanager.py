@@ -5,8 +5,8 @@ import logging
 
 from eptestbenchmanager.connections import ConnectionManager
 from eptestbenchmanager.experiment_runner import ExperimentRunner
-from eptestbenchmanager.chat.alert_manager import DiscordAlertManager
-from eptestbenchmanager.chat.engine import DiscordEngine
+from eptestbenchmanager.alerts.alert_manager import DiscordAlertManager
+from eptestbenchmanager.alerts.engine import DiscordEngine
 from eptestbenchmanager.dashboard import DashboardManager
 from eptestbenchmanager.report import ReportManager
 from eptestbenchmanager.runtime import RuntimeManager
@@ -21,9 +21,8 @@ class TestbenchManager:
         monitor (TestbenchMonitor): Monitors the testbench and evaluates rules.#TODO: Implement this
         connection_manager (ConnectionManager): Manages connections with physical and virtual
         instruments.
-        communication_engine (DiscordEngine): Engine that plugs into alert and chat managers.
+        communication_engine (DiscordEngine): Engine that plugs into alert manager.
         alert_manager (DiscordAlertManager): Manages sending alerts.
-        chat_manager (DiscordChatManager): Manages chat commands and responses.
         runner (ExperimentRunner): Runs experiments.
         dashboard (DashboardManager): Manages the web GUI dashboard.
         report_manager (ReportManager): Manages reports/archives. #TODO: not implemented yet
@@ -58,7 +57,6 @@ class TestbenchManager:
 
         self.connection_manager = ConnectionManager(self)
 
-        # Configure the chat stuff
         try:
             self.communication_engine.run()
             sleep(2.5)  # just give it a little time to start up
