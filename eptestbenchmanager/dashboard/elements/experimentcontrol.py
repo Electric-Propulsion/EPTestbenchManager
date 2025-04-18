@@ -48,8 +48,14 @@ class ExperimentControl(DashboardElement):
         Returns:
             str: Rendered HTML content.
         """
+
+        experiments = {
+            uid: self.experiment_runner.check_experiment_disabled(uid)
+            for uid in self.experiment_runner.experiments
+        }
+
         data = {
-            "experiments": self.experiment_runner.experiments,
+            "experiments": experiments,
             "operators": self.operators if self.operators is not None else [],
             "uid": self.uid,
         }

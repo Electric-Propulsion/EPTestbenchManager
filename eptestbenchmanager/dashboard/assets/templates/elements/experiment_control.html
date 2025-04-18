@@ -2,14 +2,14 @@
     <div class="experiment_control_box_name">Experiment Control</div>
     <label for="{{ data.uid }}_experiment_selector">Select Experiment:</label>
     <select id="{{ data.uid }}_experiment_selector" name="experiments">
-        {% for experiment in data.experiments %}
-            <option value="{{ experiment }}">{{ experiment }}</option>
+        {% for experiment_uid, experiment_disabled in data.experiments.items() %}
+            <option value="{{ experiment_uid }}" {% if experiment_disabled %}class="disabled" title="This experiment could not be loaded and will not run"{% endif %}>{{ experiment_uid }}</option>
         {% endfor %}
     </select>
     <label for="{{ data.uid }}_operaor_selector">Select Operator:</label>
     <select id="{{ data.uid }}_operator_selector" name="operators">
         {% for operator in data.operators %}
-            <option value="{{ operator }}">{{ operator }}</option>
+            <option value="{{ operator }}">{{ operator }} </option>
         {% endfor %}
     </select>
     <button onclick="start_experiment()" id="{{ data.uid }}_start_button">Start</button>

@@ -111,6 +111,12 @@ h1 {
     gap: 20px;
 }
 
+
+#experiment_control_experiment_selector option.disabled{
+    color: lightgrey; /* Light gray for disabled options */
+    background-color: inherit
+}
+
 .archive_dl_box_name, .experiment_control_box_name, .apparatus_control_box_name {
     position: absolute;
     top: -7.5px;

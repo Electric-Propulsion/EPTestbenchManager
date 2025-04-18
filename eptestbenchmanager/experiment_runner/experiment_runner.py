@@ -40,19 +40,16 @@ class ExperimentRunner:
             "experiment_config"
         ].load_configs()
         # Load all experiments from the config files
-        print(self._testbench_manager.runtime_manager.configs["experiment_config"])
         for uid, config in self._testbench_manager.runtime_manager.configs[
             "experiment_config"
         ].items():
             try:
-                print(uid)
-                print(config)
-                print(type(config))
                 self.add_experiment(uid, config)
             except Exception as e:
                 logger.exception(
                     f"Error loading experiment {uid}: {e} (Possibly incompatible with current apparatus)"
                 )
+                self.add_disabled_experiment(uid)
 
     def request_abort_current_experiment(self) -> None:
         """Requests the current experiment
@@ -71,6 +68,15 @@ class ExperimentRunner:
         )
         self._experiments[experiment.uid] = experiment
 
+    def add_disabled_experiment(self, uid: str) -> None:
+        """Adds a broken experiment to the runner. This is so you can edit it, but not run it."""
+        self._experiments[uid] = None
+
+    def check_experiment_disabled(self, uid: str) -> bool:
+        """Validates if the experiment can be run with the current apparatus. Basic check, not guaranteed."""
+
+        return self._experiments[uid] is None
+
     def run_experiment(self, uid: str, operator: str) -> None:
         """Runs the experiment with the given UID.
 
@@ -78,6 +84,17 @@ class ExperimentRunner:
             uid (str): Unique identifier of the experiment.
             operator (str): Name of the operator running the experiment.
         """
+
+        if uid not in self._experiments:
+            logger.error("Experiment %s not found", uid)
+            return
+        if self._experiments[uid] is None:
+            logger.error(
+                "Experiment %s is broken and will not run (possibly incompatible with current apparatus)",
+                uid,
+            )
+            return
+
         if self._experiment_lock.acquire(blocking=False):
             logger.info("Running experiment %s", uid)
             self._current_experiment_uid = uid

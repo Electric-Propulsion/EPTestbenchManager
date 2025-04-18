@@ -16,7 +16,6 @@ class ConfigDir(dict):
             config_dir.mkdir(parents=True, exist_ok=False)
         self.config_dir = config_dir
         super().__init__()
-
         self.load_configs()
 
     def load_configs(self) -> None:
@@ -35,3 +34,4 @@ class ConfigDir(dict):
                 self[config_id] = config
             except Exception as e:
                 logger.error("Error loading config %s: %s", config_id, e)
+                self[config_id] = None  # Store None for failed loads to avoid reloading

@@ -17,3 +17,15 @@ function new_experiment(  ) {
 function request_abort(  ) {
     {{ data.uid }}_socket.emit('request_abort');
     }
+
+document.getElementById("{{ data.uid }}_experiment_selector").addEventListener('change', function() {
+    var experiment_selector = document.getElementById("{{ data.uid }}_experiment_selector");
+    var start_button = document.getElementById("{{ data.uid }}_start_button");
+    var selected_option = experiment_selector.options[experiment_selector.selectedIndex];
+    
+    if (selected_option.classList.contains('disabled')) {
+        start_button.disabled = true;
+    } else {
+        start_button.disabled = false;
+    }
+});
