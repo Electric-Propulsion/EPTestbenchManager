@@ -10,43 +10,64 @@ logger = logging.getLogger(__name__)
 
 
 class Editor(DashboardElement):
+
     def __init__(
         self,
         uid: str,
         testbench_manager: "TestbenchManager",
-        edit_dir: Path,
-        filename: str,
+        config_dir_name: str,
+        config_name: str,
         socketio=None,
     ):
-        self._edit_dir = edit_dir
-        self.filename = filename
         self.testbench_manager = testbench_manager
 
-        self._file_path = self.safe_join(self._edit_dir, self.filename)
+        self.config_name = config_name
+        self.config_dir_name = config_dir_name
 
         super().__init__(uid, socketio)
 
         # check if the file exists. If so, read it
         self.content = ""
-        if os.path.exists(self._file_path):
-            with open(self._file_path, "r") as file:
+        if os.path.exists(self.file_path):
+            with open(self.file_path, "r") as file:
                 self.content = file.read()
 
         self.namespace = f"/{uid}"
         self.socketio.on_namespace(Namespace(self.namespace))
         self.configure()
 
+    @property
+    def file_path(self):
+        """Returns the file path of the configuration."""
+        try:
+            file_path = self.testbench_manager.runtime_manager.configs[
+                self.config_dir_name
+            ][self.config_name].path
+        except KeyError:
+            # This is a new config, so we need to create it
+            file_path = os.path.join(
+                self.testbench_manager.runtime_manager.configs[
+                    self.config_dir_name
+                ].config_dir,
+                self.config_name + ".yaml",
+            )
+            Path(file_path).touch(exist_ok=True)
+
+        return file_path
+
     def save(
         self,
         content,
     ):
-        logger.info("Saving file %s with content %s", self._file_path, content)
-        with open(self._file_path, "w") as file:
+        logger.info("Saving file %s with content %s", self.file_path, content)
+        with open(self.file_path, "w") as file:
             file.write(content)
 
         # need to somehow trigger the rest of the page to know that there's new apparatus configs
         self.testbench_manager.runner.load_experiments()
-        self.testbench_manager.connection_manager.update_apparatus_configs()
+        self.testbench_manager.runtime_manager.configs[
+            "apparatus_config"
+        ].load_configs()
 
     def safe_join(self, base, *paths):
         """Safely joins a path with a base path."""
@@ -62,7 +83,7 @@ class Editor(DashboardElement):
             data={
                 "uid": self.uid,
                 "content": self.content,
-                "file_root": self.filename.split(".")[0],
+                "file_root": self.config_name,
             },
         )
 
@@ -74,22 +95,21 @@ class Editor(DashboardElement):
     def configure(self):
         @self.socketio.on("save", namespace=self.namespace)
         def on_save(data):
-            logger.debug(f"Saving file with data {data}")
-            old_filename = self.filename
-            self.filename = f"{data["file_root"]}.yaml"
-
-            self._file_path = self.safe_join(self._edit_dir, self.filename)
+            logger.info(f"Saving file with data {data}")
+            old_config_name = self.config_name
+            old_file_path = self.file_path
+            self.config_name = data["file_root"]
 
             self.save(data["content"])
 
-            renamed = old_filename != self.filename
+            renamed = old_config_name != self.config_name
 
             if renamed:
-                if os.path.exists(self.safe_join(self._edit_dir, old_filename)):
-                    os.remove(self.safe_join(self._edit_dir, old_filename))
+                if os.path.exists(old_file_path):
+                    os.remove(old_file_path)
                 self.socketio.emit(
                     "save_status",
-                    {"status": "success", "redirect": self.filename},
+                    {"status": "success", "redirect": self.config_name},
                     namespace=self.namespace,
                 )
             else:

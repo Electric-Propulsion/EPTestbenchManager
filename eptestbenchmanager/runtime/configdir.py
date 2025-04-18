@@ -29,7 +29,7 @@ class ConfigDir(dict):
         ]
 
         for config_id in config_ids:
-            config_path = path.join(self.config_dir, config_id + ".yaml")
+            config_path = Path(path.join(self.config_dir, config_id + ".yaml"))
             try:
                 config = Config(config_path)
                 self[config_id] = config

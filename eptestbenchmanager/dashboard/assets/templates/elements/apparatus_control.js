@@ -7,9 +7,9 @@ function set_apparatus(  ) {
 
 function edit_apparatus(  ) {
     var apparatus_uid = document.getElementById("{{ data.uid }}_apparatus_selector").value;
-    window.location.href = '/{{ data.apparatus_config_path }}/'+apparatus_uid+'.yaml';
+    window.location.href = '/{{ data.apparatus_config_path }}/'+apparatus_uid;
     }
 
 function new_apparatus(  ) {
-    window.location.href = '/{{ data.apparatus_config_path }}/untitled_space_craft.yaml';
+    window.location.href = '/{{ data.apparatus_config_path }}/untitled_space_craft';
     }

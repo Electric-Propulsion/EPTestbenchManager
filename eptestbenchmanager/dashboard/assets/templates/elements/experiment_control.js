@@ -7,11 +7,11 @@ function start_experiment(  ) {
 
 function edit_experiment(  ) {
     var experiment_uid = document.getElementById("{{ data.uid }}_experiment_selector").value;
-    window.location.href = '/{{ data.experiment_config_path }}/'+experiment_uid+'.yaml';
+    window.location.href = '/{{ data.experiment_config_path }}/'+experiment_uid;
     }
 
 function new_experiment(  ) {
-    window.location.href = '/{{ data.experiment_config_path }}/untitled_experiment.yaml';
+    window.location.href = '/{{ data.experiment_config_path }}/untitled_experiment';
     }
 
 function request_abort(  ) {

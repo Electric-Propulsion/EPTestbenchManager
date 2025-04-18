@@ -38,7 +38,7 @@ class DashboardManager:
             static_folder="dashboard/assets/static",
             template_folder="dashboard/assets/templates",
         )
-        Payload.max_decode_packets = 2048 # this is a shitty workaround to an architectural issue I have no desire to fix
+        Payload.max_decode_packets = 2048  # this is a shitty workaround to an architectural issue I have no desire to fix
         self.socketio = SocketIO(self.app, cors_allowed_origins="*")
         self.app.config["SECRET_KEY"] = "testkey!"  # TODO: change me!
 
@@ -60,10 +60,9 @@ class DashboardManager:
         @self.app.route("/apparatus_config/<path:config_file>")
         def apparatus_config(config_file):
             """Renders the apparatus configuration editor."""
-            apparatus_config_dir = self.testbench_manager.connection_manager.config_dir
             return ConfigEditor(
                 self.testbench_manager,
-                apparatus_config_dir,
+                "apparatus_config",
                 config_file,
                 self.app,
                 self.socketio,

@@ -28,7 +28,7 @@ class ConnectionManager:
         _testbench_manager: Global TestbenchManager object.
     """
 
-    def __init__(self, testbench_manager, config_dir: Path):
+    def __init__(self, testbench_manager):
         """Initializes the ConnectionManager with the given testbench manager and config file path.
 
         Args:
@@ -44,10 +44,6 @@ class ConnectionManager:
         self.current_apparatus_config = None
 
         logger.info("Initializing ConnectionManager")
-        logger.info("Connection manager config file dir: %s", config_dir)
-        self.config_dir = config_dir
-        self._configs = None
-        self.update_apparatus_configs()
         self.ui_element = self._testbench_manager.dashboard.create_element(
             ApparatusControl, ("apparatus_control", self)
         )
@@ -55,6 +51,11 @@ class ConnectionManager:
         self.reload = None
         self._shutdown_complete = Lock()
         self._shutdown_complete.acquire()
+
+    @property
+    def _configs(self) -> dict:
+        """Returns the apparatus configuration dictionary."""
+        return self._testbench_manager.runtime_manager.configs["apparatus_config"]
 
     def register_reload(self, reload_element):
         """Registers a reload element to the connection manager.
@@ -64,21 +65,6 @@ class ConnectionManager:
         """
         self.reload = reload_element
 
-    def update_apparatus_configs(self) -> list:
-        """Returns a list of all apparatus configs on the system.
-
-        Args:
-            config_dir (Path): The path to the directory containing configuration files.
-
-        Returns:
-            list: List of apparatus configs.
-        """
-        self._configs = [
-            f.stem
-            for f in self.config_dir.iterdir()
-            if f.is_file() and f.suffix == ".yaml"
-        ]
-
     @property
     def apparatus_configs(self) -> list:
         """Returns a list of all apparatus configs on the system.
@@ -86,7 +72,7 @@ class ConnectionManager:
         Returns:
             list: List of apparatus configs.
         """
-        return self._configs
+        return self._configs.keys()
 
     def set_apparatus_config(self, apparatus_config: str) -> None:
         """Sets the apparatus configuration to the given configuration.
@@ -102,7 +88,7 @@ class ConnectionManager:
         set_apparatus_config_thread.start()
 
     def _set_apparatus_config(self, apparatus_config: str) -> None:
-        self.current_apparatus_config = None # it's reset as part of the process
+        self.current_apparatus_config = None  # it's reset as part of the process
 
         try:
             if apparatus_config not in self._configs:
@@ -137,11 +123,8 @@ class ConnectionManager:
                 except Exception as e:
                     logger.error("Error closing physical instrument: %s", e)
 
-
-
             # Load the configuration file for the selected apparatus
-            config_file_path = os.path.join(self.config_dir, f"{apparatus_config}.yaml")
-            self.load_instruments(config_file_path)
+            self.load_instruments(apparatus_config)
 
             # Start polling and updating for virtual instruments
             self.run()
@@ -156,8 +139,7 @@ class ConnectionManager:
             if self.reload is not None:
                 self.reload.reload()
 
-
-    def load_instruments(self, config_file_path: str) -> None:
+    def load_instruments(self, config_name: str) -> None:
         """Loads and configures physical and virtual instruments from a given configuration file.
 
         Args:
@@ -167,8 +149,7 @@ class ConnectionManager:
         # I think what we need to do here is a) close all existing physical instruments, and
         # b) stop all existing polling threads
 
-        with open(config_file_path, "r", encoding="utf-8") as config_file:
-            config = load(config_file, Loader=FullLoader)
+        config = self._configs[config_name]
 
         try:
             for uid, instrument_config in config["physical_instruments"].items():

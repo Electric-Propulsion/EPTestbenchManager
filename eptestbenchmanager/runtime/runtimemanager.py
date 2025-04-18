@@ -4,12 +4,15 @@ import logging
 import platform
 from datetime import datetime
 
+from .configdir import ConfigDir
+
 logger = logging.getLogger(__name__)
 
 
 class RuntimeManager:
 
     def __init__(self, app_data_dir: Path = None):
+        self.configs = {}
         app_data_dir = self.get_base_app_data_dir(app_data_dir)
         if not app_data_dir.exists():
             app_data_dir.mkdir(parents=True, exist_ok=True)
@@ -22,6 +25,14 @@ class RuntimeManager:
         self.secrets_dir = app_data_dir / "secrets"
         if not self.secrets_dir.exists():
             self.secrets_dir.mkdir(parents=True, exist_ok=True)
+
+        # load or create the expected configdirs
+        self.configs["experiment_config"] = ConfigDir(
+            self.config_dir / "experiment_config"
+        )
+        self.configs["apparatus_config"] = ConfigDir(
+            self.config_dir / "apparatus_config"
+        )
 
     def get_base_app_data_dir(self, app_data_dir: Path = None) -> Path:
         """Returns the base application data directory."""

@@ -53,11 +53,6 @@ class TestbenchManager:
 
         self.runtime_manager = runtime_manager
 
-        # Initialize the connection manager
-        apparatus_config_dir_path = Path(
-            path.join(Path(__file__).parent.parent, Path("apparatus_config"))
-        )
-
         experiment_config_dir_path = Path(
             path.join(Path(__file__).parent.parent, Path("experiment_config"))
         )
@@ -65,7 +60,7 @@ class TestbenchManager:
         # Initialize the experiment runner
         self.runner = ExperimentRunner(self, experiment_config_dir_path)
 
-        self.connection_manager = ConnectionManager(self, apparatus_config_dir_path)
+        self.connection_manager = ConnectionManager(self)
 
         # Configure the chat stuff
         try:
