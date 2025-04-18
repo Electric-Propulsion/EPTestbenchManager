@@ -1,5 +1,8 @@
 from pathlib import Path
 import yaml
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Config(dict):
@@ -12,10 +15,12 @@ class Config(dict):
             raise IsADirectoryError(f"Configuration file {path} is not a file.")
         if not path.suffix == ".yaml":
             raise ValueError(f"Configuration file {path} is not a YAML file.")
-
-        config_dict = self._load_yaml(path)
-        super().__init__(config_dict)
         self.path = path
+        try:
+            config_dict = self._load_yaml(path)
+            super().__init__(config_dict)
+        except Exception as e:
+            logger.error(f"Error loading config YAML file {path}: {e}")
 
     def _load_yaml(self, path: Path) -> dict:
         """Loads a YAML file and returns its content as a dictionary."""

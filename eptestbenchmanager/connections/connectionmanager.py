@@ -94,7 +94,6 @@ class ConnectionManager:
             if apparatus_config not in self._configs:
                 logger.error("Invalid apparatus config: %s", apparatus_config)
                 return
-            print("setting up apparatus config")
             # Signal the shutdown of the current polling threads
             for batcher in self._batchers.values():
                 batcher.halt_poll()
@@ -132,6 +131,10 @@ class ConnectionManager:
             # (Re)Load the experiments
             self._testbench_manager.runner.load_experiments()
             self.current_apparatus_config = apparatus_config
+        except KeyError as e:
+            logger.error("Error in apparatus config file %s: %s", apparatus_config, e)
+        except Exception as e:
+            logger.error("Error loading apparatus config %s: %s", apparatus_config, e)
 
         finally:
             # Update the UI with the new apparatus configuration
@@ -177,7 +180,6 @@ class ConnectionManager:
                 uid,
                 instrument_config,
             )
-
         for virtual_instrument in self._virtual_instruments.values():
             setattr(self, virtual_instrument.uid, virtual_instrument)
 

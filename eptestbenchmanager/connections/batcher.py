@@ -54,13 +54,13 @@ class Batcher:
                     self._vints[arg].set_value(value)
 
             except Exception as e:
-                print(f"A batcher encountered exception: {e}")
+                logger.error(f"A batcher encountered exception: {e}")
             sleep_time = next_poll_time - monotonic()
             if sleep_time > 0:
                 sleep(sleep_time)
             else:
                 # We missed the polling interval
-                print(
+                logger.error(
                     f"EPTestbenchManager: A batcher missed a polling interval by {-sleep_time} seconds"
                 )
                 pass
@@ -91,7 +91,6 @@ class Batcher:
             case "custom_USBTC08":
                 return {}
 
-
     def _get_demux_function(self, batching_scheme: str) -> callable:
         match batching_scheme:
             case "SCPI_chanlist":
@@ -119,9 +118,12 @@ class Batcher:
 
                 return demux_function
             case "custom_USBTC08":
+
                 def demux_function(values):
                     # values is a list of eight temperatures corrisponding to channels 1-8
                     return {
-                        list(self._vints.keys())[i]: values[list(self._vints.keys())[i]] for i in range(len(self._vints))
+                        list(self._vints.keys())[i]: values[list(self._vints.keys())[i]]
+                        for i in range(len(self._vints))
                     }
+
                 return demux_function

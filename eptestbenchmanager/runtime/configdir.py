@@ -34,4 +34,4 @@ class ConfigDir(dict):
                 self[config_id] = config
             except Exception as e:
                 logger.error("Error loading config %s: %s", config_id, e)
-                self[config_id] = None  # Store None for failed loads to avoid reloading
+                raise e from e
