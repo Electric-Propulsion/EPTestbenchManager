@@ -4,7 +4,7 @@ import time
 import datetime
 from io import StringIO
 from typing import TYPE_CHECKING
-from eptestbenchmanager.chat.alert_manager import AlertSeverity
+from eptestbenchmanager.alerts.alert_manager import AlertSeverity
 from .experiment_segments.experiment_segment import (
     ExperimentSegment,
     AbortingSegmentFailure,
@@ -130,7 +130,9 @@ class Experiment:
                     try:
                         segment.postrun()
                     except Exception as e:
-                        logger.error("Error in postrun of segment %s: %s", segment.uid, e)
+                        logger.error(
+                            "Error in postrun of segment %s: %s", segment.uid, e
+                        )
 
                     self._testbench_manager.alert_manager.send_alert(
                         (
@@ -196,7 +198,7 @@ class Experiment:
             str: UID of the current segment, or "no segment" if index is out of range.
         """
         return self._current_segment_uid
-        
+
     def get_current_segment_name(self) -> str:
         """Gets the name of the current segment.
 
@@ -204,7 +206,7 @@ class Experiment:
             str: Name of the current segment, or "no segment" if index is out of range.
         """
         return self._current_segment_name
-    
+
     def update_vints(self):
         """Updates the virtual instruments with the current segment information."""
         self._testbench_manager.connection_manager.virtual_instruments[
