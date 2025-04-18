@@ -71,10 +71,9 @@ class DashboardManager:
         @self.app.route("/experiment_config/<path:config_file>")
         def experiment_config(config_file):
             """Renders the experiment configuration editor."""
-            experiment_config_dir = self.testbench_manager.runner.experiment_config_dir
             return ConfigEditor(
                 self.testbench_manager,
-                experiment_config_dir,
+                "experiment_config",
                 config_file,
                 self.app,
                 self.socketio,

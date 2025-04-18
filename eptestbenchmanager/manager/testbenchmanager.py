@@ -53,12 +53,8 @@ class TestbenchManager:
 
         self.runtime_manager = runtime_manager
 
-        experiment_config_dir_path = Path(
-            path.join(Path(__file__).parent.parent, Path("experiment_config"))
-        )
-
         # Initialize the experiment runner
-        self.runner = ExperimentRunner(self, experiment_config_dir_path)
+        self.runner = ExperimentRunner(self)
 
         self.connection_manager = ConnectionManager(self)
 

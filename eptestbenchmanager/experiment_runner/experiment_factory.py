@@ -10,8 +10,12 @@ from .experiment_segments import (
     Wait,
     IsoFilamentHold,
     IsoFilamentVoltageStep,
-    Step, Hold, Set
+    Step,
+    Hold,
+    Set,
 )
+
+from eptestbenchmanager.runtime import Config
 
 if TYPE_CHECKING:
     from eptestbenchmanager.manager import TestbenchManager
@@ -31,7 +35,8 @@ class ExperimentFactory:
     @classmethod
     def create_experiment(
         cls,
-        config_file: StringIO,
+        uid: str,
+        config: Config,
         testbench_manager: "TestbenchManager",
         experiment_lock: Lock,
     ) -> Experiment:
@@ -45,9 +50,7 @@ class ExperimentFactory:
         Returns:
             Experiment: The created Experiment instance.
         """
-        config = load(config_file, Loader=FullLoader)
 
-        uid = config["experiment"]["uid"]
         name = config["experiment"]["name"]
         description = config["experiment"]["description"]
         experiment_recordings = config.get("recordings", None)
@@ -58,7 +61,9 @@ class ExperimentFactory:
             segment_type = segment_config["type"]
             segment_name = segment_config["name"]
             if experiment_recordings is not None:
-                segment_config["recordings"] = segment_config.get("recordings", []) + experiment_recordings
+                segment_config["recordings"] = (
+                    segment_config.get("recordings", []) + experiment_recordings
+                )
             # 'segment' could be a single segment or a list of segments
             segment = cls.get_class(segment_type)(
                 segment_uid, segment_name, segment_config, testbench_manager

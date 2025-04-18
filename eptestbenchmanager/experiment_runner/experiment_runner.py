@@ -23,9 +23,7 @@ class ExperimentRunner:
         _current_experiment_uid (str): UID of the currently running experiment.
     """
 
-    def __init__(
-        self, testbench_manager: "TestbenchManager", experiment_config_dir: Path
-    ):
+    def __init__(self, testbench_manager: "TestbenchManager"):
         """Initializes the ExperimentRunner with a testbench manager.
 
         Args:
@@ -35,21 +33,26 @@ class ExperimentRunner:
         self._testbench_manager = testbench_manager
         self._experiment_lock = Lock()
         self._current_experiment_uid = None
-        self.experiment_config_dir = experiment_config_dir
 
     def load_experiments(self) -> None:
-        for dirpath, _, filenames in walk(self.experiment_config_dir):
-            for filename in filenames:
-                if filename.endswith(".yaml"):
-                    with open(
-                        path.join(dirpath, filename), "r", encoding="utf-8"
-                    ) as experiment_config_file:
-                        try:
-                            self.add_experiment(experiment_config_file)
-                        except Exception as e:
-                            logger.error(
-                                f"Error loading experiment {filename}: {e} (Possibly incompatible with current apparatus)"
-                            )
+        self._experiments = {}
+        self._testbench_manager.runtime_manager.configs[
+            "experiment_config"
+        ].load_configs()
+        # Load all experiments from the config files
+        print(self._testbench_manager.runtime_manager.configs["experiment_config"])
+        for uid, config in self._testbench_manager.runtime_manager.configs[
+            "experiment_config"
+        ].items():
+            try:
+                print(uid)
+                print(config)
+                print(type(config))
+                self.add_experiment(uid, config)
+            except Exception as e:
+                logger.exception(
+                    f"Error loading experiment {uid}: {e} (Possibly incompatible with current apparatus)"
+                )
 
     def request_abort_current_experiment(self) -> None:
         """Requests the current experiment
@@ -57,14 +60,14 @@ class ExperimentRunner:
         if self._current_experiment_uid is not None:
             self._experiments[self._current_experiment_uid].request_abort()
 
-    def add_experiment(self, experiment_file: StringIO) -> None:
+    def add_experiment(self, uid, config) -> None:
         """Adds an experiment to the runner.
 
         Args:
             experiment_file (StringIO): File containing the experiment configuration.
         """
         experiment = ExperimentFactory.create_experiment(
-            experiment_file, self._testbench_manager, self._experiment_lock
+            uid, config, self._testbench_manager, self._experiment_lock
         )
         self._experiments[experiment.uid] = experiment
 
