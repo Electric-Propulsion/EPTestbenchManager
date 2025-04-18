@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Union
-from eptestbenchmanager.chat.engine import CommunicationEngine
-from eptestbenchmanager.chat.alert_manager.alert_severity import AlertSeverity
+from eptestbenchmanager.alerts.engine import CommunicationEngine
+from eptestbenchmanager.alerts.alert_manager.alert_severity import AlertSeverity
 
 
 class AlertManager(ABC):
