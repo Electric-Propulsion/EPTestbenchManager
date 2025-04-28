@@ -172,9 +172,8 @@ class DiscordEngine(CommunicationEngine):
             "discord"
         ]
 
-        self._guild_id = self._config["guild"]
+        self._guild_id = int(self._config["guild"])
         logger.info("Connecting to guild %s", self._guild_id)
-
         self._user_ids = self._get_user_ids()
         self._channel_ids = self._get_channel_ids()
 
@@ -222,6 +221,7 @@ class DiscordEngine(CommunicationEngine):
         """
         if self._user_ids is None:  # If the user IDs are not set, return an empty list
             return []
+        print(list(self._user_ids.keys()))
         return list(self._user_ids.keys())
 
     def _get_channel_ids(self) -> dict[str, int]:

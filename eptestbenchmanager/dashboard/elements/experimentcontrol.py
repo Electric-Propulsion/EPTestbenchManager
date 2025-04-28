@@ -35,7 +35,7 @@ class ExperimentControl(DashboardElement):
         self.name = "Experiment Control"
         self.experiment_runner = testbench_manager.runner
         self.operators = (
-            testbench_manager.communication_engine.users
+            testbench_manager.alert_manager.operators
         )  # TODO: This is not great
 
         self.namespace = f"/{uid}"

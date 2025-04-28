@@ -56,17 +56,7 @@ class TestbenchManager:
 
         self.report_manager = ReportManager(self)
 
-        self.communication_engine = DiscordEngine(self)
-        self.alert_manager = AlertManager(self.communication_engine)
-
-        try:
-            self.communication_engine.run()
-            sleep(2.5)  # just give it a little time to start up
-            self.communication_engine.configure()
-        except Exception as e:  # I know it's way too broad
-            logger.critical(
-                "Discord failed to start. No messages will be sent or recieved."
-            )
+        self.alert_manager = AlertManager(self)
 
         # Start everything
         self.connection_manager.run()
