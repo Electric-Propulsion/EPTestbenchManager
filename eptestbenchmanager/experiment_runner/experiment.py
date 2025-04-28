@@ -90,10 +90,10 @@ class Experiment:
         """Runs all segments of the experiment sequentially."""
         self.start_time = time.perf_counter()
 
-        self._testbench_manager.alert_manager.send_alert(
+        self._testbench_manager.alert_manager.send_message(
             f"Starting experiment **{self.name}**. ({len(self.segments)} segments)\nRun ID: {self.run_id}",  # pylint: disable=line-too-long
             severity=AlertSeverity.INFO,
-            target=self.operator,
+            target_operators=self.operator,
         )
         try:
             self.current_segment_id = 0
@@ -107,7 +107,7 @@ class Experiment:
                 self.update_vints()
 
                 try:
-                    self._testbench_manager.alert_manager.send_alert(
+                    self._testbench_manager.alert_manager.send_message(
                         (
                             f"Experiment **{self.name}** is running segment "
                             f"**{segment.uid}**. Elapsed time: "
@@ -115,7 +115,7 @@ class Experiment:
                             f"({self.current_segment_id}/{len(self.segments)})"
                         ),
                         severity=AlertSeverity.INFO,
-                        target=self.operator,
+                        target_operators=self.operator,
                     )
                     if self.abort.is_set():
                         raise AbortingSegmentFailure("Manual abort requested.")
@@ -134,7 +134,7 @@ class Experiment:
                             "Error in postrun of segment %s: %s", segment.uid, e
                         )
 
-                    self._testbench_manager.alert_manager.send_alert(
+                    self._testbench_manager.alert_manager.send_message(
                         (
                             f"Experiment **{self.name}** has aborted at segment "
                             f"**{segment.uid}**. Elapsed time: "
@@ -142,7 +142,7 @@ class Experiment:
                             f"(reason: {e})"
                         ),
                         severity=AlertSeverity.INFO,
-                        target=self.operator,
+                        target_operators=self.operator,
                     )
 
                     return
@@ -162,13 +162,13 @@ class Experiment:
                 self.run_id, self.run_id
             )
 
-            self._testbench_manager.alert_manager.send_alert(
+            self._testbench_manager.alert_manager.send_message(
                 (
                     f"Experiment **{self.name}** has completed. Completed in "
                     f"{datetime.timedelta(seconds=end_time - self.start_time)}."
                 ),
                 severity=AlertSeverity.INFO,
-                target=self.operator,
+                target_operators=self.operator,
             )
 
             self._testbench_manager.alert_manager.send_file(

@@ -2,6 +2,7 @@ from pathlib import Path
 import os
 import logging
 import platform
+from dotenv import load_dotenv
 from datetime import datetime
 
 from .configdir import ConfigDir
@@ -25,6 +26,9 @@ class RuntimeManager:
         self.data_dir = app_data_dir / "experiment_data"
         if not self.data_dir.exists():
             self.data_dir.mkdir(parents=True, exist_ok=True)
+        self.env_dir = app_data_dir / "env"
+        if not self.env_dir.exists():
+            self.env_dir.mkdir(parents=True, exist_ok=True)
 
         # load or create the expected configdirs
         self.configs["experiment_config"] = ConfigDir(
@@ -33,6 +37,15 @@ class RuntimeManager:
         self.configs["apparatus_config"] = ConfigDir(
             self.config_dir / "apparatus_config"
         )
+        self.configs["alert_config"] = ConfigDir(self.config_dir / "alert_config")
+
+        # load the environment variables from the .env files
+        for env_file in os.listdir(self.env_dir):
+            if env_file.endswith(".env"):
+                env_path = self.env_dir / env_file
+                # load the environment variables from the .env file
+                load_dotenv(env_path, override=True)
+                logger.info("Loaded environment variables from %s", env_path)
 
     def get_base_app_data_dir(self, app_data_dir: Path = None) -> Path:
         """Returns the base application data directory."""

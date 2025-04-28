@@ -5,7 +5,7 @@ import logging
 
 from eptestbenchmanager.connections import ConnectionManager
 from eptestbenchmanager.experiment_runner import ExperimentRunner
-from eptestbenchmanager.alerts.alert_manager import DiscordAlertManager
+from eptestbenchmanager.alerts.alert_manager import AlertManager
 from eptestbenchmanager.alerts.engine import DiscordEngine
 from eptestbenchmanager.dashboard import DashboardManager
 from eptestbenchmanager.report import ReportManager
@@ -22,7 +22,7 @@ class TestbenchManager:
         connection_manager (ConnectionManager): Manages connections with physical and virtual
         instruments.
         communication_engine (DiscordEngine): Engine that plugs into alert manager.
-        alert_manager (DiscordAlertManager): Manages sending alerts.
+        alert_manager (AlertManager): Manages sending alerts.
         runner (ExperimentRunner): Runs experiments.
         dashboard (DashboardManager): Manages the web GUI dashboard.
         report_manager (ReportManager): Manages reports/archives. #TODO: not implemented yet
@@ -31,11 +31,8 @@ class TestbenchManager:
     def __init__(self):
         """Initializes the TestbenchManager with default attributes."""
         self.connection_manager: ConnectionManager = None
-        self.communication_engine = DiscordEngine()
-        self.alert_manager = DiscordAlertManager(self.communication_engine)
         self.runner: ExperimentRunner = None
         self.dashboard: DashboardManager = DashboardManager(self)
-        self.report_manager = ReportManager(self)
 
     def start_app(
         self,
@@ -57,10 +54,15 @@ class TestbenchManager:
 
         self.connection_manager = ConnectionManager(self)
 
+        self.report_manager = ReportManager(self)
+
+        self.communication_engine = DiscordEngine(self)
+        self.alert_manager = AlertManager(self.communication_engine)
+
         try:
             self.communication_engine.run()
             sleep(2.5)  # just give it a little time to start up
-            self.communication_engine.configure({"guild": discord_guild})
+            self.communication_engine.configure()
         except Exception as e:  # I know it's way too broad
             logger.critical(
                 "Discord failed to start. No messages will be sent or recieved."

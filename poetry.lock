@@ -972,6 +972,20 @@ files = [
 cp2110 = ["hidapi"]
 
 [[package]]
+name = "python-dotenv"
+version = "1.1.0"
+description = "Read key-value pairs from a .env file and set them as environment variables"
+optional = false
+python-versions = ">=3.9"
+files = [
+    {file = "python_dotenv-1.1.0-py3-none-any.whl", hash = "sha256:d7c01d9e2293916c18baf562d95698754b0dbbb5e74d457c45d4f6561fb9d55d"},
+    {file = "python_dotenv-1.1.0.tar.gz", hash = "sha256:41f90bc6f5f177fb41f53e87666db362025010eb28f60a01c9143bfa33a2b2d5"},
+]
+
+[package.extras]
+cli = ["click (>=5.0)"]
+
+[[package]]
 name = "python-engineio"
 version = "4.11.2"
 description = "Engine.IO server and client for Python"
@@ -1443,4 +1457,4 @@ ifaddr = ">=0.1.7"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "4dcc3eaac24d4f8637cf3c38aa9cddb09eb77ad7a715f77f6ba5d4f5642b9c24"
+content-hash = "7408e172964c3b63a742527293e765fc8775bd0e8bfd851d81794a6be662c061"
