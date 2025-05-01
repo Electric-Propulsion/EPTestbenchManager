@@ -37,7 +37,6 @@ class TestbenchManager:
     def start_app(
         self,
         runtime_manager: RuntimeManager,
-        discord_guild: str = "Hall-Effect Thruster",
     ):
         """Starts the application with optional delays for loading apparatus and experiments.
 

@@ -1,6 +1,6 @@
 from typing import Union
 import logging
-from eptestbenchmanager.alerts.engine import DiscordEngine
+from eptestbenchmanager.alerts.engine import DiscordEngine, StdoutEngine
 from eptestbenchmanager.alerts.alert_manager.alert_severity import AlertSeverity
 import time
 
@@ -34,6 +34,17 @@ class AlertManager:
                         self._engines.append(engine)
                     except Exception as e:
                         logger.critical(f"Failed to initialize Discord engine: {e}")
+                
+                case "stdout":
+                    logger.info("Initializing Stdout engine")
+                    try:
+
+                        engine = StdoutEngine(self.testbench_manager)
+                        engine.run()
+                        engine.configure(None)
+                        self._engines.append(engine)
+                    except Exception as e:
+                        logger.critical(f"Failed to initialize Stdout engine: {e}")
 
                 case _:
                     logger.warning(f"Unknown engine type: {engine_type}")
